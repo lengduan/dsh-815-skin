@@ -295,7 +295,14 @@ export function apply(ctx: Context): void {
   const caption = document.createElement('div')
   caption.dataset.skinChrome = 'caption'
   caption.dataset.skinOwner = SKIN_OWNER
-  caption.textContent = '1945.9.9 南京 · 陈坚《公元一千九百四十五年九月九日九时》'
+  /* 展签两行：主行画名，副行时间地点事件。 */
+  const captionTitle = document.createElement('span')
+  captionTitle.dataset.skinChrome = 'caption-title'
+  captionTitle.textContent = '陈坚《公元一千九百四十五年九月九日九时》'
+  const captionSub = document.createElement('span')
+  captionSub.dataset.skinChrome = 'caption-sub'
+  captionSub.textContent = '1945.9.9 九时 · 南京 中国战区日军投降签字'
+  caption.append(captionTitle, captionSub)
   ownedNodes.add(caption)
   body.append(caption)
 
