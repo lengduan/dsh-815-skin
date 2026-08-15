@@ -3,13 +3,13 @@
  * 《终战诏书》侧栏牌、token 覆盖。effect 销毁器还原全部 CSS/DOM 写入。
  */
 import type { Context } from '@deepseek-ai/cordis'
-import { IMPERIAL_RESCRIPT, SURRENDER_PHOTO } from './art.generated.ts'
+import { IMPERIAL_RESCRIPT, SURRENDER_PHOTO_2K, SURRENDER_PHOTO_4K } from './art.generated.ts'
 import { MAID_ATELIER_TITLEBAR_BRAND } from './titlebar-brand.ts'
 import './vj815.module.css'
 
 const SKIN_TITLE = '一九四五年八月十五日 · DeepSeek Harness'
 const SKIN_OWNER = '815'
-const SKIN_SYSTEM_CHROME_COLOR = '#1a1c14'
+const SKIN_SYSTEM_CHROME_COLOR = '#080a06'
 const SIDEBAR_COLUMN_SELECTOR = ":is([data-pane='sidebar'], [class*='sidebarCol'])"
 
 const BACKDROP_PROPERTIES = [
@@ -18,6 +18,7 @@ const BACKDROP_PROPERTIES = [
   'background-size',
   'background-attachment',
   'background-repeat',
+  'background-color',
   '--vj-photo',
   '--vj-rescript',
   '--vj-sidebar-width',
@@ -73,12 +74,16 @@ export function apply(ctx: Context): void {
   let syncTitlebarHeight: (() => void) | undefined
   let observedSidebar: HTMLElement | undefined
   let resizeObserver: ResizeObserver | undefined
+  let syncBackdrop: (() => void) | undefined
 
   ctx.effect(() => () => {
     body.removeAttribute('data-dsh-815')
     observer?.disconnect()
     themeColorObserver?.disconnect()
     resizeObserver?.disconnect()
+    if (syncBackdrop !== undefined) {
+      window.removeEventListener('resize', syncBackdrop)
+    }
     if (titlebarOverlay !== undefined && syncTitlebarHeight !== undefined) {
       titlebarOverlay.removeEventListener('geometrychange', syncTitlebarHeight)
     }
@@ -111,20 +116,30 @@ export function apply(ctx: Context): void {
   syncSystemChrome()
 
   body.setAttribute('data-dsh-815', '')
-  body.style.setProperty('--vj-photo', `url(${SURRENDER_PHOTO})`)
   body.style.setProperty('--vj-rescript', `url(${IMPERIAL_RESCRIPT})`)
-  body.style.setProperty('background-image', `url(${SURRENDER_PHOTO})`)
   body.style.setProperty('background-position', 'center 42%')
   body.style.setProperty('background-size', 'cover')
   body.style.setProperty('background-attachment', 'fixed')
   body.style.setProperty('background-repeat', 'no-repeat')
+  body.style.setProperty('background-color', '#080a06')
+
+  /** 设备像素宽 >= 2560 用 4K，否则 2K。 */
+  syncBackdrop = (): void => {
+    const deviceWidth = window.innerWidth * (window.devicePixelRatio || 1)
+    const photo = deviceWidth >= 2560 ? SURRENDER_PHOTO_4K : SURRENDER_PHOTO_2K
+    const url = `url(${photo})`
+    body.style.setProperty('--vj-photo', url)
+    body.style.setProperty('background-image', url)
+  }
+  window.addEventListener('resize', syncBackdrop)
+  syncBackdrop()
 
   const widthSheet = document.createElement('style')
   widthSheet.dataset.skinChrome = 'sidebar-width-rule'
   widthSheet.dataset.skinOwner = SKIN_OWNER
   ownedNodes.add(widthSheet)
   document.head.append(widthSheet)
-  widthSheet.sheet!.insertRule('body { --vj-sidebar-width: 280px; --vj-titlebar-height: 0px; }')
+  widthSheet.sheet!.insertRule('html, body { background-color: #080a06; --vj-sidebar-width: 280px; --vj-titlebar-height: 0px; }')
   const appendRule = (rule: string): void => {
     widthSheet.sheet!.insertRule(rule, widthSheet.sheet!.cssRules.length)
   }
@@ -211,8 +226,8 @@ export function apply(ctx: Context): void {
 
   const favicon = document.createElement('link')
   favicon.rel = 'icon'
-  favicon.type = 'image/png'
-  favicon.href = SURRENDER_PHOTO
+  favicon.type = 'image/jpeg'
+  favicon.href = SURRENDER_PHOTO_2K
   favicon.dataset.skinChrome = 'favicon'
   favicon.dataset.skinOwner = SKIN_OWNER
   ownedNodes.add(favicon)

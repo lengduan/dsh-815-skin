@@ -11,7 +11,8 @@ function dataUri(file, mime) {
 
 const source = [
   '/** 内嵌皮肤图，构建时由 scripts/embed-art.mjs 生成。 */',
-  `export const SURRENDER_PHOTO = '${dataUri('nanjing-surrender-chen-jian.png', 'image/png')}';`,
+  `export const SURRENDER_PHOTO_2K = '${dataUri('nanjing-surrender-chen-jian-2k.jpg', 'image/jpeg')}';`,
+  `export const SURRENDER_PHOTO_4K = '${dataUri('nanjing-surrender-chen-jian.jpg', 'image/jpeg')}';`,
   `export const IMPERIAL_RESCRIPT = '${dataUri('imperial-rescript.jpg', 'image/jpeg')}';`,
   '',
 ].join('\n')

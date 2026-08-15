@@ -37,7 +37,7 @@ describe('815 skin apply', () => {
   it('installs the photograph backdrop and restores prior body styles', async () => {
     document.body.style.setProperty('background-position', 'left bottom')
     fiber = await mount()
-    expect(document.body.style.backgroundImage).toContain('data:image/png;base64,')
+    expect(document.body.style.backgroundImage).toContain('data:image/jpeg;base64,')
     expect(document.body.style.backgroundPosition).toBe('center 42%')
     await fiber.dispose()
     expect(document.body.style.backgroundImage).toBe('')
