@@ -155,6 +155,17 @@ body[data-dsh-815] :is([data-pane='conversation'], [class*='centerCol']) {
   background: transparent;
 }
 
+/* 对话列宿主会写 background: var(--dsw-alias-bg-base)；主题若在内层重绑该 token，会盖住油画并和输入座切出一条水平线。 */
+body[data-dsh-815] [data-phase='active'] {
+  --dsw-alias-bg-base: transparent;
+  background: transparent;
+}
+
+body[data-dsh-815] [data-phase='active'] [class*='scrollBody'],
+body[data-dsh-815] [data-phase='active'] [class*='viewArea'] {
+  background: transparent;
+}
+
 body[data-dsh-815] :is([data-pane='details'], [class*='detailsCol']) {
   background: rgba(18, 20, 14, 0.88);
   border-left-color: rgba(196, 163, 90, 0.4);
@@ -206,9 +217,7 @@ body[data-dsh-815] [data-composer-card] :is(textarea, input)::placeholder {
 
 body[data-dsh-815] [data-phase='active'] [data-composer-seat] {
   --dsw-alias-bg-base: transparent;
-  background:
-    linear-gradient(180deg, rgba(10, 12, 8, 0.62), rgba(10, 12, 8, 0.88)),
-    var(--vj-photo) center 42% / cover fixed no-repeat;
+  background: transparent;
 }
 
 body[data-dsh-815] [data-chat-flow] {
