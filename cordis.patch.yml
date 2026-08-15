@@ -1,0 +1,4 @@
+# 815 终战皮肤 bundle patch：把 dsh.client 入口插入 web 插件名册。
+- insert:
+    - id: ui-skin-815
+      name: '@dsh-external/dsh-client-ui-skin-815'

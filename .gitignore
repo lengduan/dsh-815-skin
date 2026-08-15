@@ -141,3 +141,7 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# 构建产物与内嵌图（由 pnpm build / embed-art 生成）
+lib/
+src/client/art.generated.ts

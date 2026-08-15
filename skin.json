@@ -1,0 +1,22 @@
+{
+  "id": "815",
+  "name": "一九四五年八月十五日",
+  "nameEn": "15 August 1945",
+  "author": "lengduan",
+  "tagline": "陈坚《公元一千九百四十五年九月九日九时》为底",
+  "description": "DeepSeek Harness WebUI 史料皮肤。对话区使用陈坚油画《公元一千九百四十五年九月九日九时》（南京受降、弯腰递交投降书），侧栏挂《终战诏书》印刷件。",
+  "tags": [
+    "history",
+    "ww2",
+    "painting",
+    "nanjing"
+  ],
+  "accent": "#c4a35a",
+  "bodyAttr": "data-dsh-815",
+  "package": "@dsh-external/dsh-client-ui-skin-815",
+  "wiring": {
+    "id": "ui-skin-815",
+    "bundleWired": false
+  },
+  "order": 15
+}

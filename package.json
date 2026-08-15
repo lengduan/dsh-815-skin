@@ -1,0 +1,51 @@
+{
+  "name": "@dsh-external/dsh-client-ui-skin-815",
+  "description": "1945 终战皮肤：陈坚《公元一千九百四十五年九月九日九时》作为 DeepSeek Harness Web 背景",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./skin.json": "./skin.json",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [],
+      "platform": "web"
+    }
+  },
+  "scripts": {
+    "embed-art": "node scripts/embed-art.mjs",
+    "build": "node scripts/embed-art.mjs && tsdown",
+    "test": "vitest run"
+  },
+  "license": "MIT",
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1",
+    "jsdom": "29.1.1",
+    "lightningcss": "^1.32.0",
+    "tsdown": "0.22.14",
+    "vitest": "4.1.10"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "skin.json",
+    "preview",
+    "src",
+    "tests",
+    "LICENSE",
+    "NOTICE",
+    "README.md"
+  ]
+}
