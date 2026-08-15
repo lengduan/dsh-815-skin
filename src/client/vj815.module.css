@@ -85,15 +85,14 @@ body[data-dsh-815] :is([data-pane='sidebar'], [class*='sidebarCol']) {
   --dsw-alias-label-secondary: #d4ccb0;
   position: relative;
   z-index: auto;
-  background: rgba(16, 18, 12, 0.86);
+  background: rgba(16, 18, 12, 0.92);
   border-right: 1px solid rgba(196, 163, 90, 0.42);
   box-shadow: 10px 0 28px rgba(0, 0, 0, 0.28);
-  backdrop-filter: blur(10px) saturate(0.7);
 }
 
 body[data-dsh-815] :is([data-pane='sidebar'], [class*='sidebarCol']) > div {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   background:
     linear-gradient(180deg, rgba(28, 30, 20, 0.55), rgba(12, 14, 10, 0.72));
 }
@@ -103,13 +102,52 @@ body[data-dsh-815] [data-skin-chrome='rescript-plaque'] {
   left: 50%;
   bottom: 88px;
   z-index: 1;
-  width: min(78%, 210px);
-  max-height: 42%;
+  width: min(86%, 232px);
+  max-height: 28%;
   object-fit: contain;
+  border-radius: 10px;
   transform: translateX(-50%);
   pointer-events: none;
   opacity: 0.88;
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.45));
+}
+
+/* 青天白日海军旗：蓝底白日十二芒。仅挂在会话选中行左侧。 */
+body[data-dsh-815] [data-vj-session] {
+  position: relative;
+  padding-left: 26px;
+}
+
+body[data-dsh-815] [data-vj-session]:hover:not([aria-selected='true']) {
+  border-radius: 8px;
+  background: rgba(196, 163, 90, 0.1);
+}
+
+body[data-dsh-815] [data-vj-session][aria-selected='true'] {
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(196, 163, 90, 0.22), rgba(28, 30, 22, 0.12));
+  box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.35);
+}
+
+body[data-dsh-815] [data-vj-session][aria-selected='true'] [class*='title'] {
+  color: #fff8e8;
+}
+
+body[data-dsh-815] [data-vj-session][aria-selected='true']::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  z-index: 2;
+  width: 16px;
+  height: 11px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  background-color: #000095;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Crect width='30' height='20' fill='%23000095'/%3E%3Cg fill='%23fff' transform='translate(15 10)'%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(30)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(60)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(90)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(120)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(150)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(180)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(210)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(240)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(270)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(300)'/%3E%3Cpolygon points='0,-8.4 1.05,-3.5 -1.05,-3.5' transform='rotate(330)'/%3E%3Ccircle r='2.7'/%3E%3Ccircle r='3.55' fill='none' stroke='%23000095' stroke-width='0.85'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: cover;
+  background-repeat: no-repeat;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
 }
 
 body[data-dsh-815] :is([data-pane='conversation'], [class*='centerCol']) {
@@ -228,8 +266,29 @@ body[data-dsh-815] [data-terminal] {
 body[data-dsh-815] :is([role='dialog'], [role='menu'], [data-radix-popper-content-wrapper] > *) {
   color: #f4ead6;
   --dsw-alias-label-primary: #f4ead6;
+  --dsw-alias-label-secondary: #d4ccb0;
+  --dsw-alias-label-tertiary: #9e9780;
+  --dsw-alias-label-caption: #7e7866;
+  --dsw-alias-bg-layer-1: #24261c;
+  --dsw-alias-bg-layer-2: #1c1e16;
+  --dsw-alias-bg-layer-3: #2c2e24;
+  --dsw-alias-bg-module-platform: #24261c;
+  --dsw-alias-bg-overlay: #323428;
+  --dsw-specific-input-major: #24261c;
+  --dsw-specific-selector: #323428;
+  --dsw-specific-menu: #2c2e24;
+  --dsw-specific-tip: #2a2c22;
+  --dsw-alias-button-elevated-fill: #2e3026;
+  --dsw-alias-button-floating-fill: #2a2c22;
+  --dsw-alias-button-floating-hover: #3a3e2c;
+  --dsw-alias-markdown-inline-code: #2a2c22;
   border-color: rgba(196, 163, 90, 0.5);
   box-shadow: var(--vj-shadow);
+}
+
+body[data-dsh-815] [data-slot='sidebar.settings'] [role='dialog'][aria-modal='true'] {
+  --dsw-specific-sidebar-nav-item-active: rgba(196, 163, 90, 0.32);
+  --dsw-specific-sidebar-nav-item-hover: rgba(196, 163, 90, 0.14);
 }
 
 body[data-dsh-815] [class*='titlebar'] > [class*='button']:first-of-type {

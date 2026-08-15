@@ -54,6 +54,55 @@ function decorateSidebarPlaque(ownedNodes: Set<Element>): void {
 }
 
 /**
+ * 从女仆皮 copy：给侧栏 treeitem 打会话标记，选中行才能挂青天白日小旗。
+ * @param decoratedElements - 卸载时清除 data-* 的节点集合
+ */
+function decorateWorkspaceTree(decoratedElements: Set<HTMLElement>): void {
+  const sidebar = document.querySelector<HTMLElement>(SIDEBAR_COLUMN_SELECTOR)
+  if (!sidebar) return
+
+  sidebar.querySelectorAll<HTMLElement>(
+    '[data-vj-session], [data-vj-session-flat]',
+  ).forEach((element) => {
+    delete element.dataset.vjSession
+    delete element.dataset.vjSessionFlat
+  })
+
+  sidebar.querySelectorAll<HTMLElement>("[role='tree']").forEach((tree) => {
+    const rows = [...tree.querySelectorAll<HTMLElement>("[role='treeitem']")]
+    if (tree.matches("[class*='flatList']") && !rows.some(row => row.hasAttribute('aria-expanded'))) {
+      rows.filter(row => row.hasAttribute('aria-selected')).forEach((sessionRow) => {
+        sessionRow.dataset.vjSession = ''
+        sessionRow.dataset.vjSessionFlat = ''
+        decoratedElements.add(sessionRow)
+      })
+      return
+    }
+
+    let workspaceRow: HTMLElement | undefined
+    let sessionRows: HTMLElement[] = []
+    const decorateGroup = (): void => {
+      if (!workspaceRow) return
+      sessionRows.forEach((sessionRow) => {
+        sessionRow.dataset.vjSession = ''
+        decoratedElements.add(sessionRow)
+      })
+    }
+
+    rows.forEach((row) => {
+      if (row.hasAttribute('aria-expanded')) {
+        decorateGroup()
+        workspaceRow = row
+        sessionRows = []
+      } else if (workspaceRow && row.hasAttribute('aria-selected')) {
+        sessionRows.push(row)
+      }
+    })
+    decorateGroup()
+  })
+}
+
+/**
  * 写入皮肤背景与史料牌，并由 effect 在卸载时整份撤回。
  * @param ctx - 拥有效果生命周期的 Cordis 上下文
  */
@@ -66,6 +115,7 @@ export function apply(ctx: Context): void {
   }
 
   const ownedNodes = new Set<Element>()
+  const decoratedElements = new Set<HTMLElement>()
   let themeColorMeta: HTMLMetaElement | null = null
   let previousThemeColor: string | undefined
   let themeColorObserver: MutationObserver | undefined
@@ -91,6 +141,10 @@ export function apply(ctx: Context): void {
       body.style.setProperty(property, value)
     }
     ownedNodes.forEach(element => element.remove())
+    decoratedElements.forEach((element) => {
+      delete element.dataset.vjSession
+      delete element.dataset.vjSessionFlat
+    })
     if (themeColorMeta?.isConnected && themeColorMeta.content === SKIN_SYSTEM_CHROME_COLOR) {
       themeColorMeta.content = previousThemeColor ?? ''
     }
@@ -194,13 +248,23 @@ export function apply(ctx: Context): void {
 
   decorateTitlebarBrand(ownedNodes)
   decorateSidebarPlaque(ownedNodes)
+  decorateWorkspaceTree(decoratedElements)
   ensureSidebarObserved()
   const initialSidebar = document.querySelector<HTMLElement>(SIDEBAR_COLUMN_SELECTOR)
   if (initialSidebar) applySidebarWidth(initialSidebar.getBoundingClientRect().width)
 
   observer = new MutationObserver((records) => {
+    let sidebarStructureChanged = false
+    let workspaceStateChanged = false
     for (const record of records) {
-      if (record.type === 'attributes') continue
+      if (record.type === 'attributes') {
+        const target = record.target instanceof Element ? record.target : undefined
+        if ((record.attributeName === 'aria-expanded' || record.attributeName === 'aria-selected')
+          && target !== undefined && target.closest(SIDEBAR_COLUMN_SELECTOR) !== null) {
+          workspaceStateChanged = true
+        }
+        continue
+      }
       const appNodes = [...record.addedNodes].filter(node => node instanceof Element)
       if (appNodes.some(node =>
         node instanceof Element
@@ -208,14 +272,25 @@ export function apply(ctx: Context): void {
           || node.querySelector(SIDEBAR_COLUMN_SELECTOR) !== null
           || node.matches("[class*='titlebar']")
           || node.querySelector("[class*='titlebar']") !== null))) {
-        decorateTitlebarBrand(ownedNodes)
-        decorateSidebarPlaque(ownedNodes)
-        ensureSidebarObserved()
-        syncTitlebarHeight?.()
+        sidebarStructureChanged = true
       }
     }
+    if (sidebarStructureChanged) {
+      decorateTitlebarBrand(ownedNodes)
+      decorateSidebarPlaque(ownedNodes)
+      decorateWorkspaceTree(decoratedElements)
+      ensureSidebarObserved()
+      syncTitlebarHeight?.()
+    } else if (workspaceStateChanged) {
+      decorateWorkspaceTree(decoratedElements)
+    }
   })
-  observer.observe(body, { childList: true, subtree: true })
+  observer.observe(body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['aria-expanded', 'aria-selected'],
+  })
 
   const caption = document.createElement('div')
   caption.dataset.skinChrome = 'caption'
