@@ -298,7 +298,7 @@ export function apply(ctx: Context): void {
   /* 展签两行：主行画名，副行时间地点事件。 */
   const captionTitle = document.createElement('span')
   captionTitle.dataset.skinChrome = 'caption-title'
-  captionTitle.textContent = '陈坚《公元一千九百四十五年九月九日九时》'
+  captionTitle.textContent = '陈坚《公元一九四五年九月九日九时》'
   const captionSub = document.createElement('span')
   captionSub.dataset.skinChrome = 'caption-sub'
   captionSub.textContent = '1945.9.9 九时 · 南京 中国战区日军投降签字'
