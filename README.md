@@ -11,7 +11,7 @@ DeepSeek Harness **Web GUI** 史料皮肤。对话区底图是陈坚油画《公
 | 平台 | `web`（`dsh.client.platform`） |
 | 许可证 | MIT（代码）；油画著作权见 [NOTICE](NOTICE) |
 
-![页面效果](docs/preview.png)
+![页面效果](https://raw.githubusercontent.com/lengduan/dsh-815-skin/main/docs/preview.png)
 
 文档结构对齐 [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins)「给插件开发者」对合格 README 的最低要求。
 
