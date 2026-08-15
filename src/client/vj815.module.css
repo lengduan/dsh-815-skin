@@ -331,6 +331,11 @@ body[data-dsh-815] [data-slot='sidebar.settings'] [role='dialog'][aria-modal='tr
   --dsw-specific-sidebar-nav-item-hover: rgba(196, 163, 90, 0.14);
 }
 
+/* Cordis 底栏面板写 background: var(--dsw-alias-bg-base)；全局透明会透出油画。 */
+body[data-dsh-815] [data-slot='sidebar.footer.action'] {
+  --dsw-alias-bg-base: #24261c;
+}
+
 body[data-dsh-815] [class*='titlebar'] > [class*='button']:first-of-type {
   display: none;
 }
