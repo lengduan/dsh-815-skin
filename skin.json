@@ -13,7 +13,7 @@
   ],
   "accent": "#c4a35a",
   "bodyAttr": "data-dsh-815",
-  "package": "@dsh-external/dsh-client-ui-skin-815",
+  "package": "@lengduan/dsh-client-ui-skin-815",
   "wiring": {
     "id": "ui-skin-815",
     "bundleWired": false
