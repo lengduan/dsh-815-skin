@@ -1,5 +1,8 @@
 # 一九四五年八月十五日 · dsh-815-skin
 
+这个懂的都懂，不得的先欣赏世界名画
+![4K世界名画](https://raw.githubusercontent.com/lengduan/dsh-815-skin/main/assets/nanjing-surrender-chen-jian.jpg)
+
 DeepSeek Harness **Web GUI** 史料皮肤。对话区底图是陈坚油画《公元一九四五年九月九日九时》：1945-09-09 南京受降，日军代表弯腰递交投降书。侧栏挂《终战诏书》印刷件。
 
 加载即生效，卸载即还原 DOM / CSS / `document.title`。不改会话、不调模型、不访问网络。
