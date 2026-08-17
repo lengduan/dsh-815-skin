@@ -231,6 +231,28 @@ body[data-dsh-815] [data-phase='active'] [data-composer-seat] {
   background: transparent;
 }
 
+/* 斜杠候选菜单 / popupSelect 浮层挂在输入座 overlay 锚点（零高条带），
+   是输入座的子节点，会继承宣纸浅底的墨字 token；但浮层自身是深色 Elevated
+   面（background: var(--dsw-specific-menu)），墨字落在深底上看不清。
+   在浮层根上换回主题浅色文字，并把菜单底压成不透明深橄榄——与对话框、
+   普通菜单（vj815.module.css 的 role='dialog' / role='menu' 规则）同一取值。 */
+body[data-dsh-815]
+  :is(
+    [data-composer-card] [role='listbox'],
+    [data-composer-card] [class*='overlayAnchor'] > *
+  ) {
+  color: #f4ead6;
+  --dsw-specific-menu: #2c2e24;
+  --dsw-alias-label-primary: #f4ead6;
+  --dsw-alias-label-primary-bluish: #e8dcb8;
+  --dsw-alias-label-secondary: #d4ccb0;
+  --dsw-alias-label-tertiary: #9e9780;
+  --dsw-alias-label-dimmed: #9e9780;
+  --dsw-alias-interactive-bg-hover: rgba(196, 163, 90, 0.14);
+  --dsw-alias-interactive-bg-active: rgba(196, 163, 90, 0.28);
+  border-color: rgba(196, 163, 90, 0.5);
+}
+
 body[data-dsh-815] [data-chat-flow] {
   max-width: var(--dsh-composer-card-max-width);
 }
