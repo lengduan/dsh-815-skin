@@ -41,7 +41,8 @@ body[data-dsh-815] {
   --dsw-alias-state-business-tertiary: #3a3828;
   --dsw-shadow-lv2: var(--vj-shadow);
   --dsw-specific-input-major: rgba(28, 30, 22, 0.82);
-  --dsw-specific-selector: rgba(48, 50, 36, 0.9);
+  --dsw-specific-selector: #323428;
+  --dsw-specific-menu: #2c2e24;
   --dsw-specific-sidebar-fill: rgba(14, 16, 12, 0.88);
   --dsw-alias-markdown-code-block: #141610;
   --dsw-alias-markdown-code-block-banner: #1c1e16;
@@ -339,8 +340,9 @@ body[data-dsh-815] [data-terminal] {
 
 /* 对话列把 --dsw-alias-bg-base 设成透明好露油画；对话管理等弹层若写
    background: var(--dsw-alias-bg-base)，会整层透出后面的字。弹层改实色。 */
-body[data-dsh-815] :is([role='dialog'], [role='menu'], [aria-modal='true'], [data-radix-popper-content-wrapper] > *) {
+body[data-dsh-815] :is([role='dialog'], [role='menu'], [role='listbox'], [aria-modal='true'], [data-radix-popper-content-wrapper] > *) {
   color: #f4ead6;
+  background-color: #24261c;
   --dsw-alias-bg-base: #24261c;
   --dsw-alias-label-primary: #f4ead6;
   --dsw-alias-label-secondary: #d4ccb0;
@@ -366,6 +368,18 @@ body[data-dsh-815] :is([role='dialog'], [role='menu'], [aria-modal='true'], [dat
 body[data-dsh-815] [data-slot='sidebar.settings'] [role='dialog'][aria-modal='true'] {
   --dsw-specific-sidebar-nav-item-active: rgba(196, 163, 90, 0.32);
   --dsw-specific-sidebar-nav-item-hover: rgba(196, 163, 90, 0.14);
+}
+
+/* 设置里原生 <select>：闭合条橄榄底奶油字；系统弹出层常是白底，option 用墨色宣纸。 */
+body[data-dsh-815] select {
+  color: #f4ead6;
+  background-color: #24261c;
+  border-color: rgba(196, 163, 90, 0.5);
+}
+
+body[data-dsh-815] option {
+  color: #1c1a14;
+  background-color: #f3ead4;
 }
 
 /* 插件推荐面板写死 GitHub 冷色（#0d1117 / #58a6ff）。皮肤下换成暖橄榄底 + 铜金链。 */
