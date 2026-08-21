@@ -198,10 +198,31 @@ body[data-dsh-815] [data-composer-card]:focus-within {
   box-shadow: 0 0 0 3px rgba(196, 163, 90, 0.16), var(--vj-shadow);
 }
 
+/* DSH 新版 Composer 把草稿文字渲染在 backdrop 层（data-input-backdrop），
+   textarea 只保留原生 caret，其文字与背景都应是透明的：这里若把背景写成
+   宣纸浅色，会形成不透明层遮住 backdrop 里的草稿字。textarea 仅留深色 caret。 */
 body[data-dsh-815] [data-composer-card] :is(textarea, input, [contenteditable='true']) {
   color: #1c1a14;
   caret-color: #1c1a14;
-  background: #f3ead4;
+  background: transparent;
+}
+
+/* 草稿正文字符真正由 backdrop 层（data-input-backdrop）绘制，颜色取自
+   var(--dsw-alias-label-primary)。主题在暗色下把该 token 解析成浅色，
+   落在宣纸浅底上将看不清；这里在输入座内把 backdrop 压回墨色。 */
+body[data-dsh-815] [data-composer-card] [data-input-backdrop] {
+  color: #1c1a14;
+}
+
+/* backdrop 内的 slash 命令 token / 引用 chip 原本用主题暗色下的浅色
+   token（warn/business），落在宣纸浅底上也偏浅；压成暗金与深橄榄，
+   与 815 主题协调。用 data-decoration 属性定位，避开 CSS Modules 的 hash 类名。 */
+body[data-dsh-815] [data-composer-card] [data-input-backdrop] [data-decoration='token'] {
+  color: #8a6a1c;
+}
+
+body[data-dsh-815] [data-composer-card] [data-input-backdrop] :is([data-decoration='chip'], [data-decoration='text-ref']) {
+  color: #2f4a2f;
 }
 
 body[data-dsh-815] [data-composer-card] :is(textarea, input)::placeholder {

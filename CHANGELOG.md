@@ -1,5 +1,13 @@
 # 更新日志
 
+## 0.1.8 — 2026-08-21
+
+适配 DSH 新版 Composer 输入区：草稿文字改在 `backdrop` 层渲染，输入框文字不再偏浅/被遮挡。
+
+- DSH 更新后输入区改为「透明 `textarea` + `backdrop` 层画字」，草稿正文字符由 `[data-input-backdrop]` 绘制，颜色取 `--dsw-alias-label-primary`（暗色主题解析为浅色）
+- 皮肤原先只给 `textarea/input` 设深色，且把 textarea 背景写死成宣纸浅色 `#f3ead4`，形成不透明层盖住 backdrop 里的草稿字
+- 本次修复：textarea 背景改回透明（只留深墨 `caret`）；给 `[data-composer-card] [data-input-backdrop]` 显式压回墨色 `#1c1a14`；slash 命令 token 与引用 chip 在浅纸底压成暗金/深橄榄
+
 ## 0.1.7 — 2026-08-21
 
 为了减少侧边栏对工作区历史空间占用，决定移除这一块图片的显示。
