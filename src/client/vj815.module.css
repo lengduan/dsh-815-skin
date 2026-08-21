@@ -152,7 +152,9 @@ body[data-dsh-815] [data-phase='active'] [class*='viewArea'] {
 }
 
 body[data-dsh-815] :is([data-pane='details'], [class*='detailsCol']) {
-  background: rgba(18, 20, 14, 0.88);
+  --dsw-alias-bg-base: #1c1e16;
+  --dsw-alias-bg-overlay: #24261c;
+  background: #1c1e16;
   border-left-color: rgba(196, 163, 90, 0.4);
 }
 
@@ -335,8 +337,11 @@ body[data-dsh-815] [data-terminal] {
   color: #f4ead6;
 }
 
-body[data-dsh-815] :is([role='dialog'], [role='menu'], [data-radix-popper-content-wrapper] > *) {
+/* 对话列把 --dsw-alias-bg-base 设成透明好露油画；对话管理等弹层若写
+   background: var(--dsw-alias-bg-base)，会整层透出后面的字。弹层改实色。 */
+body[data-dsh-815] :is([role='dialog'], [role='menu'], [aria-modal='true'], [data-radix-popper-content-wrapper] > *) {
   color: #f4ead6;
+  --dsw-alias-bg-base: #24261c;
   --dsw-alias-label-primary: #f4ead6;
   --dsw-alias-label-secondary: #d4ccb0;
   --dsw-alias-label-tertiary: #9e9780;
