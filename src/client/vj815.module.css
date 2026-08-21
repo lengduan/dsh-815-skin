@@ -182,6 +182,9 @@ body[data-dsh-815] [data-composer-card] {
   --dsw-alias-label-tertiary: #6a6454;
   --dsw-alias-label-caption: #7e7866;
   --dsw-alias-brand-text: #1c1a14;
+  /* 目标条「进行中的目标」走 brand/business 主色；浅纸底上浅铜看不清，压成暗铜。 */
+  --dsw-alias-brand-primary: #6b4e16;
+  --dsw-alias-state-business-primary: #6b4e16;
   --dsw-specific-input-major: #f3ead4;
   --dsw-alias-bg-layer-1: #f3ead4;
   --dsw-alias-bg-layer-2: #efe4c8;
@@ -231,6 +234,8 @@ body[data-dsh-815] [data-composer-card] :is(textarea, input)::placeholder {
 
 body[data-dsh-815] [data-phase='active'] [data-composer-seat] {
   --dsw-alias-bg-base: transparent;
+  --dsw-alias-brand-primary: #6b4e16;
+  --dsw-alias-state-business-primary: #6b4e16;
   background: transparent;
 }
 
@@ -251,6 +256,8 @@ body[data-dsh-815]
   --dsw-alias-label-secondary: #d4ccb0;
   --dsw-alias-label-tertiary: #9e9780;
   --dsw-alias-label-dimmed: #9e9780;
+  --dsw-alias-brand-primary: #c4a35a;
+  --dsw-alias-state-business-primary: #c4a35a;
   --dsw-alias-interactive-bg-hover: rgba(196, 163, 90, 0.14);
   --dsw-alias-interactive-bg-active: rgba(196, 163, 90, 0.28);
   border-color: rgba(196, 163, 90, 0.5);
