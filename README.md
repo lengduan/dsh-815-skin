@@ -3,7 +3,7 @@
 这个懂的都懂，不得的先欣赏世界名画
 ![4K世界名画](https://raw.githubusercontent.com/lengduan/dsh-815-skin/main/assets/nanjing-surrender-chen-jian.jpg)
 
-DeepSeek Harness **Web GUI** 史料皮肤。对话区底图是陈坚油画《公元一九四五年九月九日九时》：1945-09-09 南京受降，日军代表弯腰递交投降书。侧栏挂《终战诏书》印刷件。
+DeepSeek Harness **Web GUI** 史料皮肤。对话区底图是陈坚油画《公元一九四五年九月九日九时》：1945-09-09 南京受降，日军代表弯腰递交投降书。
 
 加载即生效，卸载即还原 DOM / CSS / `document.title`。不改会话、不调模型、不访问网络。
 
@@ -20,7 +20,7 @@ DeepSeek Harness **Web GUI** 史料皮肤。对话区底图是陈坚油画《公
 
 ## Overview
 
-**解决什么：** Web UI 默认浅色/默认底换成 1945 终战史料外观（油画底、诏书侧栏牌、选中会话青天白日小旗、标题栏品牌）。
+**解决什么：** Web UI 默认浅色/默认底换成 1945 终战史料外观（油画底、选中会话青天白日小旗、标题栏品牌）。
 
 **适合谁：** 本机跑 `dsh web` / `--profile web`、只想换皮的人。
 
@@ -64,7 +64,7 @@ dsh plugin --profile web update @lengduan/dsh-client-ui-skin-815
 dsh plugin --profile web remove @lengduan/dsh-client-ui-skin-815
 ```
 
-依赖和 `dsh.profile.bundles` 层一并拿掉。重启 `dsh web` 后不应再有 `data-dsh-815`、史料牌、内嵌油画。
+依赖和 `dsh.profile.bundles` 层一并拿掉。重启 `dsh web` 后不应再有 `data-dsh-815`、内嵌油画。
 
 固定版本：用 commit / tag，不要依赖会漂移的未钉死分支。建议先在隔离 profile 试加载，再进日常 web profile。
 
@@ -72,7 +72,7 @@ dsh plugin --profile web remove @lengduan/dsh-client-ui-skin-815
 
 1. `pnpm build` 且 `dsh plugin --profile web add .` 成功。
 2. `dsh web`，打开 GUI。
-3. 最小验收：`document.body` 有 `data-dsh-815`；对话区能看见南京受降油画；侧栏底部有诏书缩略；点卸载/禁用后上述全部消失。
+3. 最小验收：`document.body` 有 `data-dsh-815`；对话区能看见南京受降油画；侧栏不出现诏书缩略；点卸载/禁用后上述全部消失。
 
 无需额外配置文件、无需环境变量。
 
@@ -86,10 +86,10 @@ dsh plugin --profile web remove @lengduan/dsh-client-ui-skin-815
 
 | 面 | 行为 |
 |---|---|
-| 网络 | 无。底图与诏书在构建期 embed 进 client bundle（data URL） |
+| 网络 | 无。底图在构建期 embed 进 client bundle（data URL） |
 | 文件系统 | 运行时不读用户文件；构建读本仓 `assets/` |
 | 凭据 / 会话 | 不读 token、密钥、聊天内容 |
-| DOM | 写 `body` 样式与 `data-dsh-815`；插入标题栏品牌、侧栏诏书图、宽度 stylesheet；给选中会话行打 `data-vj-session*` |
+| DOM | 写 `body` 样式与 `data-dsh-815`；插入标题栏品牌、宽度 stylesheet；给选中会话行打 `data-vj-session*` |
 | 权限模型 | `dsh.client.inject` 为空；不申请宿主服务 |
 
 卸载走 Cordis `ctx.effect` 销毁器：断 observer、还原 style、删 `data-skin-owner="815"` 节点、清会话标记。

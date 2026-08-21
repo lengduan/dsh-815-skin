@@ -1,9 +1,9 @@
 /**
- * 1945 终战皮肤。客户端入口只做展示层：南京受降油画背景、
- * 《终战诏书》侧栏牌、token 覆盖。effect 销毁器还原全部 CSS/DOM 写入。
+ * 1945 终战皮肤。客户端入口只做展示层：南京受降油画背景、token 覆盖。
+ * effect 销毁器还原全部 CSS/DOM 写入。
  */
 import type { Context } from '@deepseek-ai/cordis'
-import { IMPERIAL_RESCRIPT, SURRENDER_PHOTO_2K, SURRENDER_PHOTO_4K } from './art.generated.ts'
+import { SURRENDER_PHOTO_2K, SURRENDER_PHOTO_4K } from './art.generated.ts'
 import { MAID_ATELIER_TITLEBAR_BRAND } from './titlebar-brand.ts'
 import './vj815.module.css'
 
@@ -20,7 +20,6 @@ const BACKDROP_PROPERTIES = [
   'background-repeat',
   'background-color',
   '--vj-photo',
-  '--vj-rescript',
   '--vj-sidebar-width',
   '--vj-titlebar-height',
 ] as const
@@ -36,21 +35,6 @@ function decorateTitlebarBrand(ownedNodes: Set<Element>): void {
   brand.innerHTML = MAID_ATELIER_TITLEBAR_BRAND
   ownedNodes.add(brand)
   titlebar.prepend(brand)
-}
-
-function decorateSidebarPlaque(ownedNodes: Set<Element>): void {
-  const sidebar = document.querySelector<HTMLElement>(SIDEBAR_COLUMN_SELECTOR)
-  const sidebarRoot = sidebar?.querySelector<HTMLElement>(':scope > div')
-  if (!sidebar || !sidebarRoot) return
-  if (sidebarRoot.querySelector("[data-skin-chrome='rescript-plaque']")) return
-  const plaque = document.createElement('img')
-  plaque.dataset.skinChrome = 'rescript-plaque'
-  plaque.dataset.skinOwner = SKIN_OWNER
-  plaque.alt = ''
-  plaque.setAttribute('aria-hidden', 'true')
-  plaque.src = IMPERIAL_RESCRIPT
-  ownedNodes.add(plaque)
-  sidebarRoot.prepend(plaque)
 }
 
 /**
@@ -103,7 +87,7 @@ function decorateWorkspaceTree(decoratedElements: Set<HTMLElement>): void {
 }
 
 /**
- * 写入皮肤背景与史料牌，并由 effect 在卸载时整份撤回。
+ * 写入皮肤背景，并由 effect 在卸载时整份撤回。
  * @param ctx - 拥有效果生命周期的 Cordis 上下文
  */
 export function apply(ctx: Context): void {
@@ -170,7 +154,6 @@ export function apply(ctx: Context): void {
   syncSystemChrome()
 
   body.setAttribute('data-dsh-815', '')
-  body.style.setProperty('--vj-rescript', `url(${IMPERIAL_RESCRIPT})`)
   body.style.setProperty('background-position', 'center 42%')
   body.style.setProperty('background-size', 'cover')
   body.style.setProperty('background-attachment', 'fixed')
@@ -247,7 +230,6 @@ export function apply(ctx: Context): void {
   }
 
   decorateTitlebarBrand(ownedNodes)
-  decorateSidebarPlaque(ownedNodes)
   decorateWorkspaceTree(decoratedElements)
   ensureSidebarObserved()
   const initialSidebar = document.querySelector<HTMLElement>(SIDEBAR_COLUMN_SELECTOR)
@@ -277,7 +259,6 @@ export function apply(ctx: Context): void {
     }
     if (sidebarStructureChanged) {
       decorateTitlebarBrand(ownedNodes)
-      decorateSidebarPlaque(ownedNodes)
       decorateWorkspaceTree(decoratedElements)
       ensureSidebarObserved()
       syncTitlebarHeight?.()
