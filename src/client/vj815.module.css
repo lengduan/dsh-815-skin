@@ -368,6 +368,62 @@ body[data-dsh-815] [data-slot='sidebar.settings'] [role='dialog'][aria-modal='tr
   --dsw-specific-sidebar-nav-item-hover: rgba(196, 163, 90, 0.14);
 }
 
+/* 插件推荐面板写死 GitHub 冷色（#0d1117 / #58a6ff）。皮肤下换成暖橄榄底 + 铜金链。 */
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-panel) {
+  color: #f4ead6;
+  background: #24261c;
+  border: 1px solid rgba(196, 163, 90, 0.5);
+  box-shadow: var(--vj-shadow);
+  scrollbar-color: #c4a35a #1c1e16;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-title) {
+  color: #f4ead6;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :is(:global(.dsh-rec-sub), :global(.dsh-rec-desc), :global(.dsh-rec-meta), :global(.dsh-rec-rank), :global(.dsh-rec-empty), :global(.dsh-rec-loading)) {
+  color: #9e9780;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-close) {
+  color: #9e9780;
+  border-color: rgba(196, 163, 90, 0.5);
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-close):hover {
+  color: #f4ead6;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-scene),
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-repo) a {
+  color: #d4bc7a;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-item):hover {
+  background: rgba(196, 163, 90, 0.14);
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-notify) {
+  color: #f4ead6;
+  background: #2c2e24;
+  border-color: rgba(196, 163, 90, 0.5);
+  border-left-color: var(--vj-brass);
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-notify) b {
+  color: #d4bc7a;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-nbtn) {
+  color: #1c1a14;
+  background: var(--vj-brass);
+  border-color: rgba(196, 163, 90, 0.7);
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-nbtn):hover {
+  background: #d4bc7a;
+}
+
 /* Cordis 底栏面板写 background: var(--dsw-alias-bg-base)；全局透明会透出油画。 */
 body[data-dsh-815] [data-slot='sidebar.footer.action'] {
   --dsw-alias-bg-base: #24261c;
