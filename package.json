@@ -1,7 +1,7 @@
 {
   "name": "@lengduan/dsh-client-ui-skin-815",
   "description": "1945 终战皮肤：陈坚《公元一九四五年九月九日九时》作为 DeepSeek Harness Web 背景",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
