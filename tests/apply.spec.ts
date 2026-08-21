@@ -44,6 +44,12 @@ describe('815 skin apply', () => {
     expect(document.body.style.backgroundPosition).toBe('left bottom')
   })
 
+  it('does not inject the imperial rescript plaque', async () => {
+    document.body.innerHTML = '<div data-pane="sidebar"><div></div></div>'
+    fiber = await mount()
+    expect(document.querySelector("[data-skin-chrome='rescript-plaque']")).toBeNull()
+  })
+
   it('injects chrome and retracts every owned element on dispose', async () => {
     fiber = await mount()
     expect(document.body.querySelectorAll('[data-skin-owner="815"]').length).toBeGreaterThan(0)

@@ -97,24 +97,6 @@ body[data-dsh-815] :is([data-pane='sidebar'], [class*='sidebarCol']) > div {
     linear-gradient(180deg, rgba(28, 30, 20, 0.55), rgba(12, 14, 10, 0.72));
 }
 
-body[data-dsh-815] [data-skin-chrome='rescript-plaque'] {
-  position: absolute;
-  left: 50%;
-  bottom: 88px;
-  z-index: 1;
-  width: min(86%, 232px);
-  max-height: 28%;
-  object-fit: contain;
-  padding: 5px;
-  border: 1px solid rgba(196, 163, 90, 0.5);
-  border-radius: 10px;
-  transform: translateX(-50%);
-  pointer-events: none;
-  opacity: 0.88;
-  background: rgba(8, 10, 6, 0.5);
-  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.45));
-}
-
 /* 青天白日海军旗：蓝底白日十二芒。仅挂在会话选中行左侧。 */
 body[data-dsh-815] [data-vj-session] {
   position: relative;
