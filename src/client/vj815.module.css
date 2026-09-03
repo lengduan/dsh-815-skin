@@ -481,12 +481,15 @@ body[data-dsh-815] [class*='titlebar'] [class*='button'] {
   color: #d4bc7a;
 }
 
-/* 右下角展签：右缘铜金竖线，主行画名奶油字，副行时间地点铜金小字。 */
+/* 右下角展签：右缘铜金竖线，主行画名奶油字，副行时间地点铜金小字。
+   层级压到 #root（z-index: 1）之下、背景遮罩（body::before, z-index: 0）之上：
+   fixed 元素与其同为 body 子层，DOM 顺序靠后故仍浮在遮罩上；应用外壳的不透明
+   UI（如输入座宣纸卡）可盖住它，不再遮挡输入框。 */
 body[data-dsh-815] [data-skin-chrome='caption'] {
   position: fixed;
   right: 16px;
   bottom: 12px;
-  z-index: 30;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
