@@ -41,7 +41,8 @@ body[data-dsh-815] {
   --dsw-alias-state-business-tertiary: #3a3828;
   --dsw-shadow-lv2: var(--vj-shadow);
   --dsw-specific-input-major: rgba(28, 30, 22, 0.82);
-  --dsw-specific-selector: rgba(48, 50, 36, 0.9);
+  --dsw-specific-selector: #323428;
+  --dsw-specific-menu: #2c2e24;
   --dsw-specific-sidebar-fill: rgba(14, 16, 12, 0.88);
   --dsw-alias-markdown-code-block: #141610;
   --dsw-alias-markdown-code-block-banner: #1c1e16;
@@ -152,7 +153,9 @@ body[data-dsh-815] [data-phase='active'] [class*='viewArea'] {
 }
 
 body[data-dsh-815] :is([data-pane='details'], [class*='detailsCol']) {
-  background: rgba(18, 20, 14, 0.88);
+  --dsw-alias-bg-base: #1c1e16;
+  --dsw-alias-bg-overlay: #24261c;
+  background: #1c1e16;
   border-left-color: rgba(196, 163, 90, 0.4);
 }
 
@@ -182,6 +185,9 @@ body[data-dsh-815] [data-composer-card] {
   --dsw-alias-label-tertiary: #6a6454;
   --dsw-alias-label-caption: #7e7866;
   --dsw-alias-brand-text: #1c1a14;
+  /* 目标条「进行中的目标」走 brand/business 主色；浅纸底上浅铜看不清，压成暗铜。 */
+  --dsw-alias-brand-primary: #6b4e16;
+  --dsw-alias-state-business-primary: #6b4e16;
   --dsw-specific-input-major: #f3ead4;
   --dsw-alias-bg-layer-1: #f3ead4;
   --dsw-alias-bg-layer-2: #efe4c8;
@@ -198,10 +204,31 @@ body[data-dsh-815] [data-composer-card]:focus-within {
   box-shadow: 0 0 0 3px rgba(196, 163, 90, 0.16), var(--vj-shadow);
 }
 
+/* DSH 新版 Composer 把草稿文字渲染在 backdrop 层（data-input-backdrop），
+   textarea 只保留原生 caret，其文字与背景都应是透明的：这里若把背景写成
+   宣纸浅色，会形成不透明层遮住 backdrop 里的草稿字。textarea 仅留深色 caret。 */
 body[data-dsh-815] [data-composer-card] :is(textarea, input, [contenteditable='true']) {
   color: #1c1a14;
   caret-color: #1c1a14;
-  background: #f3ead4;
+  background: transparent;
+}
+
+/* 草稿正文字符真正由 backdrop 层（data-input-backdrop）绘制，颜色取自
+   var(--dsw-alias-label-primary)。主题在暗色下把该 token 解析成浅色，
+   落在宣纸浅底上将看不清；这里在输入座内把 backdrop 压回墨色。 */
+body[data-dsh-815] [data-composer-card] [data-input-backdrop] {
+  color: #1c1a14;
+}
+
+/* backdrop 内的 slash 命令 token / 引用 chip 原本用主题暗色下的浅色
+   token（warn/business），落在宣纸浅底上也偏浅；压成暗金与深橄榄，
+   与 815 主题协调。用 data-decoration 属性定位，避开 CSS Modules 的 hash 类名。 */
+body[data-dsh-815] [data-composer-card] [data-input-backdrop] [data-decoration='token'] {
+  color: #8a6a1c;
+}
+
+body[data-dsh-815] [data-composer-card] [data-input-backdrop] :is([data-decoration='chip'], [data-decoration='text-ref']) {
+  color: #2f4a2f;
 }
 
 body[data-dsh-815] [data-composer-card] :is(textarea, input)::placeholder {
@@ -210,6 +237,8 @@ body[data-dsh-815] [data-composer-card] :is(textarea, input)::placeholder {
 
 body[data-dsh-815] [data-phase='active'] [data-composer-seat] {
   --dsw-alias-bg-base: transparent;
+  --dsw-alias-brand-primary: #6b4e16;
+  --dsw-alias-state-business-primary: #6b4e16;
   background: transparent;
 }
 
@@ -230,6 +259,8 @@ body[data-dsh-815]
   --dsw-alias-label-secondary: #d4ccb0;
   --dsw-alias-label-tertiary: #9e9780;
   --dsw-alias-label-dimmed: #9e9780;
+  --dsw-alias-brand-primary: #c4a35a;
+  --dsw-alias-state-business-primary: #c4a35a;
   --dsw-alias-interactive-bg-hover: rgba(196, 163, 90, 0.14);
   --dsw-alias-interactive-bg-active: rgba(196, 163, 90, 0.28);
   border-color: rgba(196, 163, 90, 0.5);
@@ -307,8 +338,12 @@ body[data-dsh-815] [data-terminal] {
   color: #f4ead6;
 }
 
-body[data-dsh-815] :is([role='dialog'], [role='menu'], [data-radix-popper-content-wrapper] > *) {
+/* 对话列把 --dsw-alias-bg-base 设成透明好露油画；对话管理等弹层若写
+   background: var(--dsw-alias-bg-base)，会整层透出后面的字。弹层改实色。 */
+body[data-dsh-815] :is([role='dialog'], [role='menu'], [role='listbox'], [aria-modal='true'], [data-radix-popper-content-wrapper] > *) {
   color: #f4ead6;
+  background-color: #24261c;
+  --dsw-alias-bg-base: #24261c;
   --dsw-alias-label-primary: #f4ead6;
   --dsw-alias-label-secondary: #d4ccb0;
   --dsw-alias-label-tertiary: #9e9780;
@@ -333,6 +368,74 @@ body[data-dsh-815] :is([role='dialog'], [role='menu'], [data-radix-popper-conten
 body[data-dsh-815] [data-slot='sidebar.settings'] [role='dialog'][aria-modal='true'] {
   --dsw-specific-sidebar-nav-item-active: rgba(196, 163, 90, 0.32);
   --dsw-specific-sidebar-nav-item-hover: rgba(196, 163, 90, 0.14);
+}
+
+/* 设置里原生 <select>：闭合条橄榄底奶油字；系统弹出层常是白底，option 用墨色宣纸。 */
+body[data-dsh-815] select {
+  color: #f4ead6;
+  background-color: #24261c;
+  border-color: rgba(196, 163, 90, 0.5);
+}
+
+body[data-dsh-815] option {
+  color: #1c1a14;
+  background-color: #f3ead4;
+}
+
+/* 插件推荐面板写死 GitHub 冷色（#0d1117 / #58a6ff）。皮肤下换成暖橄榄底 + 铜金链。 */
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-panel) {
+  color: #f4ead6;
+  background: #24261c;
+  border: 1px solid rgba(196, 163, 90, 0.5);
+  box-shadow: var(--vj-shadow);
+  scrollbar-color: #c4a35a #1c1e16;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-title) {
+  color: #f4ead6;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :is(:global(.dsh-rec-sub), :global(.dsh-rec-desc), :global(.dsh-rec-meta), :global(.dsh-rec-rank), :global(.dsh-rec-empty), :global(.dsh-rec-loading)) {
+  color: #9e9780;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-close) {
+  color: #9e9780;
+  border-color: rgba(196, 163, 90, 0.5);
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-close):hover {
+  color: #f4ead6;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-scene),
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-repo) a {
+  color: #d4bc7a;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-item):hover {
+  background: rgba(196, 163, 90, 0.14);
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-notify) {
+  color: #f4ead6;
+  background: #2c2e24;
+  border-color: rgba(196, 163, 90, 0.5);
+  border-left-color: var(--vj-brass);
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-notify) b {
+  color: #d4bc7a;
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-nbtn) {
+  color: #1c1a14;
+  background: var(--vj-brass);
+  border-color: rgba(196, 163, 90, 0.7);
+}
+
+body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-nbtn):hover {
+  background: #d4bc7a;
 }
 
 /* Cordis 底栏面板写 background: var(--dsw-alias-bg-base)；全局透明会透出油画。 */
@@ -378,12 +481,15 @@ body[data-dsh-815] [class*='titlebar'] [class*='button'] {
   color: #d4bc7a;
 }
 
-/* 右下角展签：右缘铜金竖线，主行画名奶油字，副行时间地点铜金小字。 */
+/* 右下角展签：右缘铜金竖线，主行画名奶油字，副行时间地点铜金小字。
+   层级压到 #root（z-index: 1）之下、背景遮罩（body::before, z-index: 0）之上：
+   fixed 元素与其同为 body 子层，DOM 顺序靠后故仍浮在遮罩上；应用外壳的不透明
+   UI（如输入座宣纸卡）可盖住它，不再遮挡输入框。 */
 body[data-dsh-815] [data-skin-chrome='caption'] {
   position: fixed;
   right: 16px;
   bottom: 12px;
-  z-index: 30;
+  z-index: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
