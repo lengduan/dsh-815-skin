@@ -332,6 +332,25 @@ body[data-dsh-815] [class*='userRow'] [class*='bubble'] {
   background: rgba(52, 48, 32, 0.92);
 }
 
+/* 宿主自带的浅色面不吃皮肤的暗色假设：非暗色主题下，下列容器的底色来自
+   主题（近白 / 浅灰），而皮肤把 label-primary 全局换成奶油色 #f4ead6，
+   浅底浅字几乎不可见。在这两类容器内把文字压回墨色。暗色主题下容器本身
+   是深底，皮肤浅字仍然正确，故用 :not() 排除，避免反向回归。 */
+
+/* ui-deliverables 的 present 文件卡：卡底 var(--dsw-static-neutral-50)，
+   文件名与「打开」走 label-primary，文件图标走 link。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-presented-file] {
+  --dsw-alias-label-primary: #1c1a14;
+  --dsw-alias-link: #6b4e16;
+}
+
+/* ui-conversation 的 todo 面板：面板底 var(--dsw-specific-tip)，
+   「任务」标题走 label-primary，状态计数与图标走 label-tertiary。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-testid='todo-panel'] {
+  --dsw-alias-label-primary: #1c1a14;
+  --dsw-alias-label-tertiary: #6a6454;
+}
+
 body[data-dsh-815] [data-terminal] {
   --dsw-alias-markdown-code-block: rgba(18, 20, 14, 0.96);
   --dsw-alias-label-primary: #f4ead6;
