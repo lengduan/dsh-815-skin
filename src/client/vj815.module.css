@@ -369,11 +369,17 @@ body[data-dsh-815]:not([data-ds-dark-theme]) [data-presented-file]
   color: #f4ead6;
 }
 
-/* ui-conversation 的 todo 面板：面板底 var(--dsw-specific-tip)，
-   「任务」标题走 label-primary，状态计数与图标走 label-tertiary。 */
+/* ui-conversation 的 todo 面板：面板底是主题的浅色 var(--dsw-specific-tip)
+   （非暗色主题下量到 #f5f6f7），皮肤全局的 label-* 却是浅奶油。只压标题
+   不够——条目文字走 label-secondary（#c8c0a4，1.7:1）几乎看不见。这里把
+   面板内的文字层级整体压回墨色：标题 label-primary、条目 label-secondary、
+   计数 label-tertiary，pending 图标 label-caption 保持面板内最淡的一档。
+   层级依次 14.8:1 / 8.7:1 / 5.6:1 / 4.2:1。 */
 body[data-dsh-815]:not([data-ds-dark-theme]) [data-testid='todo-panel'] {
   --dsw-alias-label-primary: #1c1a14;
-  --dsw-alias-label-tertiary: #6a6454;
+  --dsw-alias-label-secondary: #4a4638;
+  --dsw-alias-label-tertiary: #5a5443;
+  --dsw-alias-label-caption: #6a6454;
 }
 
 body[data-dsh-815] [data-terminal] {
