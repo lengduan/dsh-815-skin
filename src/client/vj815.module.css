@@ -12,6 +12,9 @@ body[data-dsh-815] {
   --vj-paper: #f3ead4;
   --vj-glass: rgba(18, 20, 14, 0.72);
   --vj-shadow: 0 18px 48px rgba(0, 0, 0, 0.42);
+  /* 线性文件夹图标（Element UI Folder 风格的轮廓），供「在本地打开」分裂按钮
+     以 mask 描出，颜色跟随按钮文字色。 */
+  --vj-folder-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 17.5V6.5a2 2 0 0 1 2-2h3.1a2 2 0 0 1 1.6.8l1.15 1.53a2 2 0 0 0 1.6.8H18.5a2 2 0 0 1 2 2v7.87a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z'/%3E%3C/svg%3E");
 
   --dsw-alias-bg-base: transparent;
   --dsw-alias-bg-layer-1: rgba(28, 30, 22, 0.78);
@@ -510,6 +513,44 @@ body[data-dsh-815] [class*='titlebar'] {
 
 body[data-dsh-815] [class*='titlebar'] [class*='button'] {
   color: #d4bc7a;
+}
+
+/* DSH 官方「在本地打开」分裂按钮（ui-open-in-app，挂在会话页头的
+   conversation.session.header.utilities 插槽）：宿主按已装应用下发真实 PNG 图标，
+   边框与分裂分隔线都取 --dsw-alias-border-l4，而皮肤没定义该 token（浅色主题下
+   是浅灰 hairline），于是边框和竖线在暗底上全都看不见。
+   这里把它按旁边的「对话管理 / 删除本对话」对齐：同款铜金边（l2）、同高 32px、
+   同 18px 圆角，并把两个分段的左右内边距各放宽 4px；宿主 PNG 换成统一的线性
+   文件夹图标（mask 跟随按钮文字色，hover/报错态一起变），分隔线取自 chevron
+   自身的 border-left，随边框一同显形。 */
+body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) {
+  --dsw-alias-border-l4: var(--dsw-alias-border-l2);
+  height: 32px;
+  border-radius: 18px;
+}
+
+body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) > button > img {
+  display: none;
+}
+
+/* 主段：官方 padding 5px 6px 5px 7px，左右各 +4。 */
+body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) > button:first-child {
+  padding: 5px 10px 5px 11px;
+}
+
+/* 箭头段：官方 padding 5px 6px 5px 4px，左右各 +4。 */
+body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) > button:last-child {
+  padding: 5px 10px 5px 8px;
+}
+
+body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) > button:first-child::before {
+  content: '';
+  flex: none;
+  width: 15px;
+  height: 15px;
+  background-color: currentColor;
+  -webkit-mask: var(--vj-folder-icon) center / contain no-repeat;
+  mask: var(--vj-folder-icon) center / contain no-repeat;
 }
 
 /* 右下角展签：右缘铜金竖线，主行画名奶油字，副行时间地点铜金小字。
