@@ -1,5 +1,13 @@
 # 更新日志
 
+## 0.1.11 — 2026-09-12
+
+浅色主题下的文字对比度与宽表格横向溢出。
+
+- 交付文件卡（`present`）与 todo 面板的底色取自宿主浅色主题（`--dsw-static-neutral-50` / `--dsw-specific-tip`），皮肤全局的奶油色 `label-primary` 落在浅底上几乎不可见；改在 `body[data-dsh-815]:not([data-ds-dark-theme])` 下把这两类容器的文字压回墨色，暗色主题不受影响
+- 宽表格（渲染器的 `md-table-wide` 钩子）宿主让它 breakout 到整个对话列宽、且非 hover/focus 时 `overflow-x: hidden`，皮肤的气泡边框被穿透、右侧被对话列裁掉；现收回气泡内容盒内并常驻横向滚动
+- 该表格规则必须写成 `:global(.md-table-wide)`：CSS Modules 会把裸类名改写成 hash 名，与宿主全局类名对不上会静默失效
+
 ## 0.1.10 — 2026-09-04
 
 右下角展签层级下调，不再遮挡输入座等应用 UI。
