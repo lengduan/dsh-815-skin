@@ -296,6 +296,18 @@ body[data-dsh-815] [class*='markdown'] pre {
   border-radius: 10px;
 }
 
+/* 宽表格（渲染器给 ≥4 列的 wrapper 打的 md-table-wide 钩子）：宿主让 wrapper
+   breakout 到整个对话列宽，且非 hover/focus 时 overflow-x: hidden —— 皮肤给
+   正文/用户消息加了气泡边框后，breakout 会直接穿透边框，右侧被对话列裁掉，
+   看上去就是「表格溢出且滚不动」。这里把 breakout 收回气泡内（spare/lead
+   归零），并让横向滚动常驻（宿主默认只在 hover/focus 时开）。 */
+body[data-dsh-815] :global(.md-table-wide) {
+  --dsh-table-spare: 0px;
+  --dsh-table-lead: 0px;
+  overflow-x: auto;
+  padding-bottom: 0;
+}
+
 /* 行内 code 走宣纸底墨字，白底场景下也必须压成墨色。 */
 body[data-dsh-815]
   :is(
