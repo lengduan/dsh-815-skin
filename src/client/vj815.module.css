@@ -359,6 +359,16 @@ body[data-dsh-815]:not([data-ds-dark-theme]) [data-presented-file] {
   --dsw-alias-link: #6b4e16;
 }
 
+/* 但卡里的「打开 / 展开」分裂按钮底不是卡片底：它取皮肤全局的
+   button-floating-fill（深橄榄 rgba(58,60,44,.94)，浅底卡片上量到 #45463a），
+   上面那条 label-primary 覆盖顺手把按钮文字也压成墨色，深底墨字只有 1.8:1，
+   看着就是「文字融进按钮」。按钮分两段，文字单独拿回奶油色；
+   箭头段的 disabled 态仍交给宿主（label-dimmed），免得禁用与可用没区别。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-presented-file]
+  :is(button[class*='_open'], button[class*='_chevron']:not(:disabled)) {
+  color: #f4ead6;
+}
+
 /* ui-conversation 的 todo 面板：面板底 var(--dsw-specific-tip)，
    「任务」标题走 label-primary，状态计数与图标走 label-tertiary。 */
 body[data-dsh-815]:not([data-ds-dark-theme]) [data-testid='todo-panel'] {
