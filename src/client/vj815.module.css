@@ -487,6 +487,64 @@ body[data-dsh-815] [data-slot='sidebar.footer.action'] {
   --dsw-alias-bg-base: #24261c;
 }
 
+/* dsh-timer-agent 的侧栏入口是插件自绘 DOM（board.module.css 的 .entry，一条透明
+   导航行），插在宿主「新会话」与 mneme portal 的「记忆」按钮之间；后两者都是宿主
+   .newSession 观感（38px 高 / 12px 圆角 / 0.5px 铜边 / elevated 底 / 内容居中）。
+   插件自己不继承宿主类名，这里按它的标记属性覆盖成同款盒模型：注入式覆盖，
+   不改插件源码。收起态与宿主 .collapsed .newSession 同几何。 */
+body[data-dsh-815] [data-dsh-timeragent-entry] {
+  align-self: stretch;
+  width: auto;
+  flex: none;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  margin: 0 2px 8px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  border: 0.5px solid var(--dsw-alias-border-l3);
+  border-radius: 12px;
+  background: var(--dsw-alias-button-elevated-fill);
+  color: var(--dsw-alias-label-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+body[data-dsh-815] [data-dsh-timeragent-entry]:hover {
+  background: var(--dsw-alias-button-floating-hover);
+}
+
+body[data-dsh-815] [data-dsh-timeragent-entry][data-active] {
+  background: var(--dsw-alias-interactive-bg-active);
+  font-weight: 600;
+}
+
+/* 收起态：折叠成 rail 的 36x36 图标按钮，与「新会话」同位置同间距。 */
+body[data-dsh-815] [class*='collapsed'] [data-dsh-timeragent-entry] {
+  align-self: flex-start;
+  width: 36px;
+  height: 36px;
+  margin: 0 0 12px;
+  padding: 0;
+  gap: 0;
+  border-color: transparent;
+  background: transparent;
+}
+
+body[data-dsh-815] [class*='collapsed'] [data-dsh-timeragent-entry]:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+body[data-dsh-815] [class*='collapsed'] [data-dsh-timeragent-entry] [class*='entryLabel'] {
+  display: none;
+}
+
+body[data-dsh-815] [class*='collapsed'] [data-dsh-timeragent-entry] svg {
+  width: 18px;
+  height: 18px;
+}
+
 body[data-dsh-815] [class*='titlebar'] > [class*='button']:first-of-type {
   display: none;
 }
