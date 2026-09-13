@@ -656,6 +656,31 @@ body[data-dsh-815] [class*='collapsed'] [data-dsh-timeragent-entry] svg {
   height: 18px;
 }
 
+/* mneme portal 的「记忆」按钮（`.mneme-topentry-native`，插在「新会话」与
+   「定时任务」之间）自带一条样式：底取 bg-layer-1（rgba(28,30,22,.78)，比兄弟
+   按钮暗一档）、边取 l2（比兄弟按钮淡）。它与宿主 .newSession 同特异性 —— 谁的
+   样式表后加载谁赢，mneme 更新后它排到后面，于是「记忆」的底就比左右两个暗。
+   这里由皮肤把这三条钉死成兄弟按钮的值（特异性高于插件），收起态对齐宿主
+   .collapsed .newSession；几何（38px / 12px / 图标位）仍由宿主的 .newSession 给。 */
+body[data-dsh-815] [class*='mneme-topentry-native'] {
+  border: 0.5px solid var(--dsw-alias-border-l3);
+  background: var(--dsw-alias-button-elevated-fill);
+  color: var(--dsw-alias-label-primary);
+}
+
+body[data-dsh-815] [class*='mneme-topentry-native']:hover {
+  background: var(--dsw-alias-button-floating-hover);
+}
+
+body[data-dsh-815] [class*='collapsed'] [class*='mneme-topentry-native'] {
+  border-color: transparent;
+  background: transparent;
+}
+
+body[data-dsh-815] [class*='collapsed'] [class*='mneme-topentry-native']:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
 body[data-dsh-815] [class*='titlebar'] > [class*='button']:first-of-type {
   display: none;
 }
