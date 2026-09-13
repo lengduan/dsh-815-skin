@@ -747,6 +747,16 @@ body[data-dsh-815] [data-skin-chrome='caption-sub'] {
   }
 }
 
+/* 对话区右侧的轮次导航轨（ui-chat TurnNavigator）：普通刻度取
+   --dsw-alias-border-l4，皮肤没定义这个 token，浅色主题回落成半透明黑
+   #00000029（实测刻度 rgba(0,0,0,.16) 再乘未加载态的 opacity .6），落在暗色
+   油画上等于没有，「时间线」只剩当前轮那一根。这里在刻度容器内把该 token 换成
+   皮肤的铜金：当前轮（label-primary 奶油）与预览态（label-tertiary）各有自己的
+   颜色，层级不变；未加载态仍由宿主的 opacity .6 压淡一档。 */
+body[data-dsh-815] [class*='markPosition'] {
+  --dsw-alias-border-l4: var(--vj-brass);
+}
+
 @media (prefers-reduced-motion: reduce) {
   body[data-dsh-815] [data-composer-card] {
     transition: none;
