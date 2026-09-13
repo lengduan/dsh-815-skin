@@ -432,6 +432,21 @@ body[data-dsh-815]:not([data-ds-dark-theme]) [data-testid='todo-panel'] {
   --dsw-alias-label-caption: #6a6454;
 }
 
+/* ui-conversation 的排队坞（QueueDock，`data-queue-dock`）：它挂在 composer
+   栈里、输入卡之外，拿不到 [data-composer-card] 那层墨色 token，于是面板底
+   照样是主题浅色 var(--dsw-specific-tip)（实测 #f5f6f7），而「N 条排队消息」
+   走 label-primary 奶油 #f4ead6（1.05:1）、前面那枚队列图标与右侧箭头走
+   label-tertiary #9e9780（2.6:1），整条几乎读不出来。与 todo 面板同法，
+   在坞内把文字层级压回墨色：标题 primary 约 15:1，前面那枚队列图标与右侧
+   箭头、状态字 tertiary 约 7:1（条目正文与文件名走 label-primary-dimmed，
+   浅色主题下本就是近黑，不用管）。暗色主题下面板本身深色，故排除。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-queue-dock] {
+  --dsw-alias-label-primary: #1c1a14;
+  --dsw-alias-label-secondary: #4a4638;
+  --dsw-alias-label-tertiary: #5a5443;
+  --dsw-alias-label-caption: #6a6454;
+}
+
 /* ui-goal 的目标条：条底是主题的浅色 var(--dsw-specific-tip)（非暗色主题下量到
    #f5f6f7），而「进行中的目标」标签走 label-primary —— 皮肤在 body 上把它换成
    奶油色 #f4ead6，对条底只有 1.1:1，标签整条融进条底看不见；目标正文走
