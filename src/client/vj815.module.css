@@ -347,6 +347,13 @@ body[data-dsh-815]:not([data-ds-dark-theme]) [role='tab'][class*='tabActive'] {
   color: #1c1a14;
 }
 
+/* 选中 tab 一 hover，底就从浅灰胶囊换成半透明的交互底（皮肤值
+   rgba(196,163,90,.14)，叠在油画上就是暗底），上面那层刚压好的墨字于是又沉
+   进底色里。hover 态把字换回奶油色；未选中的 tab 本来就是奶油灰字，不在其列。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [role='tab'][class*='tabActive']:hover {
+  color: #f4ead6;
+}
+
 /* tab 上的文件类型图标是宿主下发的彩色实心方块（markdown 是 DeepSeek 蓝
    #4176e6，文件夹是琥珀），在皮肤的线性描边视觉里像贴纸。按皮肤自绘的那套
    描边图标用 mask 重画：文件走 --vj-file-icon，目录类型（class 里带 folder）
