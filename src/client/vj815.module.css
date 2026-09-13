@@ -155,13 +155,7 @@ body[data-dsh-815] [data-phase='active'] [class*='viewArea'] {
   background: transparent;
 }
 
-/* 右栏（宿主 ui-sidebar-right 占的 rightbarCol，取代旧 details 列）：面板底取
-   var(--dsw-alias-bg-base)，而皮肤为了让对话列露油画把该 token 全局设成
-   transparent，于是打开文件时整块右栏跟着透明，油画从底下透上来 —— 文件名与
-   正文走 label-primary（奶油色 #f4ead6），落在油画亮部就读不出来。
-   这里把右栏这一层恢复成实色底：奶油字对 #1c1e16 约 15:1。
-   旧 details 列在现宿主已不存在，选择器一并换成 rightbarCol。 */
-body[data-dsh-815] :is([data-rightbar-col], [class*='rightbarCol']) {
+body[data-dsh-815] :is([data-pane='details'], [class*='detailsCol']) {
   --dsw-alias-bg-base: #1c1e16;
   --dsw-alias-bg-overlay: #24261c;
   background: #1c1e16;
@@ -329,6 +323,25 @@ body[data-dsh-815]
   border-radius: 5px;
   color: #1c1a14;
   background: var(--vj-paper);
+}
+
+/* 文件查看区域（右栏的文档预览）正文是 ui-primitives 的 markdown：行内 code
+   的底取 --dsw-alias-markdown-inline-code，浅色主题下是近白 #fafafa，而字色
+   继承皮肤全局的奶油 label-primary #f4ead6 —— 只有 1.14:1，胶囊里的字基本
+   读不出来。对话区的行内 code 早就走过宣纸底墨字，这一处是漏网的：这里只
+   把浅底上的字压回墨色，底仍交给宿主。暗色主题下 code 底本身是深色
+   （static-neutral-800），奶油字正确，故排除。 */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  :is([class*='rightbarCol'], [data-sidebar-right-float-host]) [class*='markdown'] :not(pre) > code {
+  color: #1c1a14;
+}
+
+/* 右栏的选中 tab（打开的文件名就在这颗胶囊上）同理：dockkit 的 .tabActive
+   文字取 label-primary，底取 --dsw-alias-markdown-tag，浅色主题下是近白
+   bluish-75（实测 #f1f3f5），奶油字落上去只有 1.07:1，文件名等于看不见。
+   同样只压字色。暗色主题下胶囊底是深色 bluish-850，保留奶油字。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [role='tab'][class*='tabActive'] {
+  color: #1c1a14;
 }
 
 body[data-dsh-815]
