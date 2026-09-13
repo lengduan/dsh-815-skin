@@ -15,6 +15,9 @@ body[data-dsh-815] {
   /* 线性文件夹图标（Element UI Folder 风格的轮廓），供「在本地打开」分裂按钮
      以 mask 描出，颜色跟随按钮文字色。 */
   --vj-folder-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 17.5V6.5a2 2 0 0 1 2-2h3.1a2 2 0 0 1 1.6.8l1.15 1.53a2 2 0 0 0 1.6.8H18.5a2 2 0 0 1 2 2v7.87a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z'/%3E%3C/svg%3E");
+  /* 同一套描边语言的线性文件图标（右上折角的纸），供右栏 tab 的文件类型图标
+     以 mask 描出；目录类型仍走上面那枚文件夹。 */
+  --vj-file-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13.6 3.2H7.2a2 2 0 0 0-2 2v13.6a2 2 0 0 0 2 2h9.6a2 2 0 0 0 2-2V8.4Z'/%3E%3Cpath d='M13.6 3.2v5.2h5.2'/%3E%3C/svg%3E");
 
   --dsw-alias-bg-base: transparent;
   --dsw-alias-bg-layer-1: rgba(28, 30, 22, 0.78);
@@ -342,6 +345,27 @@ body[data-dsh-815]:not([data-ds-dark-theme])
    同样只压字色。暗色主题下胶囊底是深色 bluish-850，保留奶油字。 */
 body[data-dsh-815]:not([data-ds-dark-theme]) [role='tab'][class*='tabActive'] {
   color: #1c1a14;
+}
+
+/* tab 上的文件类型图标是宿主下发的彩色实心方块（markdown 是 DeepSeek 蓝
+   #4176e6，文件夹是琥珀），在皮肤的线性描边视觉里像贴纸。按皮肤自绘的那套
+   描边图标用 mask 重画：文件走 --vj-file-icon，目录类型（class 里带 folder）
+   仍走 --vj-folder-icon。颜色走 currentColor，跟着 tab 文字色（选中墨色 /
+   未选中次要色）一起变；svg 内部的 path 藏掉，只留 mask 裁出的那层底色。 */
+body[data-dsh-815] [data-slot='sidebar.right.pane.tab.title'] svg[class*='titleIcon'] {
+  color: inherit;
+  background-color: currentColor;
+  -webkit-mask: var(--vj-file-icon) center / contain no-repeat;
+  mask: var(--vj-file-icon) center / contain no-repeat;
+}
+
+body[data-dsh-815] [data-slot='sidebar.right.pane.tab.title'] svg[class*='titleIcon'][class*='folder'] {
+  -webkit-mask-image: var(--vj-folder-icon);
+  mask-image: var(--vj-folder-icon);
+}
+
+body[data-dsh-815] [data-slot='sidebar.right.pane.tab.title'] svg[class*='titleIcon'] > * {
+  display: none;
 }
 
 body[data-dsh-815]
