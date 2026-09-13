@@ -28,6 +28,11 @@ body[data-dsh-815] {
   --dsw-alias-border-l2-darkmode-thin: rgba(196, 163, 90, 0.36);
   --dsw-alias-border-l2: rgba(196, 163, 90, 0.42);
   --dsw-alias-border-l3: rgba(196, 163, 90, 0.7);
+  /* l4 是宿主那档最细的描边（卡片 / 输入框 / 标签 / 分组线都在用），浅色主题下
+     是半透明黑 rgba(0,0,0,.16) —— 落在皮肤的暗底上只有 1.1~1.4:1，等于没有边框
+     （设置里的预设卡、插件卡、外观方块，右栏引导卡、轨迹单元格等都中招）。
+     这里补成同族的铜金细线：对 #24261c 约 2.6:1，细线可见又不抢眼。 */
+  --dsw-alias-border-l4: rgba(196, 163, 90, 0.5);
   --dsw-alias-brand-primary: #c4a35a;
   --dsw-alias-brand-text: #f4ead6;
   --dsw-alias-button-elevated-fill: rgba(52, 54, 40, 0.9);
@@ -446,6 +451,23 @@ body[data-dsh-815]:not([data-ds-dark-theme]) [data-testid='todo-panel'] {
    箭头、状态字 tertiary 约 7:1（条目正文与文件名走 label-primary-dimmed，
    浅色主题下本就是近黑，不用管）。暗色主题下面板本身深色，故排除。 */
 body[data-dsh-815]:not([data-ds-dark-theme]) [data-queue-dock] {
+  --dsw-alias-label-primary: #1c1a14;
+  --dsw-alias-label-secondary: #4a4638;
+  --dsw-alias-label-tertiary: #5a5443;
+  --dsw-alias-label-caption: #6a6454;
+}
+
+/* dsh-session-manager 的「会话管理」弹框（类名 sm-nativeDialog / sm-panelDialog，
+   不带 hash）：弹框底是插件自己写死的白 / #f5f5f5，文字却取宿主的 label-* 三个
+   token —— 皮肤把它们换成了奶油系，于是「全部 / 未归档 / 已归档」、会话标题、
+   行内「打开 / 归档 / 移动至工作区 / 迁移预设」以及行下方的元信息全落在白底上
+   （1.1~2.7:1）。这里在弹框内把文字层级压回墨色；行内按钮 hover 时插件会把字
+   换成 label-primary（仍是皮肤的奶油），一并压掉，落在它的 --dsw-alias-fill-l2
+   浅底上就是墨字。插件的危险色（state-error-primary，4.8:1）与它自己写死的近黑
+   标题不动。注意必须写成属性选择器：本表是 CSS Module，类选择器会被 hash 成
+   .xxxx_sm-nativeDialog，匹配不到插件的类。 */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  :is([class*='sm-nativeDialog'], [class*='sm-panelDialog']) {
   --dsw-alias-label-primary: #1c1a14;
   --dsw-alias-label-secondary: #4a4638;
   --dsw-alias-label-tertiary: #5a5443;
