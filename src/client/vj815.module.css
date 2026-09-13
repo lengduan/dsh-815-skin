@@ -155,7 +155,13 @@ body[data-dsh-815] [data-phase='active'] [class*='viewArea'] {
   background: transparent;
 }
 
-body[data-dsh-815] :is([data-pane='details'], [class*='detailsCol']) {
+/* 右栏（宿主 ui-sidebar-right 占的 rightbarCol，取代旧 details 列）：面板底取
+   var(--dsw-alias-bg-base)，而皮肤为了让对话列露油画把该 token 全局设成
+   transparent，于是打开文件时整块右栏跟着透明，油画从底下透上来 —— 文件名与
+   正文走 label-primary（奶油色 #f4ead6），落在油画亮部就读不出来。
+   这里把右栏这一层恢复成实色底：奶油字对 #1c1e16 约 15:1。
+   旧 details 列在现宿主已不存在，选择器一并换成 rightbarCol。 */
+body[data-dsh-815] :is([data-rightbar-col], [class*='rightbarCol']) {
   --dsw-alias-bg-base: #1c1e16;
   --dsw-alias-bg-overlay: #24261c;
   background: #1c1e16;
