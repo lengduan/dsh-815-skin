@@ -593,6 +593,19 @@ body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-nbtn):hover {
   background: #d4bc7a;
 }
 
+/* dsh-update-checker 的「检查更新」页把描边写死在**内联 style** 里（元素没有类名
+   可挂）：分组卡是 border: 1px solid rgba(128,128,128,.3)，行内按钮是 .5 —— 灰线
+   落在暗底上只有 1.5~2:1，卡片等于没有边。内联样式优先级最高，只能用
+   !important，并按 style 属性文本精确命中（只改 border-color，宽度/圆角/flex
+   等其余内联声明都不动）。插件若改写法，这两条会自然失效，届时按新值重写。 */
+body[data-dsh-815] [style*='rgba(128, 128, 128, 0.3)'] {
+  border-color: rgba(196, 163, 90, 0.5) !important;
+}
+
+body[data-dsh-815] [style*='rgba(128, 128, 128, 0.5)'] {
+  border-color: rgba(196, 163, 90, 0.7) !important;
+}
+
 /* Cordis 底栏面板写 background: var(--dsw-alias-bg-base)；全局透明会透出油画。 */
 body[data-dsh-815] [data-slot='sidebar.footer.action'] {
   --dsw-alias-bg-base: #24261c;
