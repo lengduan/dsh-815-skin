@@ -339,18 +339,23 @@ body[data-dsh-815]:not([data-ds-dark-theme])
   color: #1c1a14;
 }
 
-/* 右栏的选中 tab（打开的文件名就在这颗胶囊上）同理：dockkit 的 .tabActive
-   文字取 label-primary，底取 --dsw-alias-markdown-tag，浅色主题下是近白
-   bluish-75（实测 #f1f3f5），奶油字落上去只有 1.07:1，文件名等于看不见。
-   同样只压字色。暗色主题下胶囊底是深色 bluish-850，保留奶油字。 */
-body[data-dsh-815]:not([data-ds-dark-theme]) [role='tab'][class*='tabActive'] {
+/* 右栏的选中 tab（打开的文件名就在这颗胶囊上）：dockkit 的 .tabActive 文字取
+   label-primary，底取 --dsw-alias-markdown-tag，浅色主题下是近白 bluish-75
+   （实测 #f1f3f5），奶油字落上去只有 1.07:1，文件名等于看不见。这里只压字色。
+   必须限定在右栏/浮窗容器内：会话页头那排视图 tab（对话 / 轨迹 / 用量统计）
+   用的是另一套类名，选中态底是透明的（叠在暗色油画上），全局压墨色会把它们
+   直接抹掉（墨字落在深底上，1.1:1）。暗色主题下胶囊底是深色 bluish-850，
+   保留奶油字。 */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  :is([class*='rightbarCol'], [data-sidebar-right-float-host]) [role='tab'][class*='tabActive'] {
   color: #1c1a14;
 }
 
 /* 选中 tab 一 hover，底就从浅灰胶囊换成半透明的交互底（皮肤值
    rgba(196,163,90,.14)，叠在油画上就是暗底），上面那层刚压好的墨字于是又沉
    进底色里。hover 态把字换回奶油色；未选中的 tab 本来就是奶油灰字，不在其列。 */
-body[data-dsh-815]:not([data-ds-dark-theme]) [role='tab'][class*='tabActive']:hover {
+body[data-dsh-815]:not([data-ds-dark-theme])
+  :is([class*='rightbarCol'], [data-sidebar-right-float-host]) [role='tab'][class*='tabActive']:hover {
   color: #f4ead6;
 }
 
