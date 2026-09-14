@@ -253,6 +253,25 @@ body[data-dsh-815] [data-phase='active'] [data-composer-seat] {
   background: transparent;
 }
 
+/* 提问卡（ui-user-questions 的 composer 接管层）是输入座的兄弟，不在输入卡内，
+   拿不到输入卡那层墨色 token。卡内自由作答框（.customBlock）的底取宿主
+   --dsw-alias-bg-module-platform，皮肤没接管该 token，浅色主题下是近白
+   #f5f6f7，而框内文字是皮肤全局的奶油 label-primary #f4ead6 —— 1.10:1，
+   输入值与占位符一起糊在白底上（输入框还是块白斑，与深橄榄卡面断裂）。
+   在提问卡子树内（宿主下发的 data-question-key，plan review 卡走
+   data-plan-review-key，不受影响）把该 token 压成卡面同色 #24261c：输入值
+   12.85:1；占位符原值 label-caption 对深底只有 3.48:1，另提一档到
+   label-tertiary #9e9780（5.25:1）。作用域限 :not([data-ds-dark-theme])
+   （暗色主题下该 token 本身是深色，无需改动），卡外任何使用该 token 的表面
+   不受影响。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-question-key] {
+  --dsw-alias-bg-module-platform: #24261c;
+}
+
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-question-key] [class*='fieldInput']::placeholder {
+  color: #9e9780;
+}
+
 /* 斜杠候选菜单 / popupSelect 浮层挂在输入座 overlay 锚点（零高条带），
    是输入座的子节点，会继承宣纸浅底的墨字 token；但浮层自身是深色 Elevated
    面（background: var(--dsw-specific-menu)），墨字落在深底上看不清。
