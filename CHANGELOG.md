@@ -1,5 +1,13 @@
 # 更新日志
 
+## 0.1.19 — 2026-09-14
+
+提问卡（ui-user-questions）的作答框字色与底色过近，压成深底。
+
+- 提问卡是输入座的兄弟（`data-question-key`），不在输入卡内，拿不到输入卡那层墨色 token；卡内自由作答框（`.customBlock`）的底取宿主 `--dsw-alias-bg-module-platform`，皮肤没接管该 token，浅色主题下是近白 `#f5f6f7`，而框内文字是皮肤全局的奶油 `label-primary #f4ead6` —— 只有 1.10:1，输入值与占位符一起糊在白底上；输入框还成了块白斑，与深橄榄卡面断裂
+- 在提问卡子树内把该 token 压成卡面同色 `#24261c`：输入值 12.85:1；占位符（`.fieldInput::placeholder`）原值 `label-caption` 对深底只有 3.48:1，另提一档到 `label-tertiary #9e9780`（5.25:1）
+- 作用域限 `:not([data-ds-dark-theme])`（暗色主题下该 token 本身就是深色）；plan review 卡走 `data-plan-review-key`、底取 `--dsw-specific-input-major`，不受影响；卡外任何使用该 token 的表面实测仍是 `#f5f6f7`
+
 ## 0.1.18 — 2026-09-13
 
 右栏 tab 图标与字色、排队坞、轮次导航轨、设置卡片边框与弹框文字的一批对比度修复。
