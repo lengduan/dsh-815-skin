@@ -1,5 +1,15 @@
 # 更新日志
 
+## 0.1.21 — 2026-09-16
+
+`@linxin666/dsh-client-ui-task-board` 的侧栏「任务看板」按钮，改成与上方「新会话 / 记忆」两枚按钮同款。
+
+- 侧栏「任务看板」入口（该插件注入的 `[data-dsh-taskboard-entry]`，即它 `board.module.css` 的 `.entry`）原本是 36px 高 / 8px 圆角 / 左对齐 / 13px 次要色文字的透明导航行 —— 与它上方宿主「新会话」按钮、mneme「记忆」按钮（38px 高 / 12px 圆角 / 铜边 / elevated 底 / 内容居中）并排时明显不是一套观感
+- 按本文件里已有的 `[data-dsh-timeragent-entry]` 段同款写法，把该按钮覆盖成兄弟按钮的盒模型（38px 高 / 12px 圆角 / `0.5px` 铜边 / `--dsw-alias-button-elevated-fill` 底 / 内容居中 / 14px 500 文字），仍是不改插件源码的注入式覆盖
+- hover 走 `--dsw-alias-button-floating-hover`；看板打开时插件在行上打的 `data-active` 高亮会被新底色盖掉，按同档补回（`--dsw-alias-interactive-bg-active` + `font-weight: 600`）
+- 收起态对齐宿主 `.collapsed .newSession`：36x36 图标按钮、透明底、12px 圆角（插件自带的 50% 圆形在此收正）
+- 实测展开态三枚按钮 252x38 / x=14 / 12px 圆角 / 1px 铜边 / `rgba(52,54,40,.9)` 底完全一致，收起态同为 36x36 / x=10；`pnpm test` 5 passed
+
 ## 0.1.20 — 2026-09-16
 
 底部工作台终端（dsh-better-sidebar 的 xterm）白底浅字，压成皮肤暗底。
