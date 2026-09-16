@@ -512,6 +512,72 @@ body[data-dsh-815] [data-terminal] {
   color: #f4ead6;
 }
 
+/* dsh-better-sidebar 底部工作台的终端（xterm，头部工具条最右侧的「展开底部面板」）。
+   插件按「宿主配色方案」自选终端主题：surface 取 body 上的 --dsw-alias-bg-base，
+   透明或半透明时回退到 dark ? #111114 : #ffffff。815 皮肤为露油画把该 token 设成
+   transparent，宿主又是浅色方案（html 内联 color-scheme: light、body 无
+   data-ds-dark-theme），回退于是落到 #ffffff 白底；前景仍取皮肤的 label-primary
+   奶油色 #f4ead6 —— 白底奶油字约 1.1:1，终端内容等于看不见。
+   xterm 的 surface 与 ANSI 16 色是插件在创建时一次性写成的内联样式与渲染 style
+   （.xterm-viewport 的 background-color、.xterm-fg-N/.xterm-bg-N 的颜色），皮肤的
+   CSS 变量改不到它们，所以这里在渲染面上按皮肤配色覆盖，不改插件源码：
+   底用 815 的深橄榄黑 #141610、前景留奶油色（约 15:1），ANSI 16 色换成与暗底匹配的
+   one-dark 系（0/8 两色提亮到可读档），光标块与选区走铜金。
+   只在宿主浅色方案下出手：暗色方案下插件本就用深底 + ANSI_DARK，无需干预。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-viewport) {
+  background-color: #141610 !important;
+  scrollbar-color: rgba(196, 163, 90, 0.55) #141610;
+}
+
+/* 上面的 fg 规则特异性高于插件的 .xterm-dim 半透明色，dim 语义改用透明度保留。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-dim) {
+  opacity: 0.7;
+}
+
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-selection) div {
+  background-color: rgba(196, 163, 90, 0.32) !important;
+}
+
+/* 光标块由插件填成前景色、块内文字填成背景色（浅色方案下是 #ffffff），白字落在
+   奶油块上同样看不清；animation 内的声明优先于普通规则，故用 !important 压回墨色。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-cursor.xterm-cursor-block) {
+  color: #1c1a14 !important;
+}
+
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-0) { color: #5c6370; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-1) { color: #e06c75; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-2) { color: #98c379; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-3) { color: #e5c07b; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-4) { color: #61afef; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-5) { color: #c678dd; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-6) { color: #56b6c2; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-7) { color: #abb2bf; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-8) { color: #7f8694; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-9) { color: #e06c75; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-10) { color: #98c379; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-11) { color: #e5c07b; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-12) { color: #61afef; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-13) { color: #c678dd; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-14) { color: #56b6c2; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-fg-15) { color: #ffffff; }
+
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-0) { background-color: #5c6370; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-1) { background-color: #e06c75; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-2) { background-color: #98c379; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-3) { background-color: #e5c07b; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-4) { background-color: #61afef; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-5) { background-color: #c678dd; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-6) { background-color: #56b6c2; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-7) { background-color: #abb2bf; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-8) { background-color: #7f8694; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-9) { background-color: #e06c75; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-10) { background-color: #98c379; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-11) { background-color: #e5c07b; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-12) { background-color: #61afef; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-13) { background-color: #c678dd; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-14) { background-color: #56b6c2; }
+body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-15) { background-color: #ffffff; }
+
 /* 对话列把 --dsw-alias-bg-base 设成透明好露油画；对话管理等弹层若写
    background: var(--dsw-alias-bg-base)，会整层透出后面的字。弹层改实色。 */
 body[data-dsh-815] :is([role='dialog'], [role='menu'], [role='listbox'], [aria-modal='true'], [data-radix-popper-content-wrapper] > *) {
