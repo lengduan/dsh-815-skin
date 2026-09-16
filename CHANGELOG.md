@@ -1,5 +1,16 @@
 # 更新日志
 
+## 0.1.20 — 2026-09-16
+
+底部工作台终端（dsh-better-sidebar 的 xterm）白底浅字，压成皮肤暗底。
+
+- 现象：头部工具条「展开底部面板」打开的终端底色纯白、文字奶油色，几乎看不见
+- 根因：插件的 `xtermTheme()` 按 `isDarkScheme()` 选主题，surface 取 body 上的 `--dsw-alias-bg-base`，透明时回退 `dark ? #111114 : #ffffff`。皮肤为露油画把该 token 设成 `transparent`，宿主又是浅色方案（`html` 内联 `color-scheme: light`、body 无 `data-ds-dark-theme`），回退于是落到 `#ffffff`；而前景取皮肤的 `label-primary #f4ead6`（不透明，正常通过）—— 白底奶油字 1.10:1。ANSI 16 色同样按 light 档取了 one-light。白底不是加载错误，是该回退链的合规结果
+- 修复在皮肤侧覆盖 xterm 渲染面，不动插件源码：`.xterm-viewport` 底 `#141610 !important` 压掉内联白底；16 组 `.xterm-fg-N` / `.xterm-bg-N` 换成与暗底匹配的 one-dark 系（0 号 `#5c6370`、8 号 `#7f8694` 提亮到可读档，15 号 `#ffffff`）；选区走铜金 `rgba(196,163,90,.32)`；光标块内文字压回墨色 `#1c1a14`（插件把它填成 `#ffffff`，白字落在奶油块上同样看不见）；`dim` 语义改用 `opacity .7` 保留
+- 外部类名必须包 `:global()`：本文件是 CSS Modules，直接写 `.xterm-viewport` 会被哈希成 `.xxxx_xterm-viewport` 而匹配不到（首轮规则就是这么静默失效的）
+- 作用域限 `:not([data-ds-dark-theme])`：暗色方案下插件本就用深底 + ANSI_DARK，避免反向回归
+- 实测：viewport 计算背景 `rgb(20,22,16)`、默认文本 `rgb(244,234,214)`（15.2:1），ANSI 0–7 与光标块按新配色渲染；`pnpm test` 5 passed
+
 ## 0.1.19 — 2026-09-14
 
 提问卡（ui-user-questions）的作答框字色与底色过近，压成深底。
