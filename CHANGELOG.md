@@ -1,5 +1,15 @@
 # 更新日志
 
+## 0.1.22 — 2026-09-16
+
+发布链路改用 npm 可信发布（Trusted Publishing / OIDC），不再使用 NPM_TOKEN。
+
+- 新增 `.github/workflows/publish.yml`：推纯版本号 tag（如 `0.1.22`）或手动 dispatch 触发；`id-token: write` 让 npm CLI 在 publish 时自动用 OIDC 换取短期凭据，发布步骤不注入任何 token
+- 步骤为 `pnpm install --frozen-lockfile` → tag 与 package.json 版本一致性校验 → `pnpm build` → `pnpm test` → `npm publish --access public`；provenance 由 npm 在 OIDC 下自动生成，无需 `--provenance`
+- 工具链固定 pnpm 12.4.1（与 lockfileVersion 9.0 配套）与 Node 24（npm CLI ≥ 11.5.1 才支持 OIDC），并按发布构建要求关闭依赖缓存
+- `package.json` 补 `repository` 字段：npm 要求它与 GitHub 仓库一致，此前缺失会导致 provenance 生成失败
+- 验证：干净副本复跑 install / build / test（5 passed）与 `npm pack --dry-run`（16 个文件）全绿；真实链路由 0.1.22 的 tag 触发首次运行
+
 ## 0.1.21 — 2026-09-16
 
 `@linxin666/dsh-client-ui-task-board` 的侧栏「任务看板」按钮，改成与上方「新会话 / 记忆」两枚按钮同款。
