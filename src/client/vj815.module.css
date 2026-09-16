@@ -779,6 +779,63 @@ body[data-dsh-815] [class*='collapsed'] [class*='mneme-topentry-native']:hover {
   background: var(--dsw-alias-interactive-bg-hover);
 }
 
+/* dsh-task-board 的侧栏入口（[data-dsh-taskboard-entry]，即插件 board.module.css 的
+   .entry：36px 高 / 8px 圆角 / 左对齐 / 13px 次要色文字的透明导航行）与 dsh-timer-agent
+   同族，同样插在「新会话」与工作区浏览区之间，一样不继承宿主的 .newSession 类名。
+   按标记属性覆盖成上方「新会话 / 记忆」那两枚按钮的同款盒模型（38px 高 / 12px 圆角 /
+   0.5px 铜边 / elevated 底 / 内容居中），与 timer-agent 段逐条对齐；收起态对齐宿主
+   .collapsed .newSession（36x36 图标按钮、透明底、12px 圆角，把插件自带的 50%
+   圆形收正）。仍是注入式覆盖，不改插件源码。 */
+body[data-dsh-815] [data-dsh-taskboard-entry] {
+  align-self: stretch;
+  width: auto;
+  flex: none;
+  justify-content: center;
+  gap: 6px;
+  height: 38px;
+  margin: 0 2px 8px;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  border: 0.5px solid var(--dsw-alias-border-l3);
+  border-radius: 12px;
+  background: var(--dsw-alias-button-elevated-fill);
+  color: var(--dsw-alias-label-primary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+}
+
+body[data-dsh-815] [data-dsh-taskboard-entry]:hover {
+  background: var(--dsw-alias-button-floating-hover);
+}
+
+/* 看板打开时插件在行上打 data-active；上面那层底会盖掉插件自己的 active 底色，
+   这里按同档高亮补回来，与 timer-agent 一致。 */
+body[data-dsh-815] [data-dsh-taskboard-entry][data-active] {
+  background: var(--dsw-alias-interactive-bg-active);
+  font-weight: 600;
+}
+
+body[data-dsh-815] [class*='collapsed'] [data-dsh-taskboard-entry] {
+  align-self: flex-start;
+  width: 36px;
+  height: 36px;
+  margin: 0 0 12px;
+  padding: 0;
+  gap: 0;
+  border-color: transparent;
+  border-radius: 12px;
+  background: transparent;
+}
+
+body[data-dsh-815] [class*='collapsed'] [data-dsh-taskboard-entry]:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+body[data-dsh-815] [class*='collapsed'] [data-dsh-taskboard-entry] [class*='entryLabel'] {
+  display: none;
+}
+
 body[data-dsh-815] [class*='titlebar'] > [class*='button']:first-of-type {
   display: none;
 }
