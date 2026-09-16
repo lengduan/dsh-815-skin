@@ -44,12 +44,6 @@
     "lib/client.js",
     "cordis.patch.yml",
     "skin.json",
-    "docs",
-    "src",
-    "tests",
-    "LICENSE",
-    "NOTICE",
-    "README.md",
-    "CHANGELOG.md"
+    "NOTICE"
   ]
 }

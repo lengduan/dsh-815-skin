@@ -308,10 +308,12 @@ function clientConfig(id: string, entry: string, portableCssModuleIds: boolean):
     }],
     outputOptions: {
       entryFileNames: 'client.js',
+      // 发行产物不带 sourcesContent：内联图源（4.3 MB）已随 client.js 进包，map 再存一份等于体积翻倍；
+      // 去掉后 map 只保留文件路径与行号映射，浏览器调试能定位到位置，但取不到原始源码文本。
+      sourcemapExcludeSources: true,
       // The map is served from /plugins/<scoped-package>/client.js.map. The
       // browser resolves its local sources back into URLs that mirror the
-      // /packages/<group>/<package>/src directories; sourcesContent keeps them usable
-      // without exposing that tree as an HTTP route.
+      // /packages/<group>/<package>/src directories.
       sourcemapPathTransform: browserSourcePath,
       banner: `window.__ModuleLoader__.load({ id: ${JSON.stringify(id)}, factory: (require) => {`,
       footer: 'return module.exports; } });',
