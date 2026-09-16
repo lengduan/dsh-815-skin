@@ -25,6 +25,10 @@
     "test": "vitest run"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lengduan/dsh-815-skin.git"
+  },
   "peerDependencies": {
     "@deepseek-ai/cordis": "^4.0.1"
   },

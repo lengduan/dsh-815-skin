@@ -1,0 +1,65 @@
+# 通过 npm 可信发布（Trusted Publishing / OIDC）发布到 npm，不再依赖 NPM_TOKEN。
+#
+# 前置条件（任一不满足都会在 publish 时报错）：
+#   1. npmjs.com 上该包已配置 Trusted Publisher，且 Workflow filename 与本文件名完全一致（publish.yml，大小写敏感）；
+#      若其中填了 Environment name，下面的 publish job 必须声明同名 environment；
+#   2. 可信发布者的 Allowed actions 需允许 npm publish（只勾选 npm stage publish 时，发布会进入暂存待审流程）；
+#   3. OIDC 要求 Node >= 22.14.0、npm CLI >= 11.5.1，且运行在 GitHub 托管 runner 上（自托管 runner 不支持）；
+#   4. package.json 的 repository.url 必须与 GitHub 仓库一致，否则 provenance 生成失败。
+name: Publish
+
+on:
+  # tag 触发，沿用本仓库既有的纯版本号 tag（如 0.1.21）
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+  # 手动触发，用于首次验证或补发
+  workflow_dispatch:
+
+permissions:
+  id-token: write # OIDC 必需：publish 时用它向 npm 换取短期凭据
+  contents: read
+
+jobs:
+  publish:
+    name: Build, test and publish
+    runs-on: ubuntu-latest
+    concurrency:
+      group: npm-publish
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 12.4.1 # 与本仓库 pnpm-lock.yaml（lockfileVersion 9.0）配套的 pnpm 版本
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false # 发布构建不使用依赖缓存
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: 校验 tag 与 package.json 版本一致
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          pkg_version=$(node -p "require('./package.json').version")
+          if [ "$GITHUB_REF_NAME" != "$pkg_version" ]; then
+            echo "tag $GITHUB_REF_NAME 与 package.json 的版本 $pkg_version 不一致，已中止"
+            exit 1
+          fi
+
+      - name: 构建
+        run: pnpm build
+
+      - name: 测试
+        run: pnpm test
+
+      # 不设置 NODE_AUTH_TOKEN：npm CLI 会先检测 OIDC 环境并用它认证，provenance 自动生成
+      - name: 发布到 npm
+        run: npm publish --access public
