@@ -1,5 +1,15 @@
 # 更新日志
 
+## 0.1.23 — 2026-09-16
+
+皮肤底图换成 WebP，发布包体积从 5.23 MB 压到 0.73 MB。
+
+- `assets/` 新增两张 WebP（quality 80 / effort 6）：4K `3840x1351` 0.51 MB（原 JPEG 2.16 MB）、2K `2560x901` 0.20 MB（原 0.89 MB）；像素尺寸不变，JPEG 原图保留作源，可随时回退或换档
+- `scripts/embed-art.mjs` 改读 `.webp` 并把内联 MIME 换成 `image/webp`；`tests/apply.spec.ts` 里硬编码的 `data:image/jpeg` 背景图断言同步更新
+- 体积：`lib/client.js` 4.31 MB → 1.04 MB，发布包 8 个文件 5.23 MB → 0.73 MB（相对最初的 8.7 MB 已降到 8.4%）
+- 兼容性：WebP 全局支持率 96.09%（caniuse）；Chrome 32+ / Firefox 65+ / Edge 18+ / Safari 16+ 完整支持（Safari 14.0–15.6 需 macOS 11 Big Sur 及以上），仅 IE 11 不支持
+- 验证：WebP q80 与原图在铺满与 3x 放大下无可见差异；隔离 profile 起 `:3099` 实例，下发的 client bundle 内 `data:image/webp` 2 处、`data:image/jpeg` 0 处；`pnpm test` 5 passed
+
 ## 0.1.22 — 2026-09-16
 
 发布链路改用 npm 可信发布（Trusted Publishing / OIDC），不再使用 NPM_TOKEN。
