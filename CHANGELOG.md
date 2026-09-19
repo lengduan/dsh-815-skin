@@ -1,5 +1,16 @@
 # 更新日志
 
+## 0.1.24 — 2026-09-19
+
+侧栏底部三个插件的入口在收起态竖排，两态统一成纯白 16px 图标。
+
+- 现象：侧栏收起（rail 56px 宽）后，左下角那排入口仍横排、整行溢出栏外，「会话管理」的文字被挤成竖排四行；性能监控（lag-trace-pro）图标比兄弟偏高 4px、会话管理（dsh-session-manager）图标颜色比兄弟淡一档
+- 根因：宿主 `packages/client/ui-sidebar` 的 `SidebarRoot.module.css` 在收起态只给 `.footerActions` 加 `justify-content: center` + `width: auto`，`flex-direction` 仍为 `row`；三个插件入口横排总宽 `36+48+28=112px`，在 56px 宽的 rail 里居中后整体溢出（x=-28），`dsh-session-manager` 的按钮被压到 48px 宽，文字换行成四行把该行撑到 78px。偏高则是 `lag-trace-pro` 自带 28px 圆钮、与 36px 按钮顶对齐所致
+- 覆盖：`src/client/vj815.module.css` 新增 73 行（注入式，不改插件源码）——收起态 `[class*='footerActions']` 改 `flex-direction: column`，四个入口统一 36x36、水平居中于 rail、间距 4px，`dsh-session-manager` 收起后只留图标（`aria-label` 保留）；两态通用前景统一 `#fff`（含 hover），图标尺寸由 18/14/18px 统一为 16px，容器统一 36px 高并垂直居中，`lag-trace-pro` 的 28px 圆钮拉成 36x36
+- 坑：`lag-trace-pro` 的角标类名 `.ltp-btnBadge` 含 `ltp-btn` 子串，`[class*='ltp-btn']` 会连角标一起命中、把它拉成 36x36 红块盖住波形图标；该族 5 处选择器改用属性词匹配 `[class~='ltp-btn']`
+- 实测（1600x900，真实 GUI；刷新页面即可生效，无需重启 `dsh web`）：收起态 `footerActions` 由 `[-28,762,112,78]` 变为 `[10,684,36,156]`、四入口 x=10 且均 36x36；展开态四图标中心同为 y=826、`color` 均 `rgb(255,255,255)`，`.ltp-btnBadge` 恢复 14x14 停在按钮右上（与图标重叠 2x2px）
+- 测试：`pnpm test` 5 passed
+
 ## 0.1.23 — 2026-09-16
 
 皮肤底图换成 WebP，发布包体积从 5.23 MB 压到 0.73 MB。
