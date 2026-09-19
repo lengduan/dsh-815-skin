@@ -836,6 +836,80 @@ body[data-dsh-815] [class*='collapsed'] [data-dsh-taskboard-entry] [class*='entr
   display: none;
 }
 
+/* 侧栏底部动作区（宿主 SidebarRoot.module.css 的 .footerActions，槽位
+   sidebar.footer.action）在收起态只被宿主居中：.collapsed .footerActions 给的是
+   justify-content: center + width: auto，flex-direction 仍是 row。三个插件塞进来的
+   入口 —— @linxin666 的「检查更新 / 远程访问」行（其 .entryRow 自己已转
+   column-reverse）、dsh-session-manager 的 .sm-footerBtn、lag-trace-pro 的
+   .ltp-btn —— 于是横向排成 36+48+28=112px，在 56px 宽的 rail 里整行溢出（居中后
+   x=-28），「会话管理」的文字被压成竖排四行、把这一行撑到 78px 高。
+   这里按皮肤惯例注入式覆盖，不改插件源码：收起态把它变成 rail 同款的一列
+   36px 图标按钮（隐藏文字），两种宽度下都统一成 36px 高、16px 图标、纯白前景。
+   宿主与插件若改了这些类名后缀，本段失效，按新值重写。 */
+body[data-dsh-815] [class*='footerActions'] {
+  align-items: center;
+}
+
+/* 三个插件各有一套同特异性的颜色规则（「检查更新 / 远程访问」那行尤其：只加一条
+   :is([class*='trigger']) 会被它按加载顺序压住），所以这里把每个入口的选择器都
+   指到它自己的容器/元素上，稳住优先级。 */
+body[data-dsh-815] [class*='footerActions'] :is([class*='entryRow'] button[class*='trigger'], [class*='sm-footer'] > [class*='sm-footerBtn'], [class~='ltp-btn']) {
+  height: 36px;
+  color: #fff;
+}
+
+/* lag-trace-pro 自带的 28px 圆钮比左右两个 36px 按钮矮 8px，与动作区顶部对齐时
+   图标中心比兄弟高 4px（这就是「偏高」的来源）；拉成同高同宽后由 align-items
+   收正。它的角标叫 .ltp-btnBadge，含 'ltp-btn' 子串，[class*=] 会连角标一起拉成
+   36x36 的红色方块盖住图标，所以这一族统一用词匹配 [class~=]。 */
+body[data-dsh-815] [class*='footerActions'] [class~='ltp-btn'] {
+  width: 36px;
+  padding: 0;
+  justify-content: center;
+}
+
+body[data-dsh-815] [class*='footerActions'] :is([class*='entryRow'] button[class*='trigger'], [class*='sm-footer'] > [class*='sm-footerBtn'], [class~='ltp-btn']):hover {
+  color: #fff;
+}
+
+/* 四枚图标原尺寸各不同（更新/远程 18px、会话管理 14px、性能监控 18px），统一到
+   16px 并垂直居中。 */
+body[data-dsh-815] [class*='footerActions'] :is([class*='entryRow'] button[class*='trigger'], [class*='sm-footer'] > [class*='sm-footerBtn'], [class~='ltp-btn']) svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+
+body[data-dsh-815] [class*='collapsed'] [class*='footerActions'] {
+  flex-direction: column;
+  align-items: center;
+  width: auto;
+  gap: 4px;
+}
+
+body[data-dsh-815] [class*='collapsed'] [class*='footerActions'] [class*='sm-footer'] {
+  width: 36px;
+  height: 36px;
+}
+
+body[data-dsh-815] [class*='collapsed'] [class*='footerActions'] [class*='sm-footer'] > [class*='sm-footerBtn'] {
+  width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  gap: 0;
+  justify-content: center;
+}
+
+body[data-dsh-815] [class*='collapsed'] [class*='footerActions'] [class*='sm-footer'] > [class*='sm-footerBtn'] span {
+  display: none;
+}
+
+body[data-dsh-815] [class*='collapsed'] [class*='footerActions'] [class~='ltp-btn'] {
+  width: 36px;
+  height: 36px;
+}
+
 body[data-dsh-815] [class*='titlebar'] > [class*='button']:first-of-type {
   display: none;
 }
