@@ -1,0 +1,4 @@
+# 版本依据：.github/workflows/publish.yml（node-version '24'、pnpm 12.4.1）。
+[tools]
+node = "24"
+pnpm = "12.4.1"
