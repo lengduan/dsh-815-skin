@@ -512,6 +512,33 @@ body[data-dsh-815] [data-terminal] {
   color: #f4ead6;
 }
 
+/* dsh-better-sidebar 的「在文件夹中显示」（intercept.tsx 把 css.producedMore 同时挂在
+   「+N」计数 span 与这个 <button> 上，只有本轮产出超过 6 个文件时才渲染）。插件只声明了
+   font 与 label-tertiary，没重置按钮的 UA 外观，于是它自带 buttonface 灰底与 2px outset
+   白边，皮肤米灰字 #9e9780 压在上面只有 1.83:1（本机 :3080 实测按钮底 rgb(107,107,107)），
+   用户看到的就是「字和底色糊在一起」。这里只接管该行的 button（选择器末段限定 button，
+   「+N」那个 span 计数不受影响）：清掉 UA 外观，换成与产出 chip 同族的 token —— 橄榄底
+   bg-layer-2、铜边 border-l2，并把字提到比 chip 的 label-secondary 更亮一档的奶油色，
+   与本行文件 chip 区分「动作」与「文件」；对比度约 11:1。插件把下划线写在内联 style 上，
+   只能用 !important 压掉。 */
+body[data-dsh-815] [class*='producedRow'] button[class*='producedMore'] {
+  appearance: none;
+  box-sizing: border-box;
+  padding: 2px 8px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 999px;
+  background: var(--dsw-alias-bg-layer-2);
+  color: #e8dcc0;
+  font: var(--dsw-font-xxs-12);
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+body[data-dsh-815] [class*='producedRow'] button[class*='producedMore']:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+  color: #f4ead6;
+}
+
 /* dsh-better-sidebar 底部工作台的终端（xterm，头部工具条最右侧的「展开底部面板」）。
    插件按「宿主配色方案」自选终端主题：surface 取 body 上的 --dsw-alias-bg-base，
    透明或半透明时回退到 dark ? #111114 : #ffffff。815 皮肤为露油画把该 token 设成
