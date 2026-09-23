@@ -1,5 +1,15 @@
 # 更新日志
 
+## 0.1.25 — 2026-09-23
+
+两处第三方插件的浅底浅字，压成皮肤深底：产出「在文件夹中显示」按钮与会话优先级徽章。
+
+- 产出按钮（dsh-better-sidebar 0.19.1 的 `css.producedMore`，即「本次产出」行右侧那一枚，单轮产出超过 6 个文件时才渲染）：插件只声明 font 与 label-tertiary，没重置按钮的 UA 外观，于是自带 buttonface 灰底与 2px outset 白边，皮肤米灰字 `#9e9780` 压上去只有 1.83:1（实测按钮底 `rgb(107,107,107)`）。覆盖：选择器末段限定 `button`（同类的「+N」计数是 span，不受影响）、`appearance: none` 清 UA 外观、底与边换成产出 chip 同族 token（`bg-layer-2` / `border-l2` / 圆角 999px）、字色提到奶油 `#e8dcc0`，并用 `text-decoration: none !important` 压掉插件写在内联 style 上的下划线
+- 优先级徽章（dsh-session-manager 0.5.1 的 `.sm-priorityBadge`，即「标签/备注」按钮里的 P3）：插件走 `var(--dsw-alias-fill-l2, #eee)` 与 `var(--dsw-alias-label-secondary)`；815 皮肤没有定义 fill-l2，底落到回退值 `#eee`，字则是皮肤的米色 `#c8c0a4` —— 1.57:1（P1/P2 走插件写死的橙/黄，不受影响）。在徽章自身重设这两个 token 为橄榄深底加米字
+- 两条都沿用既有做法：注入式覆盖、不改插件源码；必须用属性选择器，本表是 CSS Module，类选择器会被 hash 成 `.xxxx_sm-priorityBadge` 而失配
+- 实测（1600x900，:3080 真实 GUI，刷新页面即生效、无需重启 `dsh web`）：按钮 `rgb(232,220,192)` 压 `rgba(36,38,28,.88)` 为 11.27:1、徽章 8.42:1
+- 测试：`pnpm test` 5 passed
+
 ## 0.1.24 — 2026-09-19
 
 侧栏底部三个插件的入口在收起态竖排，两态统一成纯白 16px 图标。
