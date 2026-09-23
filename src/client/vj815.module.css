@@ -493,6 +493,20 @@ body[data-dsh-815]:not([data-ds-dark-theme])
   --dsw-alias-label-caption: #6a6454;
 }
 
+/* dsh-session-manager 会话头部工具条里的优先级徽章（`.sm-priorityBadge` 不带 hash，
+   挂在「标签/备注」按钮内，显示 P3 / 普通）：插件声明的是
+   background: var(--dsw-alias-fill-l2, #eee) + color: var(--dsw-alias-label-secondary, #666)。
+   815 皮肤没有定义 fill-l2，底于是落到回退值 #eee；皮肤又把 label-secondary 换成米色
+   #c8c0a4 —— 实测底 rgb(238,238,238)、字 rgb(200,192,164)，对比度 1.57:1，徽章里的 P3
+   基本看不见（P1/P2 走插件写死的橙 / 黄，不在此列）。这里在徽章自身重设这两个 token：
+   底换皮肤的橄榄深底、字留米色，与产出 chip 同族（约 8.5:1）；同一个徽章出现在「会话管理」
+   弹框里时落在插件写死的白底上，深底浅字同样成立，所以不加 :not([data-ds-dark-theme])。
+   仍须写成属性选择器：本表是 CSS Module，类选择器会被 hash 成 .xxxx_sm-priorityBadge。 */
+body[data-dsh-815] [class*='sm-priorityBadge'] {
+  --dsw-alias-fill-l2: rgba(36, 38, 28, 0.88);
+  --dsw-alias-label-secondary: #c8c0a4;
+}
+
 /* ui-goal 的目标条：条底是主题的浅色 var(--dsw-specific-tip)（非暗色主题下量到
    #f5f6f7），而「进行中的目标」标签走 label-primary —— 皮肤在 body 上把它换成
    奶油色 #f4ead6，对条底只有 1.1:1，标签整条融进条底看不见；目标正文走
