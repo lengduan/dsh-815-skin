@@ -1214,3 +1214,68 @@ body[data-dsh-815]:not([data-ds-dark-theme]) [data-changed-files='true'] button[
 body[data-dsh-815] [data-variant='think'] :is([class*='thinkBody'] [class*='markdown'], [class*='summaryText']) {
   color: #d4ccb0;
 }
+
+/* ——— 第二轮适配 2/2：diff 视图（两处宿主共用同一个 diff 组件 DoHURa_*） ———
+
+   同一套行样式出现在两个容器里，必须一起覆盖：
+     ① 右栏「本轮改动」面板：根元素带语义钩子 data-changes-review='true'（sidebar.right.pane.tab 槽）；
+     ② 对话区改动卡片上悬停弹出的预览卡：_card_178vx_13 _preview_178vx_*（**没有**上面那个钩子，
+        所以只挂 ① 的规则漏掉了它 —— 用户第二轮截图指的就是这个弹框）。
+   两个容器里行类名一致，故规则不再挂容器钩子，直接落在行类上（DoHURa_ 是 diff 组件自己的
+   hash 前缀，'add'/'del' 子串不会命中别处；唯一的近邻 I6sWlq_added 不含 'DoHURa_add'）。
+
+   该组件按增删给每行上底色，底色来自宿主的浅色主题：
+     [class*='DoHURa_add']    → #e6f4e7（浅绿，新增行本体，两处都是这个值）
+     [class*='DoHURa_number'] → #edf7ed（浅绿，新增行的行号底）
+     [class*='DoHURa_empty']  → rgba(196,163,90,.07)（仅右栏并存视图的「对侧空行」）
+   而皮肤全局把文字压成奶油 label-primary #f4ead6 / 次要 #c8c0a4，shiki 那套
+   --shiki-token-* 也是为暗底选的亮色 —— 于是整片新增行成了「浅绿底 + 浅字」。
+   本机 :3080 实测（合成背景 + opacity 累乘，opacity 沿途全为 1；两个容器同值）：
+     新增行正文（DoHURa_text #c8c0a4；shiki span 继承 #f4ead6）on #e6f4e7 → 1.47:1 / 1.05:1
+     shiki 字符串 token #69db7c on #e6f4e7 → 1.54:1；标点 token #ced4da → 1.31:1
+     新增行行号 #01a241 on #edf7ed → 3.06:1；弹框里的增删号 DoHURa_sign → 2.96:1
+   修法：只作用于**浅底行**（新增 / 删除两侧），把文字压回皮肤在浅面板上的墨色层级，
+   并在这两行的作用域内换一套深色 shiki token（逐个按 ≥4.5:1 选：正文 15.3:1、
+   字符串 5.7:1、关键字 6.3:1、注释 6.6:1、函数 6.8:1、常量 7.0:1、参数 6.0:1、
+   标点 8.3:1）。diff 的 header 与 hunk 头（`@@ -73,3 +73,30 @@`）仍落在暗底上
+   （6.04~6.81:1），保持奶油 / 铜金不受影响；暗色主题下宿主给的是深底，整体排除。
+   注：本轮手头的 diff 是纯新增（+27/-0），删除侧 [class*='DoHURa_del'] 的底色
+   没能实测，按同一结构一并处理（浅底压墨），该值未实测。 */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  :is([class*='DoHURa_add'], [class*='DoHURa_del']) {
+  color: #1c1a14;
+  --shiki-foreground: #1c1a14;
+  --shiki-token-constant: #1b4f9c;
+  --shiki-token-string: #146c2e;
+  --shiki-token-string-expression: #146c2e;
+  --shiki-token-comment: #5a5443;
+  --shiki-token-keyword: #9c2b5f;
+  --shiki-token-parameter: #8a4b00;
+  --shiki-token-function: #5b3fa8;
+  --shiki-token-punctuation: #4a4638;
+  --shiki-token-link: #1b4f9c;
+}
+
+body[data-dsh-815]:not([data-ds-dark-theme])
+  :is([class*='DoHURa_add'], [class*='DoHURa_del'])
+  :is([class*='DoHURa_text'], [class*='DoHURa_number'], [class*='DoHURa_sign']) {
+  color: #1c1a14;
+}
+
+/* 新增行的行号宿主给的是绿 #01a241（落 #edf7ed 上 3.06:1），同一族里压深一档
+   （绿仍是绿，语义不变）：5.9:1。 */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [class*='DoHURa_add'] [class*='DoHURa_number'] {
+  color: #0f6b2c;
+}
+
+/* 面板头部「-N」计数是宿主写死的 #ec1313，落在暗底上实测 4.42:1，提亮一档到
+   #ff7a7a（7.9:1）；「+N」的 #22c55e 实测 8.72:1 已够，不动。
+   两个容器（右栏面板 / 卡片悬停弹框）都有这条表头，故同时挂两个作用域。 */
+body[data-dsh-815]
+  :is([data-changes-review='true'], [class*='DoHURa_header'])
+  [class*='deleted'] {
+  color: #ff7a7a;
+}
+
+
