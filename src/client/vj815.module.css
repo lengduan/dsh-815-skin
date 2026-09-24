@@ -1143,6 +1143,21 @@ body[data-dsh-815]
   color: #e2c98a;
 }
 
+/* 但上面那条亮铜只对深底成立。行内 code 胶囊是宣纸底（--vj-paper #f3ead4），而
+   `pkg/package.json` 这种「目录 + 文件名」写法里，后半截是宿主渲染的
+   button[class*='fileMention']（带 `</>` 图标，图标取 currentColor），于是亮铜落进
+   浅纸胶囊 —— 2026-09-24 本机 :3080 实测 color #e2c98a on #f3ead4 = 1.33:1，胶囊
+   区域像素里出现最多的前景色就是 #e2c98a（75 px），紧随其后是它的抗锯齿过渡色；
+   用户截图里表现为胶囊后半截「package.json」几乎与纸面融成一片、前半截 `pkg/` 反而
+   清楚（那半截是普通 code 文本，走胶囊的墨色）。
+   胶囊内按皮肤给「浅纸底」的那一档压回暗铜（#6b4e16 on #f3ead4 = 6.29:1），
+   与用户气泡里同样的浅底场景取值一致。 */
+body[data-dsh-815]
+  [data-chat-flow-kind='assistant-step'] > * > * > * > div[class*='markdown']
+  :not(pre) > code [class*='fileMention'] {
+  color: #6b4e16;
+}
+
 /* 侧栏会话行的时长（选中行上）：文字取 label-caption #7e7866，而选中行底是铜金高亮
    实测 #897442 —— 1.03:1，「2分钟 / 2小时」这种时长在选中行上等于没有。选中行内提亮。 */
 body[data-dsh-815] [data-vj-session][aria-selected='true'] [class*='_time'] {
