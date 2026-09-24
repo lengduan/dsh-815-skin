@@ -990,38 +990,44 @@ body[data-dsh-815] [class*='titlebar'] [class*='button'] {
 }
 
 /* DSH 官方「在本地打开」分裂按钮（ui-open-in-app，挂在会话页头的
-   conversation.session.header.utilities 插槽）：宿主按已装应用下发真实 PNG 图标，
-   边框与分裂分隔线都取 --dsw-alias-border-l4，而皮肤没定义该 token（浅色主题下
-   是浅灰 hairline），于是边框和竖线在暗底上全都看不见。
-   这里把它按旁边的「对话管理 / 删除本对话」对齐：同款铜金边（l2）、同高 32px、
-   同 18px 圆角，并把两个分段的左右内边距各放宽 4px；宿主 PNG 换成统一的线性
-   文件夹图标（mask 跟随按钮文字色，hover/报错态一起变），分隔线取自 chevron
-   自身的 border-left，随边框一同显形。 */
-body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) {
-  --dsw-alias-border-l4: var(--dsw-alias-border-l2);
-  height: 32px;
-  border-radius: 18px;
-}
+   conversation.session.header.utilities 插槽）：宿主按已装应用下发真实彩色 PNG
+   图标（本机是蓝色文件夹），皮肤要把它换成统一的线性文件夹。
 
-body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) > button > img {
+   新版 DOM（0.1.7-rc.1 后再次变动）：
+     div[data-open-target='directory'][data-size='compact'][data-state='idle']
+       > button[class*='main']   > img[class*='appIcon'][src='open-in-app/icon/explorer']
+       > button[class*='chevron'] > svg
+   失配点只有一处：img 的 src 从绝对路径 `/open-in-app/icon/...` 改成相对路径
+   `open-in-app/icon/explorer`，旧选择器 `[src*='/open-in-app/icon']`（带前导斜杠）
+   于是命中 0 个元素（:3080 实测：旧写法 0 个，去掉前导斜杠 1 个），整段规则落空，
+   宿主 PNG 没被隐藏 —— 彩色文件夹就露出来了。
+   这里改用宿主语义钩子 data-open-target + appIcon 类名子串 + 直系结构（都不随
+   CSS Module hash 变），并把 src 子串那条按新写法一并保留，任一条命中即可。
+
+   尺寸不再干预：宿主 compact 态自身就是 43x24、圆角 9px、两个分段 padding
+   3px 5px / 3px 4px 3px 3px，边框与分裂分隔线已取皮肤的 --dsw-alias-border-l4
+   铜金（该 token 皮肤现已在全局定义，#c4a35a80 可见）。mask 尺寸与宿主 PNG 的
+   13x13 一致，不撑开按钮盒；图标色走 currentColor，hover / 报错态随之变化，
+   chevron 的分隔线仍来自它自身的 border-left。 */
+body[data-dsh-815]
+  :is(
+    div:has(> button > img[src*='open-in-app/icon']),
+    div[data-open-target]:has(> button > img[class*='appIcon'])
+  )
+  > button > img {
   display: none;
 }
 
-/* 主段：官方 padding 5px 6px 5px 7px，左右各 +4。 */
-body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) > button:first-child {
-  padding: 5px 10px 5px 11px;
-}
-
-/* 箭头段：官方 padding 5px 6px 5px 4px，左右各 +4。 */
-body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) > button:last-child {
-  padding: 5px 10px 5px 8px;
-}
-
-body[data-dsh-815] div:has(> button > img[src*='/open-in-app/icon']) > button:first-child::before {
+body[data-dsh-815]
+  :is(
+    div:has(> button > img[src*='open-in-app/icon']),
+    div[data-open-target]:has(> button > img[class*='appIcon'])
+  )
+  > button:first-child::before {
   content: '';
   flex: none;
-  width: 15px;
-  height: 15px;
+  width: 13px;
+  height: 13px;
   background-color: currentColor;
   -webkit-mask: var(--vj-folder-icon) center / contain no-repeat;
   mask: var(--vj-folder-icon) center / contain no-repeat;
