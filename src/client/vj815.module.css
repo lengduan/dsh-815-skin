@@ -338,10 +338,15 @@ body[data-dsh-815] :global(.md-table-wide) {
   padding-bottom: 0;
 }
 
-/* 行内 code 走宣纸底墨字，白底场景下也必须压成墨色。 */
+/* 行内 code 走宣纸底墨字，白底场景下也必须压成墨色。
+   第三个选择器是本轮补的「思考」折叠块正文：思考块内的行内 code 同样落在宿主的
+   近白胶囊（浅色主题 --dsw-alias-markdown-inline-code = #fafafa）上，字色却跟着
+   思考正文走，本机 :3080 实测 #9e9780 落 #fafafa 只有 2.80:1（比正文的 6.81:1 更糟）。
+   并进来后与助手气泡、用户气泡同一视觉语言：宣纸底 + 墨字 + 铜边。 */
 body[data-dsh-815]
   :is(
     [data-chat-flow-kind='assistant-step'] > * > * > * > div[class*='markdown'],
+    [data-variant='think'] [class*='thinkBody'] [class*='markdown'],
     [class*='userRow'] [class*='bubble']
   )
   :not(pre) > code {
@@ -1190,4 +1195,22 @@ body[data-dsh-815]:not([data-ds-dark-theme]) [data-presented-file] {
    只把绿压深一档（+N 仍是绿、-N 仍是红，语义不变）。 */
 body[data-dsh-815]:not([data-ds-dark-theme]) [data-changed-files='true'] button[class*='header'] [class*='added'] {
   color: #15803d;
+}
+
+/* ——— 第二轮适配 1/2：思考块正文提亮（见下）。图标那处在文件中部
+   「DSH 官方『在本地打开』分裂按钮」段，本轮已就地按新 DOM 重写。 ——— */
+
+/* 「思考」折叠块正文（新版 DOM：_3kTACG_root[data-variant='think'] > _root_luwio_9 >
+   _row_luwio_16[_3kTACG_row, role=button] + _3kTACG_thinkBody > _markdown_4zwvp_5
+   [data-markdown-variant='compact']）。宿主把正文颜色落在 --dsw-alias-label-tertiary
+   （皮肤该档 #9e9780），而思考块整棵子树没有自己的底色，正文直接浮在暗油画底上
+   （本机 :3080 实测合成背景 #080a06；父级 thinkBody 自身 color 是 #f4ead6，但正文被
+   markdown 那条盖掉，opacity 沿途全为 1）—— 有效对比度 6.81:1，比同页助手正文
+   （label-primary #f4ead6，16.65:1）暗一整档，14px 正文在油画底上发灰、读起来吃力。
+   这里把正文提到深底次要档 #d4ccb0（与 [data-queue-dock]、[data-testid='todo-panel']
+   在深底上的取色同值）：12.36:1；折叠态那一行预览（_3kTACG_summaryText，同样是正文
+   文本）一并纳入，避免折叠/展开两态亮度不一致。
+   钩子用宿主的语义属性 data-variant='think'，不随 CSS Module hash 变。 */
+body[data-dsh-815] [data-variant='think'] :is([class*='thinkBody'] [class*='markdown'], [class*='summaryText']) {
+  color: #d4ccb0;
 }
