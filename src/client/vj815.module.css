@@ -1084,3 +1084,104 @@ body[data-dsh-815] [class*='markPosition'] {
     transition: none;
   }
 }
+
+/* ================= 新版 DSH（0.1.7-rc.1）适配：容器底与文字层级错配 =================
+   升级后宿主换掉了两批容器的底：一批原本是浅色面板的改成了深底，另一批原本深色的
+   写死了近白。皮肤按旧版假设压出来的文字层级（浅底压墨色 / 深底留奶油）于是全部
+   反向。以下按实测值逐处纠回；每条都注明本机 :3080 实测的 color / bg。 */
+
+/* 排队坞（data-queue-dock，新版类名前缀 WKTW0q/avG_hq）：坞面背景改成透明（旧版取
+   --dsw-specific-tip 的浅色 #f5f6f7，该 token 现在仍是 #f5f6f7 但已无人使用），于是
+   坞内那条「压墨色」的覆盖把 #1c1a14 墨字直接搁在暗油画上：标题「2 条排队消息」
+   color #1c1a14 / bg #080a06 = 1.14:1，左侧队列图标 stroke #5a5443 = 2.64:1。
+   坞内恢复皮肤浅色层级（标题 15.2:1、图标 6.8:1）。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-queue-dock] {
+  --dsw-alias-label-primary: #f4ead6;
+  --dsw-alias-label-secondary: #d4ccb0;
+  --dsw-alias-label-tertiary: #9e9780;
+  --dsw-alias-label-caption: #7e7866;
+}
+
+/* todo 面板（data-testid=todo-panel）：同因。新版面板底是深橄榄 #2c2e24（旧版为
+   主题浅色 #f5f6f7），皮肤压的墨色标题「任务」实测 1.26:1、进度「8 已完成」1.83:1。
+   面板内文字同样恢复浅色。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-testid='todo-panel'] {
+  --dsw-alias-label-primary: #f4ead6;
+  --dsw-alias-label-secondary: #d4ccb0;
+  --dsw-alias-label-tertiary: #9e9780;
+  --dsw-alias-label-caption: #7e7866;
+}
+
+/* 本轮改动卡片（data-changed-files=true，新版类名前缀 t0GBjq/z90sEq）：卡片自身的底
+   是皮肤的深橄榄 rgba(28,30,22,.78)，但宿主把 header 按钮的底写死成近白 #fafafa，
+   而 header 内文字取 label-primary（皮肤奶油 #f4ead6）——实测「已编辑 2 个文件」
+   1.14:1、+N 计数 2.18:1、说明文字 2.80:1，整条白 header 都糊住。header 内压回墨色
+   （与 [data-presented-file] 同法），卡片其余部分仍走深底浅字。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-changed-files='true'] button[class*='header'] {
+  --dsw-alias-label-primary: #1c1a14;
+  --dsw-alias-label-secondary: #4a4638;
+  --dsw-alias-label-tertiary: #5a5443;
+  --dsw-alias-label-caption: #6a6454;
+  color: #1c1a14;
+}
+
+/* 对话气泡里的文件提及（fileMention）：上面的规则给的是 #6b4e16 暗铜，那是为「浅纸底」
+   选的；气泡底实测 #1c1e15（深橄榄），暗铜落上去只有 2.19:1。深底上改用亮铜。 */
+body[data-dsh-815]
+  [data-chat-flow-kind='assistant-step'] > * > * > * > div[class*='markdown'] [class*='fileMention'] {
+  color: #e2c98a;
+}
+
+/* 侧栏会话行的时长（选中行上）：文字取 label-caption #7e7866，而选中行底是铜金高亮
+   实测 #897442 —— 1.03:1，「2分钟 / 2小时」这种时长在选中行上等于没有。选中行内提亮。 */
+body[data-dsh-815] [data-vj-session][aria-selected='true'] [class*='_time'] {
+  color: #f2e6c6;
+}
+
+/* 侧栏选中行的行内操作按钮（收藏 / 标记待回看 / 编辑标签）：图标取 label-tertiary
+   #9e9780，选中行底是铜金高亮实测 #897442 —— 1.55:1，图标在选中行上消失。与同一行
+   的标题（上面已有的 #fff8e8 规则）同档提亮。 */
+body[data-dsh-815] [data-vj-session][aria-selected='true'] [class*='iconButton'] {
+  color: #fff8e8;
+}
+
+/* 消息尾部的时长与「用量 N tok」：宿主新版把悬停揭示容器从 data-time-hover-root 换成
+   data-turn-tail / data-actions-reveal='hover'（本机实测 document.querySelector
+   ('[data-time-hover-root]') === null），皮肤原来那条「悬停恒显」规则于是完全落空 ——
+   实测 div[data-clock='start'|'end'] 的 opacity 为 0，里面的 timeStart/timeEnd 与
+   tmg52W_label（用量）整块不可见；用户截图里表现为一行几乎读不出的「用量 1M tok 11:52」
+   （像素实测约 1.5:1，即 #9e9780 以约 25% 不透明度叠在 #23231d 上）。
+   按新属性把皮肤的「常显」意图重新挂上。 */
+body[data-dsh-815] [data-clock] {
+  opacity: 1 !important;
+}
+
+/* 排队坞展开后的条目正文（avG_hq_preview > _plainRun_*）：走的是
+   --dsw-alias-label-primary-dimmed，浅色主题下该 token 是近黑 #151517（实测本机同名
+   token = #151517），落在坞的深底上只有 1.09:1 —— 上面那批 token 覆盖漏了它。
+   坞内把它换成次要色档（10.9:1）。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-queue-dock] {
+  --dsw-alias-label-primary-dimmed: #d4ccb0;
+  --dsw-alias-label-dimmed: #9e9780;
+}
+
+/* 坞内每行右侧的操作按钮（删除 / 编辑排队消息）被宿主设成 opacity .45 淡显，图标色
+   虽是 label-tertiary #9e9780，实际只剩 2.21:1；坞内改为常显（6.81:1）。 */
+body[data-dsh-815] [data-queue-dock] [class*='action'] {
+  opacity: 1;
+}
+
+/* present 文件卡（data-presented-file）内的次要文字：上面那条规则只压了
+   label-primary，而卡里的说明行走 label-tertiary（#9e9780）——白卡 #fafafa 上只有
+   2.80:1。补齐墨色层级（secondary 8.7:1、tertiary 5.6:1、caption 4.2:1）。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-presented-file] {
+  --dsw-alias-label-secondary: #4a4638;
+  --dsw-alias-label-tertiary: #5a5443;
+  --dsw-alias-label-caption: #6a6454;
+}
+
+/* 改动卡片 header 上的 +N 计数是宿主写死的 #22c55e，落在白 header 上只有 2.18:1；
+   只把绿压深一档（+N 仍是绿、-N 仍是红，语义不变）。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-changed-files='true'] button[class*='header'] [class*='added'] {
+  color: #15803d;
+}
