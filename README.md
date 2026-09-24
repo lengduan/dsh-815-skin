@@ -32,7 +32,8 @@ DeepSeek Harness **Web GUI** 史料皮肤。对话区底图是陈坚油画《公
 |---|---|
 | 运行时 peer | `@deepseek-ai/cordis` `^4.0.1` |
 | DSH 形态 | Web GUI profile（`dsh web`） |
-| 最后本机验证 | 2026-08-15，Windows，加载后对话区油画可见、卸载后还原 |
+| 适配 DSH 版本 | **`0.1.7-rc.1`**（2026-09-24 本机 `:3080` 实测；服务会在 A/B 两个构建槽间切换，实测时见过 `f867838-dirty` 与 `2d3fd39-dirty`） |
+| 最后本机验证 | 2026-09-24，Windows，`:3080` 实测思考块正文 / 「在本地打开」图标 / diff 视图三类修复的对比度 |
 | 静态检查 | `pnpm test`（jsdom：body 属性、背景、owned 节点撤回） |
 | 未声称 | 未对照 awesome-dsh-plugins 某日 mainline SHA 做四维雷达；收录 ≠ 兼容 |
 
