@@ -512,17 +512,24 @@ body[data-dsh-815] [class*='sm-priorityBadge'] {
   --dsw-alias-label-secondary: #c8c0a4;
 }
 
-/* ui-goal 的目标条：条底是主题的浅色 var(--dsw-specific-tip)（非暗色主题下量到
-   #f5f6f7），而「进行中的目标」标签走 label-primary —— 皮肤在 body 上把它换成
-   奶油色 #f4ead6，对条底只有 1.1:1，标签整条融进条底看不见；目标正文走
-   label-primary-dimmed（浅色主题下是近黑）所以照常可见，看上去就只有标签失踪。
-   这里与 todo 面板同法，在条内把文字层级压回墨色：标签 primary、hover 态
-   secondary、图标 tertiary，对条底依次 16.1:1 / 8.7:1 / 7.0:1。暗色主题下条底
-   本身是深色，皮肤浅字仍然正确，故用 :not() 排除。 */
-body[data-dsh-815]:not([data-ds-dark-theme]) [data-goal-bar] {
-  --dsw-alias-label-primary: #1c1a14;
-  --dsw-alias-label-secondary: #4a4638;
-  --dsw-alias-label-tertiary: #5a5443;
+/* ui-goal 的目标条：宿主的条底是 .bar::before 的 var(--dsw-specific-menu)
+   （ui-goal/GoalBar.module.css），皮肤把它定成深橄榄 #2c2e24，实测确认不透明
+   （computed rgb(44,46,36)、alpha 1），backdrop-filter blur 不影响成色。
+   上一版规则按「条底是主题浅色 #f5f6f7」的旧假设把三级文字都压成墨色，方向正好
+   相反 —— 墨字落深底，且漏了 objective 走的 label-primary-dimmed（皮肤没定义，
+   落到浅色主题的近黑 #151517）。本机 :3080 受控探针（真实宿主类名 .ixix_W_* +
+   data-goal-bar，量计算样式）修前：标签 1.26:1、目标正文 1.32:1、目标图标与
+   三个操作图标 1.83:1 —— 与用户截图「整条糊在底色里」一致。
+   现改为深底提亮，与 todo 面板 / 排队坞同族：标签奶油、正文与 hover 次要米、
+   图标再亮一档（操作按钮要按得准）、编辑态 placeholder 走 tertiary 档。
+   对 #2c2e24 依次 11.54:1 / 8.57:1 / 7.57:1 / 4.72:1。暗色主题下条底同为深色，
+   浅字同样成立，故不再用 :not() 排除。 */
+body[data-dsh-815] [data-goal-bar] {
+  --dsw-alias-label-primary: #f4ead6;
+  --dsw-alias-label-primary-dimmed: #d4ccb0;
+  --dsw-alias-label-secondary: #d4ccb0;
+  --dsw-alias-label-tertiary: #c8c0a4;
+  --dsw-alias-label-caption: #9e9780;
 }
 
 body[data-dsh-815] [data-terminal] {
