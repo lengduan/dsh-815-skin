@@ -1,5 +1,17 @@
 # 更新日志
 
+## 0.1.29 — 2026-09-28
+
+修 composer 上方那条「进行中的目标 …」（宿主 `ui-goal` 组件）的文字与图标对比度。
+
+- 根因：宿主 `GoalBar.module.css` 的 `.bar::before` 底取 `var(--dsw-specific-menu)`，皮肤把它定成深橄榄 `#2c2e24`（本机实测该值不透明、computed `rgb(44,46,36)`；`backdrop-filter: blur(40px) saturate(1.5)` 不改变成色）。而皮肤里那条 `[data-goal-bar]` 规则是按**上一版「条底是主题浅色 `#f5f6f7`」**写的，把 label-primary / secondary / tertiary 一律压成墨色系 —— 墨字落深底，方向正好相反；它同时漏了目标正文走的 `--dsw-alias-label-primary-dimmed`（皮肤未定义 → 落到浅色主题近黑 `#151517`）
+- 修前实测（`:3080` 真实节点，ds-harness 工作区会话「检查项目和插件有没有更新」；计算样式 + 合成背景 + opacity 累乘）：标签「进行中的目标」**1.26:1**、目标正文 **1.32:1**、目标图标与暂停 / 编辑 / 清除三个操作按钮 **1.83:1** —— 与用户截图里「整条糊进底色」一致
+- 修法：条内改为深底提亮，与 todo 面板 / 排队坞同族，并补上 dimmed 档 —— `label-primary #f4ead6`、`label-primary-dimmed #d4ccb0`、`label-secondary #d4ccb0`、`label-tertiary #c8c0a4`、`label-caption #9e9780`；修后依次 **11.54:1 / 8.58:1 / 7.57:1**（三个操作按钮 opacity 1），编辑态输入框文字 11.54:1、hover 态按钮字 8.58:1
+- 截图像素口径复核：条区域（rect `478,327,717,36`）底主色 `44,46,36`、前景亮色主色 `210,202,174`（≈`#d4ccb0`），与计算样式一致
+- 暗色主题复核（宿主把条底换成 `rgba(48,49,54,.5)`，合成 `rgb(35,35,39)`）：标签 13.11:1 / 正文 9.74:1 / 图标 8.6:1，故该规则去掉 `:not([data-ds-dark-theme])` 未造成劣化
+- `pnpm test` 5 passed；仓库与 profile 两侧 `lib/client.js` sha256 一致
+- 明细见 `docs/交接-2026-09-24-低对比修复.md` 第九节
+
 ## 0.1.28 — 2026-09-24
 
 修一处行内 code 胶囊内的文件引用对比度。根因是 0.1.26 起「气泡里的 fileMention 改用亮铜」那条规则越界命中了浅纸底的胶囊。
