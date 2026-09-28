@@ -1,5 +1,17 @@
 # 更新日志
 
+## 未发布
+
+修「选中态填充」这一族 token 漏配导致的低对比（用户报的团队成员筛选胶囊「全部」）。
+
+- 现象：dsh-better-sidebar 团队任务板里 `lead` 左边的筛选胶囊是**空框**，鼠标移入才浮出「全部」两字
+- 根因：胶囊是宿主 `ui-primitives` 的 `Pill`，`.active` 取 `color: var(--dsw-alias-label-primary)` + `background: var(--dsw-alias-button-ghost-active-fill)`。上游只在浅色主题给这套 token 赋值（`design-platform.css` 浅色块 198-200 行：`ghost-active-fill` = bluish-100、`ghost-active-border` = bluish-500），皮肤此前没接管 → 底解析为近白 `#ebeef2`，而皮肤全局把 `label-primary` 换成奶油 `#f4ead6`，实测 **1.03:1**；`.interactive:hover` 的背景换成皮肤那档暗金 `interactive-bg-hover`，字才显形 —— 正是「移入才显示」
+- 修法：在 `body[data-dsh-815]` 的 token 块补齐 `--dsw-alias-button-ghost-active-fill: rgba(196,163,90,.28)`（与皮肤既有 `--dsw-alias-interactive-bg-active` 同值）、`--dsw-alias-button-ghost-active-border: rgba(196,163,90,.7)`（与 `border-l3` 同档）
+- 实测（本机 `:3080`，DSH `0.2.0-rc.1-7bb30cd-dirty`，真实 CSS 规则 + 真实 token 的受控探针）：修前 `color rgb(244,234,214)` on `bg rgb(235,238,242)` = **1.03:1**；修后背景 `rgba(196,163,90,.28)`，截图像素复核底 `72,64,38`、字 `244,234,214` = **8.63:1**。用户截图同区域独立采样：底 `233,236,242`、字 `242,232,214` ≈ 1.03:1，与计算样式闭环
+- 同一 token 还有三个消费点一并受益（未逐个实测）：`ui-trajectory` 回合头、`ui-schedule` 的 `DatePicker/ClockPicker .selected`（字同为 label-primary）、`extensions/ui-cordis` 的 `CordisRunRow .message`（字是 label-tertiary `#9e9780`，按合成底算 2.54:1 → 3.41:1，仍偏低，本轮未动它的字色）
+- 未验证项：报障面板本身当前**不可复现** —— `dsh-better-sidebar` 0.22.1 的 peer 兼容门禁在 DSH 0.2.0-rc.1 下拒绝装载，profile 已 `disabled: true`，页面 `[data-team-board]` 计数 0；本次验证走的是同构探针，不是原面板
+- 同页顺带实测到、本轮**未改**：`--dsw-alias-fill-l2` 在 `body` 层仍为空（皮肤只在 `sm-priorityBadge` 作用域覆盖过），`ui-jobs` 的 `.rowLineLive` 与 `.kind` 仍取上游浅色值
+
 ## 0.1.29 — 2026-09-28
 
 修 composer 上方那条「进行中的目标 …」（宿主 `ui-goal` 组件）的文字与图标对比度。

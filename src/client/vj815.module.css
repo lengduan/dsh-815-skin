@@ -40,6 +40,18 @@ body[data-dsh-815] {
   --dsw-alias-button-floating-hover: #4a4e38;
   --dsw-alias-button-info-fill: #6a5a32;
   --dsw-alias-button-info-hover: #7c6a3c;
+  /* ghost 按钮的选中态底色与描边。上游只在浅色主题里给这套 token 赋值
+     （bluish-100 #ebeef2 + bluish-500 #979da6 + bluish-150），皮肤此前没接管，
+     于是选中态拿到近白底，而文字走皮肤全局的奶油 label-primary #f4ead6 ——
+     实测 active Pill（团队成员筛选「全部」）1.03:1，白底奶油字等于没字；鼠标
+     移入时背景换成下面那档暗金 interactive-bg-hover 才显形，正是用户报的
+     「移入才显示全部」。同一套 token 还喂着 Pill.active、轨迹回合头
+     （TrajectoryTurnHeader）、日程选择器选中格（DatePicker/ClockPicker
+     .selected）、cordis 运行行（CordisRunRow .message），落点文字都是皮肤的
+     浅色档，所以按皮肤自己的选中档一并补齐：底取 interactive-bg-active 同值，
+     描边取铜金细线 l3 那档。 */
+  --dsw-alias-button-ghost-active-fill: rgba(196, 163, 90, 0.28);
+  --dsw-alias-button-ghost-active-border: rgba(196, 163, 90, 0.7);
   --dsw-alias-interactive-bg-active: rgba(196, 163, 90, 0.28);
   --dsw-alias-interactive-bg-hover: rgba(196, 163, 90, 0.14);
   --dsw-alias-interactive-bg-hover-solid: #3a3e2c;
