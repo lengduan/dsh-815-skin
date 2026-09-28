@@ -1249,34 +1249,53 @@ body[data-dsh-815] [data-variant='think'] :is([class*='thinkBody'] [class*='mark
   color: #d4ccb0;
 }
 
-/* ——— 第二轮适配 2/2：diff 视图（两处宿主共用同一个 diff 组件 DoHURa_*） ———
+/* ——— 第三轮适配：diff 视图改挂稳定语义属性（2026-09-28） ———
 
-   同一套行样式出现在两个容器里，必须一起覆盖：
-     ① 右栏「本轮改动」面板：根元素带语义钩子 data-changes-review='true'（sidebar.right.pane.tab 槽）；
-     ② 对话区改动卡片上悬停弹出的预览卡：_card_178vx_13 _preview_178vx_*（**没有**上面那个钩子，
-        所以只挂 ① 的规则漏掉了它 —— 用户第二轮截图指的就是这个弹框）。
-   两个容器里行类名一致，故规则不再挂容器钩子，直接落在行类上（DoHURa_ 是 diff 组件自己的
-   hash 前缀，'add'/'del' 子串不会命中别处；唯一的近邻 I6sWlq_added 不含 'DoHURa_add'）。
+   [这一处修过两次、坏过两次，坏法相同] 第二轮（2026-09-24）这批规则挂的是
+   FileDiff.module.css 的构建期 CSS Module hash 前缀 `DoHURa_`。DSH 升到
+   0.2.0-rc.1-7bb30cd 后同一模块的前缀变成 `N9Zj0W_`，六条选择器在本机 :3080
+   逐条实测命中 0 个 —— 修复整体失效，用户重新报障。本次不再引用任何 hash 前缀。
 
-   该组件按增删给每行上底色，底色来自宿主的浅色主题：
-     [class*='DoHURa_add']    → #e6f4e7（浅绿，新增行本体，两处都是这个值）
-     [class*='DoHURa_number'] → #edf7ed（浅绿，新增行的行号底）
-     [class*='DoHURa_empty']  → rgba(196,163,90,.07)（仅右栏并存视图的「对侧空行」）
-   而皮肤全局把文字压成奶油 label-primary #f4ead6 / 次要 #c8c0a4，shiki 那套
-   --shiki-token-* 也是为暗底选的亮色 —— 于是整片新增行成了「浅绿底 + 浅字」。
-   本机 :3080 实测（合成背景 + opacity 累乘，opacity 沿途全为 1；两个容器同值）：
-     新增行正文（DoHURa_text #c8c0a4；shiki span 继承 #f4ead6）on #e6f4e7 → 1.47:1 / 1.05:1
-     shiki 字符串 token #69db7c on #e6f4e7 → 1.54:1；标点 token #ced4da → 1.31:1
-     新增行行号 #01a241 on #edf7ed → 3.06:1；弹框里的增删号 DoHURa_sign → 2.96:1
-   修法：只作用于**浅底行**（新增 / 删除两侧），把文字压回皮肤在浅面板上的墨色层级，
-   并在这两行的作用域内换一套深色 shiki token（逐个按 ≥4.5:1 选：正文 15.3:1、
-   字符串 5.7:1、关键字 6.3:1、注释 6.6:1、函数 6.8:1、常量 7.0:1、参数 6.0:1、
-   标点 8.3:1）。diff 的 header 与 hunk 头（`@@ -73,3 +73,30 @@`）仍落在暗底上
-   （6.04~6.81:1），保持奶油 / 铜金不受影响；暗色主题下宿主给的是深底，整体排除。
-   注：本轮手头的 diff 是纯新增（+27/-0），删除侧 [class*='DoHURa_del'] 的底色
-   没能实测，按同一结构一并处理（浅底压墨），该值未实测。 */
+   [两个容器] 同一个 diff 组件出现在两处，都要覆盖，两处都有宿主手写的稳定钩子：
+     ① 右栏「本轮改动」面板：[data-changes-review]（sidebar.right.pane.tab 槽）；
+     ② 对话区改动卡片上悬停弹出的预览卡：[data-changes-hover-preview]（用户本次截图指的就是它）。
+
+   [匹配策略：只用固定类名，禁止哈希整串]
+   CSS Module 的类名 = 构建期哈希 + `_` + localName（如 `N9Zj0W_add`、`DoHURa_add`），
+   哈希每次构建都可能变，localName 由源码写定、不变。所以本段只允许两种锚点：
+     ① 固定类名后缀：`[class*='_add']` / `[class*='_del']`，并加
+        `:not([class*='_added'])` / `:not([class*='_deleted'])` 挡开近邻（改动卡片的
+        计数 span 是 z90sEq_added / z90sEq_deleted，与本组件无关）；容器作用域再收一层；
+     ② 宿主手写的语义属性 data-diff-line='add' | 'del'（ui-deliverables/FileDiff.tsx，
+        同样不参与构建哈希），作为并列的第二锚点，split 视图的行也带它。
+   **本文件不得再出现 `[class*='DoHURa_add']` / `[class*='N9Zj0W_add']` 这类整串哈希**
+   —— 那正是这一处两次失效的原因。同理，行号 / hunk 头 / note 等一律不用 hash 类名。
+   行号与 +/- 号不需要单独选择：宿主规则 `.add .number / .add .sign` 取
+   var(--diff-marker)，在**行**上重设该变量，宿主自己会把两处一起改深。
+   可用但本段未用的其它稳定属性：data-diff-hunk-header、data-diff-note /
+   data-diff-coarse / data-diff-truncated。
+
+   [修前实测] 本机 :3080（浅色方案，弹框与右栏两容器同值；合成背景 + opacity 累乘，
+   opacity 沿途全为 1）：
+     新增行正文 span #f4ead6 on #e6f4e7 → 1.05:1（56 处）
+     shiki 标点 token #ced4da → 1.31:1；shiki 字符串 token #69db7c → 1.54:1
+     `+` 号 / 行号 #01a241（行号底 #edf7ed）→ 2.96:1 / 3.06:1
+   底色来自宿主浅色主题：行本体 #e6f4e7、行号底 #edf7ed；而皮肤全局把文字压成奶油
+   label-primary #f4ead6，shiki 那套 --shiki-* 也是为暗底选的亮色 —— 于是整片新增行
+   成了「浅绿底 + 浅字」。shiki 走 css-variables 主题（span 的内联 style 就是
+   color:var(--shiki-token-*)），故在行上重设变量即可，不需要 !important。
+
+   [修法] 只作用于**浅底行**（新增 / 删除两侧）：正文压回皮肤浅面板的墨色层级，
+   行内换一套深色 shiki token（逐个按 ≥4.5:1 选：正文 15.3:1、字符串 5.7:1、
+   关键字 6.3:1、注释 6.6:1、函数 6.8:1、常量 7.0:1、参数 6.0:1、标点 8.3:1），
+   并把 --diff-marker 一并压深（行号 6.05:1、+/- 号同档）。
+   diff 的 header 与 hunk 头（`@@ -73,3 +73,30 @@`）仍落在暗底上（6.04~6.81:1），
+   保持奶油 / 铜金不受影响；暗色主题下宿主给的是深底，整体排除。
+   注：手头的 diff 是纯新增（+36/-0），删除行的浅红底未实测，按同一结构一并处理。 */
 body[data-dsh-815]:not([data-ds-dark-theme])
-  :is([class*='DoHURa_add'], [class*='DoHURa_del']) {
+  :is([data-changes-review], [data-changes-hover-preview])
+  :is([data-diff-line='add'], [class*='_add']:not([class*='_added'])) {
+  --diff-marker: #0f6b2c;
   color: #1c1a14;
   --shiki-foreground: #1c1a14;
   --shiki-token-constant: #1b4f9c;
@@ -1290,25 +1309,28 @@ body[data-dsh-815]:not([data-ds-dark-theme])
   --shiki-token-link: #1b4f9c;
 }
 
+/* 删除行同法，但行号与 `-` 号不动：宿主值 #ba2723 落浅红行号底 #fdece9 上 = 5.39:1，
+   本来就达标（只有新增行的 #01a241 需要压深）。 */
 body[data-dsh-815]:not([data-ds-dark-theme])
-  :is([class*='DoHURa_add'], [class*='DoHURa_del'])
-  :is([class*='DoHURa_text'], [class*='DoHURa_number'], [class*='DoHURa_sign']) {
+  :is([data-changes-review], [data-changes-hover-preview])
+  :is([data-diff-line='del'], [class*='_del']:not([class*='_deleted'])) {
   color: #1c1a14;
-}
-
-/* 新增行的行号宿主给的是绿 #01a241（落 #edf7ed 上 3.06:1），同一族里压深一档
-   （绿仍是绿，语义不变）：5.9:1。 */
-body[data-dsh-815]:not([data-ds-dark-theme])
-  [class*='DoHURa_add'] [class*='DoHURa_number'] {
-  color: #0f6b2c;
+  --shiki-foreground: #1c1a14;
+  --shiki-token-constant: #1b4f9c;
+  --shiki-token-string: #146c2e;
+  --shiki-token-string-expression: #146c2e;
+  --shiki-token-comment: #5a5443;
+  --shiki-token-keyword: #9c2b5f;
+  --shiki-token-parameter: #8a4b00;
+  --shiki-token-function: #5b3fa8;
+  --shiki-token-punctuation: #4a4638;
+  --shiki-token-link: #1b4f9c;
 }
 
 /* 面板头部「-N」计数是宿主写死的 #ec1313，落在暗底上实测 4.42:1，提亮一档到
-   #ff7a7a（7.9:1）；「+N」的 #22c55e 实测 8.72:1 已够，不动。
-   两个容器（右栏面板 / 卡片悬停弹框）都有这条表头，故同时挂两个作用域。 */
-body[data-dsh-815]
-  :is([data-changes-review='true'], [class*='DoHURa_header'])
-  [class*='deleted'] {
+   #ff7a7a（7.9:1）；「+N」的 #22c55e 实测 8.72:1 已够，不动。这条表头只在右栏
+   面板里有（弹框的 header 只显示路径），故只挂 data-changes-review。 */
+body[data-dsh-815] [data-changes-review] [class*='deleted'] {
   color: #ff7a7a;
 }
 
