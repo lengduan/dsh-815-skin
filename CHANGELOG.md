@@ -1,5 +1,16 @@
 # 更新日志
 
+## 0.1.33 — 2026-09-29
+
+修任务看板卡片「删除」确认框整层透明、与背后执行 Prompt 文字重叠看不清（用户报）。根因是**弹层兜底规则漏了 `role='alertdialog'`**，不是宿主回归。
+
+- 宿主 `._7D6uKa_modal { background: var(--dsw-alias-bg-base); … }`（任务看板删除确认框，`role='alertdialog'`）；皮肤 `:22` 把 `--dsw-alias-bg-base` 设为 `transparent` 好露油画，于是整层透出背后的详情正文
+- 皮肤弹层实色兜底规则 `body[data-dsh-815] :is([role='dialog'], [role='menu'], …)` 里没有 `alertdialog`，对本框命中 0 条；同一插件里「未保存改动」确认框（`dsh-taskboard-discard-dialog`）同样是 `alertdialog`，一并漏掉
+- 修法：把 `[role='alertdialog']` 补进该 `:is` 列表，其余取值不变
+- 修前实测（本机 `:3080`，`getComputedStyle`）：`_7D6uKa_modal` 的 `background-color` = `rgba(0, 0, 0, 0)`，与背后正文同层叠加
+- 修后实测：`background-color` = `rgb(36, 38, 28)`（不透明深橄榄），框内文字对底色 WCAG 对比度（自算，sRGB 线性化）—— 标题「删除任务」12.85:1、正文「确定删除…」9.54:1、「取消」12.85:1、「删除」15.34:1
+- `pnpm test` 5 passed（`tests/apply.spec.ts`）
+
 ## 0.1.32 — 2026-09-29
 
 接 0.1.31 的横向审计，修同批新增 token 的其余漏配：运行中蓝色文字与共享文字扫光、两张宿主浅底卡。

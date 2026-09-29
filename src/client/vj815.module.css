@@ -677,8 +677,12 @@ body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows
 body[data-dsh-815]:not([data-ds-dark-theme]) :global(.xterm) :global(.xterm-rows) :global(.xterm-bg-15) { background-color: #ffffff; }
 
 /* 对话列把 --dsw-alias-bg-base 设成透明好露油画；对话管理等弹层若写
-   background: var(--dsw-alias-bg-base)，会整层透出后面的字。弹层改实色。 */
-body[data-dsh-815] :is([role='dialog'], [role='menu'], [role='listbox'], [aria-modal='true'], [data-radix-popper-content-wrapper] > *) {
+   background: var(--dsw-alias-bg-base)，会整层透出后面的字。弹层改实色。
+   role='alertdialog' 也要收：任务看板卡片的「删除任务」确认框
+   （_7D6uKa_modal，宿主写 background: var(--dsw-alias-bg-base)）走的是
+   alertdialog 而不是 dialog，先前漏在列表外，整层透明、与背后的执行 Prompt
+   文字叠在一起看不清。 */
+body[data-dsh-815] :is([role='dialog'], [role='alertdialog'], [role='menu'], [role='listbox'], [aria-modal='true'], [data-radix-popper-content-wrapper] > *) {
   color: #f4ead6;
   background-color: #24261c;
   --dsw-alias-bg-base: #24261c;
