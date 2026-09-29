@@ -1,5 +1,19 @@
 # 更新日志
 
+## 0.1.31 — 2026-09-29
+
+修 DSH 0.2.0-rc.1 下 composer 弹层变浅灰玻璃底（用户报的模型 / 推理等级 / 访问模式三个菜单），以及这些菜单里图标仍是暗色。两处都是**升级新增的 token 皮肤没覆盖**，与上一版皮肤改动无关。
+
+- 现象：点开「模型 / 推理等级」或「访问模式」，弹层是一块浅灰面板，皮肤的奶油字压在上面几乎读不出来；文字修好后前置图标与 `›` 箭头仍是近黑
+- 根因 ①（弹层变灰）：0.2.0-rc.1 新增 `MenuSurface` 组件（`packages/client/ui-primitives/src/MenuSurface.tsx`、`MenuSurface.module.css:21`），菜单材质改由它的 `.material` 子层绘制 —— `background: var(--dsw-menu-surface-fill)` + `backdrop-filter: var(--dsw-menu-backdrop-filter)`，`z-index:-1` 画在表面自身底色之上。浅色主题该 token 是 `rgba(248,249,250,.58)`（`ui-theme/src/styles/design-platform.css:269`），皮肤只覆盖过旧的 `--dsw-specific-menu`（材质在旧构建里就是这个 token：`git show 2d3fd3971a:packages/client/ui-theme/src/styles/design-platform.css` 只有 `--dsw-specific-menu: rgba(248,249,250,.58)`，`MenuSurface.*` 在旧构建里不存在）→ 浅色玻璃盖在弹层暗橄榄底上
+- 根因 ②（图标仍是暗色）：同版新增 `--dsw-alias-menu-icon`（`design-platform.css:226` 浅色取 `--dsw-static-neutral-bluish-800` = rgb(53,54,56)，`:341` 深色取 `label-primary-dimmed`），`ui-primitives/src/Menu.module.css:175` 的 `.itemIcon` 由旧版的 `color: var(--dsw-alias-label-tertiary)`（`git show 2d3fd3971a:...Menu.module.css`）改挂到它；`ModelSelect.module.css:285` 的箭头、`ui-input-trigger/MenuView.module.css:95/184/273`、`ui-settings-account/AccountMenu.module.css:31` 同源
+- 修法：`body[data-dsh-815]` 的 token 块补 `--dsw-menu-surface-fill: #2c2e24` + `--dsw-menu-backdrop-filter: none`（实色之下模糊不可见），弹层规则内再按弹层自身底色定 `--dsw-menu-surface-fill: #24261c`；同一 token 块补 `--dsw-alias-menu-icon: #f4ead6`（与菜单文字同色）
+- 实测（本机 `:3080`，DSH `0.2.0-rc.1-7bb30cd-dirty`，计算样式合成 + 截图像素复核）：材质层 `rgba(248,249,250,.58)` on `rgb(36,38,28)` → 合成 `rgb(159,160,157)`、行文字 `#f4ead6` **2.2:1**；修后材质层 `rgb(36,38,28)`、`backdrop-filter: none`，模型菜单两行 **12.85:1**（值列 5.25:1），推理等级四项均 **12.85:1**，模型列表 21 行最低 **5.25:1**（分组标题），斜杠菜单最低 **4.72:1**
+- 图标实测：`span[class*='_itemIcon_']` 及其 `svg/path` 由 `rgb(53,54,56)` 变 `rgb(244,234,214)` = **12.85:1**，与文字同色；模型菜单两个 `›` 箭头同为 12.85:1；截图像素复核面板主体 `36,38,28`（修前同区域 `159,161,155`）
+- `pnpm test` 5 passed；仓库与 profile 两侧 `lib/client.js` sha256 一致（本机验证态，`dsh plugin update` 会盖回）
+- 同轮横向排查（只读取证，**本轮未修**）：升级新增且皮肤未覆盖、另会造成低对比的还有 —— `--dsw-alias-label-deep-diving` / `--dsw-alias-label-deep-diving-shimmer` / `--dsw-alias-label-shimmer`（`design-platform.css:215/216/224`；消费 `ChatView.module.css:121/122`、`TextShimmer.module.css:38`）。本机 `:3080` 正在运行的会话行实测：文字 `color(srgb .205 .367 .730)` = `rgb(52,94,186)`，截图像素主色 `rgb(22,19,12)` / `rgb(35,35,29)`，按 WCAG 相对亮度算 ≈ **3.1:1 / 2.6:1**；shimmer 扫光色为 `rgba(0,0,0,.3)`，落在深底上等于不可见。反向同类两条：`ui-schedule` 新建日程卡（`ScheduleCreateCard.module.css:7/19/20`，近白卡底）与 onboarding 卡（`DesktopOnboarding.module.css:7/156/159`）配皮肤奶油字。明细与逐条证据见 `docs/审计-2026-09-29-DSH-0.2.0-未覆盖token.md`
+- 未验证项：上述横向排查的 5 条只有前三条在本机复现到真实节点（运行中行），两条反向条目仅有源码与 token 字面值证据，未在浏览器实测
+
 ## 0.1.30 — 2026-09-28
 
 修 diff 视图在 DSH 0.2.0-rc.1 下重新出现的低对比（右栏「本轮改动」面板 + 改动卡片悬停弹框）——上一版修复挂的是 CSS Module 构建期 hash 前缀，升级后整体失配。

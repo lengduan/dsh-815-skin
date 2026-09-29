@@ -60,12 +60,28 @@ body[data-dsh-815] {
   --dsw-alias-label-secondary: #c8c0a4;
   --dsw-alias-label-tertiary: #9e9780;
   --dsw-alias-label-caption: #7e7866;
+  /* 菜单前置图标与导航箭头。0.2.0-rc.1 新开了这个 token：浅色主题取
+     neutral-bluish-800（rgb(53,54,56)），深色主题取 label-primary-dimmed；
+     上游把 Menu.module.css 的 .itemIcon 从 label-tertiary 改挂到它上面
+     （ModelSelect 的箭头、输入触发的斜杠 / 引用菜单、账号菜单同源）。皮肤
+     只覆盖了 label-* 那几档，于是深底菜单上的图标仍取浅色主题的近黑 ——
+     正是「文字已经变亮、图标还是暗的」。菜单底在皮肤下统一是深橄榄，
+     所以这里直接给成与菜单文字同色的奶油。 */
+  --dsw-alias-menu-icon: #f4ead6;
   --dsw-alias-state-business-primary: #c4a35a;
   --dsw-alias-state-business-tertiary: #3a3828;
   --dsw-shadow-lv2: var(--vj-shadow);
   --dsw-specific-input-major: rgba(28, 30, 22, 0.82);
   --dsw-specific-selector: #323428;
   --dsw-specific-menu: #2c2e24;
+  /* DSH 0.2.0-rc.1 起，共享菜单的材质改成 MenuSurface 组件的 .material 层来画：
+     它用 --dsw-menu-surface-fill 铺满整个表面（z-index:-1，画在表面自身底色之上），
+     再叠 --dsw-menu-backdrop-filter 的模糊。浅色主题那档是 rgba(248,249,250,.58)，
+     皮肤此前只覆盖旧的 --dsw-specific-menu，于是浅色玻璃盖在弹层的暗橄榄底上 ——
+     弹层整体变灰、皮肤的奶油字落上去只剩 2.2:1。这里把材质层压回皮肤的菜单实色，
+     并去掉实色之下不可见的模糊。 */
+  --dsw-menu-surface-fill: #2c2e24;
+  --dsw-menu-backdrop-filter: none;
   --dsw-specific-sidebar-fill: rgba(14, 16, 12, 0.88);
   --dsw-alias-markdown-code-block: #141610;
   --dsw-alias-markdown-code-block-banner: #1c1e16;
@@ -661,6 +677,8 @@ body[data-dsh-815] :is([role='dialog'], [role='menu'], [role='listbox'], [aria-m
   --dsw-specific-input-major: #24261c;
   --dsw-specific-selector: #323428;
   --dsw-specific-menu: #2c2e24;
+  /* 材质层与下面那条弹层底色同值，弹层才不会被提亮一档。 */
+  --dsw-menu-surface-fill: #24261c;
   --dsw-specific-tip: #2a2c22;
   --dsw-alias-button-elevated-fill: #2e3026;
   --dsw-alias-button-floating-fill: #2a2c22;
