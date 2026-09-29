@@ -1,5 +1,16 @@
 # 更新日志
 
+## 0.1.34 — 2026-09-29
+
+修侧栏 mneme「记忆」按钮两处（用户报）：图标与文案贴在一起没有间隔、右上角冲突计数的两位数字被裁掉一半。两条都来自插件自绘 DOM 与宿主类名拼接后的样式缺口，皮肤按值钉死，不改插件源码。
+
+- 间隔：插件只给 `.mneme-topentry-native` 一句 `display:flex`（`@modusensus/dsh-mneme/lib/client.js:1315` 的 `.mneme-topentry{display:flex;flex-direction:column;position:relative}` 管的是外层容器），按钮自身没有 `gap`。本机 `:3080` 实测修前 `gap: 0px`，图标 `svg` 右边界与文案 `.mneme-topentry-label` 左边界同为 `133.5px`；同一行的宿主「新会话」按钮实测图标右 `123px` / 文案左 `129px`，即 **6px**。修法：皮肤给按钮补 `gap: 6px` 对齐宿主。修后实测图标右 `130.5px` / 文案左 `136.5px`，间隔 **6px**，内容组仍居中（中心 140px = 按钮中心）
+- 徽章被裁：插件把冲突计数 `.mneme-entrybadge` 绝对定位成 `top:-3px; right:-3px`（`lib/client.js:1399`，`min-width:16px`，两位数即 24px 宽），而该按钮借了宿主的 `.newSession` 类名，连带继承 `overflow: hidden`。徽章越出按钮的部分因此被裁：修前实测按钮 `right 266 / top 120`，徽章 `right 268 / top 118`（rect `x244 y118 w24 h16`），右 2px 与上 2px 落进裁剪区，两位数只显示左半
+- 修法：皮肤把该按钮的 `overflow` 放成 `visible`，徽章按插件原设计凸在角上完整显示。按钮内只有图标、文案与徽章，没有宿主 `.newSession` 用来做宽度动画的 `newSessionLabelMask`，所以放成可见没有副作用；徽章最远到 `x=269`，仍在 280px 侧栏内
+- 修后实测：徽章右缘区间（`x=266`，此前被裁的 2px）`document.elementFromPoint` 命中徽章本体；展开态徽章与上方「新会话」按钮不重叠（徽章顶 118 > 新会话底 108）
+- 收起态一并实测：按钮 36×36（`x10-46`），徽章 `x24-48`，徽章右缘 48 < 侧栏宽 56（`.sidebarCol` 为 `overflow:hidden`），同样不被裁；此态下徽章会盖住图标右上角约三分之一，是 36px 图标位放 24px 徽章的结构性结果（插件原设计如此），本轮未改
+- `pnpm test` 5 passed（`tests/apply.spec.ts`）；仓库与 profile 两侧 `lib/client.js` sha256 一致（`3C9A59D8…`，本机验证态，`dsh plugin update` 会盖回）
+
 ## 0.1.33 — 2026-09-29
 
 修任务看板卡片「删除」确认框整层透明、与背后执行 Prompt 文字重叠看不清（用户报）。根因是**弹层兜底规则漏了 `role='alertdialog'`**，不是宿主回归。

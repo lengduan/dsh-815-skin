@@ -870,6 +870,20 @@ body[data-dsh-815] [class*='mneme-topentry-native'] {
   color: var(--dsw-alias-label-primary);
 }
 
+/* 插件只给按钮 flex 布局，没给 gap；图标与文案因此贴在一起（实测 icon right 与
+   label left 同为 133.5px，间距 0）。宿主 .newSession 的图标与文案实测相距 6px
+   （icon right 123 / label left 129），这里补同值对齐。
+   同一按钮还带宿主 .newSession 的 overflow: hidden，而插件把冲突计数徽章
+   （.mneme-entrybadge）绝对定位在 top:-3px / right:-3px —— 徽章越出按钮 2~3px 的
+   部分被这条 overflow 裁掉（实测按钮 right 266 / badge right 268，徽章顶 118 也
+   高过按钮顶 120），于是「26」这类两位数只显示半截。按钮内只有图标、文案与徽章，
+   没有宿主 .newSession 用来做宽度动画的 labelMask，故把 overflow 放成可见，让徽章
+   按插件设计凸在角上完整显示；徽章最远到 x=269，仍在 280px 侧栏内。 */
+body[data-dsh-815] [class*='mneme-topentry-native'] {
+  gap: 6px;
+  overflow: visible;
+}
+
 body[data-dsh-815] [class*='mneme-topentry-native']:hover {
   background: var(--dsw-alias-button-floating-hover);
 }
