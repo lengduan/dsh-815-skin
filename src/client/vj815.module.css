@@ -68,6 +68,23 @@ body[data-dsh-815] {
      正是「文字已经变亮、图标还是暗的」。菜单底在皮肤下统一是深橄榄，
      所以这里直接给成与菜单文字同色的奶油。 */
   --dsw-alias-menu-icon: #f4ead6;
+  /* 运行中（「深度求索中，用时 …」）的蓝色文字与扫光。0.2.0-rc.1 新增这三条 token：
+     浅色主题是深蓝 color-mix(deepseek-500 70%, blue-950) 与 30% 透明黑扫光，
+     深色主题才换成亮蓝 color-mix(deepseek-450 55%, bluish-400) / (blue-300 65%, deepseek-400)
+     与 45% 透明白（ui-theme/src/styles/design-platform.css:215/216/224 与 :330/331/339）。
+     宿主跑浅色主题、皮肤又是深底 —— 实测运行行文字 rgb(52,94,186) 落在行底
+     rgb(22,19,12) 上只有 ≈3.1:1，扫光 rgba(0,0,0,.3) 在深底上等于不可见。
+     这里直接取宿主深色主题那套值（下面注释里给出对应表达式）。 */
+  --dsw-alias-label-deep-diving: #7d9ade;
+  --dsw-alias-label-deep-diving-shimmer: #8abcfe;
+  --dsw-alias-label-shimmer: rgba(255, 255, 255, 0.45);
+  /* 桌面端引导卡（ui-settings-account 的 DesktopOnboarding .card）卡底取
+     --dsw-alias-onboarding-card-fill：浅色那档是 80% 的近白，深色那档才换深灰
+     （ui-theme/src/styles/onboarding.css:7 与 :13），皮肤跑在浅色宿主下 —— 近白卡底
+     配皮肤奶油字。这里按皮肤自己的玻璃面板取深橄榄，另两条同源 token 一并跟上。 */
+  --dsw-alias-onboarding-card-fill: rgba(36, 38, 28, 0.88);
+  --dsw-alias-onboarding-secondary-fill: #2c2e24;
+  --dsw-alias-onboarding-checkbox-border: rgba(196, 163, 90, 0.5);
   --dsw-alias-state-business-primary: #c4a35a;
   --dsw-alias-state-business-tertiary: #3a3828;
   --dsw-shadow-lv2: var(--vj-shadow);
@@ -1350,6 +1367,17 @@ body[data-dsh-815]:not([data-ds-dark-theme])
    面板里有（弹框的 header 只显示路径），故只挂 data-changes-review。 */
 body[data-dsh-815] [data-changes-review] [class*='deleted'] {
   color: #ff7a7a;
+}
+
+/* schedule_create 工具卡（宿主 ui-schedule 的 ScheduleCreateCard .card）：卡底写死
+   --card-fill: var(--dsw-static-neutral-50)（近白静态色），只在 body[data-ds-dark-theme]
+   下换成深灰（ScheduleCreateCard.module.css:7/19/20 与 :24-27）。皮肤跑在浅色宿主主题下，
+   于是近白卡底 + 皮肤的奶油 label-primary，等于没字。卡上带宿主手写属性
+   data-tool='schedule_create'（ScheduleCreateCard.tsx:53），据此把卡底与 hover 底换成
+   皮肤的深橄榄；条内文字仍走皮肤的 label-* 那几档，不需要再改。 */
+body[data-dsh-815] [data-tool='schedule_create'] {
+  --card-fill: #24261c;
+  --card-hover: #2c2e24;
 }
 
 

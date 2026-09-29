@@ -1,5 +1,20 @@
 # 更新日志
 
+## 0.1.32 — 2026-09-29
+
+接 0.1.31 的横向审计，修同批新增 token 的其余漏配：运行中蓝色文字与共享文字扫光、两张宿主浅底卡。
+
+- A1–A3 运行中（「深度求索中，用时 …」）与共享文字扫光：宿主新增 `--dsw-alias-label-deep-diving` / `--dsw-alias-label-deep-diving-shimmer` / `--dsw-alias-label-shimmer`（`ui-theme/src/styles/design-platform.css:215/216/224` 浅色 = `color-mix(deepseek-500 70%, blue-950)`、`color-mix(deepseek-500 30%, blue-950)`、30% 透明黑扫光；`:330/331/339` 深色 = `color-mix(deepseek-450 55%, bluish-400)`、`color-mix(blue-300 65%, deepseek-400)`、45% 透明白），消费处 `ui-chat/src/client/chat/ChatView.module.css:121-122`（`.running` 把 shimmer 重绑成 deep-diving-shimmer 并把文字色取 deep-diving）与 `ui-primitives/src/TextShimmer.module.css:38`
+  - 修前实测（本机 `:3080`，真实运行中行）：文字 `color(srgb .205 .367 .730)` = `rgb(52,94,186)`，同一行截图底色主色 `rgb(22,19,12)` → 按 WCAG 相对亮度 **≈3.1:1**；扫光 `rgba(0,0,0,.3)` 落在深底上不可见
+  - 修法：皮肤 token 块直接取宿主**深色主题那套值** —— `--dsw-alias-label-deep-diving: #7d9ade`、`--dsw-alias-label-deep-diving-shimmer: #8abcfe`、`--dsw-alias-label-shimmer: rgba(255,255,255,.45)`
+  - 修后实测：文字 `rgb(125,154,222)`，同一行底 `rgb(22,19,12)` → **6.67:1**；扫光计算值 `rgba(255,255,255,0.45)`
+- A4 `schedule_create` 工具卡（`ui-schedule/src/client/ScheduleCreateCard.module.css:7/19/20`）：卡底写死 `--card-fill: var(--dsw-static-neutral-50)`（近白静态色），深色改写只挂 `body[data-ds-dark-theme]`（`:24-27`），皮肤跑浅色宿主主题下不命中 → 近白卡底配皮肤奶油 `label-primary`
+  - 修法：按卡上宿主手写属性 `data-tool='schedule_create'`（`ScheduleCreateCard.tsx:53`）把 `--card-fill` / `--card-hover` 换成皮肤深橄榄 `#24261c` / `#2c2e24`；皮肤规则特异性 `(0,2,1)` 高于宿主 `.card` 的 `(0,1,0)` 与 `:global(body[data-ds-dark-theme]) .card` 的 `(0,2,0)`
+- A5 桌面端引导卡（`ui-settings-account/src/client/DesktopOnboarding.module.css` 卡底取 `--dsw-alias-onboarding-card-fill`）：浅色那档是 80% 近白，深色那档才换深灰（`ui-theme/src/styles/onboarding.css:7` 与 `:13`），皮肤下同样是近白卡底配奶油字
+  - 修法：皮肤 token 块按自己的玻璃面板取值 —— `--dsw-alias-onboarding-card-fill: rgba(36,38,28,.88)`、`--dsw-alias-onboarding-secondary-fill: #2c2e24`、`--dsw-alias-onboarding-checkbox-border: rgba(196,163,90,.5)`
+- `pnpm test` 5 passed；仓库与 profile 两侧 `lib/client.js` sha256 一致（`CE59070A…`）
+- **本轮未实测**：A4 需要会话里存在 `schedule_create` 工具卡（本机侧栏当前只列得出本工作区的两条会话，没翻到带该卡的会话）；A5 需要进桌面端引导页（本机 `:3080` 的设置面板实测只有「通用设置 / 模型 / 内置插件 / Agent 预设 / 已归档会话 / Web 插件 / 宠物 / 创意工坊 / 打开配置文件」，没有账户页入口）。两条目前只有「宿主源码 + token 字面值 + 特异性对照」这一档证据，待真实页面出现时复核
+
 ## 0.1.31 — 2026-09-29
 
 修 DSH 0.2.0-rc.1 下 composer 弹层变浅灰玻璃底（用户报的模型 / 推理等级 / 访问模式三个菜单），以及这些菜单里图标仍是暗色。两处都是**升级新增的 token 皮肤没覆盖**，与上一版皮肤改动无关。
