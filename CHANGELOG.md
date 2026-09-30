@@ -1,5 +1,16 @@
 # 更新日志
 
+## 0.1.35 — 2026-09-30
+
+修设置弹框左侧 tab 的选中态（用户报）：选中的那一项底为近白、字为奶油，几乎读不出来。根因是皮肤给这两个 token 定的锚点已不在弹框的祖先链上，不是配色取值问题。
+
+- 宿主消费点：`ui-settings-general/src/client/SettingsRoot.module.css:163` 的 `.navCell.active` 取 `--dsw-specific-sidebar-nav-item-active`（hover 走 `:159` 的 `--dsw-specific-sidebar-nav-item-hover`），文字取 `--dsw-alias-label-primary`（皮肤值 `#f4ead6` 奶油）
+- 皮肤旧锚点 `body[data-dsh-815] [data-slot='sidebar.settings'] [role='dialog'][aria-modal='true']` 在本机 `:3080` 实测命中 **0** 个 —— 弹框由 `SettingsRoot.tsx:67` 的 `createPortal(..., document.body)` 挂到 body 下，而 `[data-slot='sidebar.settings']` 只是侧栏底部的设置按钮行（全页该 slot 存在 1 个，但不在弹框祖先链上），token 因此一直回落到宿主的浅色主题值 `#ebeef2`
+- 修法：锚点改为弹框自身的语义属性 `[role='dialog'][aria-modal='true'][data-shortcut-modal='settings']`（`data-shortcut-modal` 由 `SettingsRoot.tsx:70` 写死），不引用 CSS Module 的构建期 hash 前缀，宿主升级换 hash 也不会再失配；实测新锚点命中 1 个、旧锚点 0 个
+- 修前实测（同一 active 节点，把 token 临时换回宿主浅色值做受控对照）：底 `rgb(235,238,242)` + 字 `rgb(244,234,214)` = **1.03:1**；修后底 `rgba(196,163,90,.32)` 合成 `rgb(87,78,48)` = **6.93:1**（hover token 口径合成 `rgb(58,56,37)` = 9.97:1；临时挂 `data-ds-dark-theme` 复测同为 6.93:1）
+- `pnpm test` 5 passed（`tests/apply.spec.ts`）
+- 同弹框内另有一处低对比**未改**：各模型卡的「删除」按钮 `#ec1313` on `rgb(36,38,28)` = 3.41:1（宿主写死的红色），本轮未动
+
 ## 0.1.34 — 2026-09-29
 
 修侧栏 mneme「记忆」按钮两处（用户报）：图标与文案贴在一起没有间隔、右上角冲突计数的两位数字被裁掉一半。两条都来自插件自绘 DOM 与宿主类名拼接后的样式缺口，皮肤按值钉死，不改插件源码。
