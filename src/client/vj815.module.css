@@ -906,6 +906,21 @@ body[data-dsh-815] [class*='collapsed'] [class*='mneme-topentry-native']:hover {
   background: var(--dsw-alias-interactive-bg-hover);
 }
 
+/* 「记忆」按钮右上角那枚冲突计数徽章（mneme 的 `.mneme-entrybadge`，插件的
+   便携样式在 `@modusensus/dsh-mneme/lib/client.js:1416`）：底取
+   var(--dsw-alias-state-error, #c33)、字取 var(--dsw-alias-bg-layer-1, #fff)。
+   宿主主题的 state-error 是 #cc3333，而皮肤把 bg-layer-1 换成了深橄榄
+   rgba(28, 30, 22, 0.78) —— 深橄榄字压在暗红底上，本机 `:3080` 实测合成
+   底 rgb(204, 51, 51) / 字 rgb(67, 35, 28)，对比度 2.73:1（10.5px / 600 的小字），
+   用户报「文字颜色和背景颜色过于接近」。修法：徽章自身把这两条钉死成鲜红底
+   #dc2626（比原 #cc3333 更饱和更亮）与纯白字，对 #dc2626 实测 4.83:1。
+   插件同一元素上的 2px 外环（box-shadow 取 bg-layer-1，深橄榄）保持不动，
+   仍把徽章从按钮底上托开。 */
+body[data-dsh-815] [class*='mneme-entrybadge'] {
+  background: #dc2626;
+  color: #ffffff;
+}
+
 /* dsh-task-board 的侧栏入口（[data-dsh-taskboard-entry]，即插件 board.module.css 的
    .entry：36px 高 / 8px 圆角 / 左对齐 / 13px 次要色文字的透明导航行）与 dsh-timer-agent
    同族，同样插在「新会话」与工作区浏览区之间，一样不继承宿主的 .newSession 类名。
