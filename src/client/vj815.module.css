@@ -712,7 +712,7 @@ body[data-dsh-815] :is([role='dialog'], [role='alertdialog'], [role='menu'], [ro
 /* 设置弹框左侧的 tab（SettingsRoot 的 navCell）：选中底取
    --dsw-specific-sidebar-nav-item-active，浅色主题下是近白 bluish-100（实测
    #ebeef2），而 tab 文字取 --dsw-alias-label-primary（皮肤 #f4ead6 奶油）——
-   实测 1.07:1，选中的那一项几乎读不出来（hover 底 #f1f3f5 同样如此）。
+   实测 1.03:1（受控对照：同一 active 节点把 token 换回宿主浅色值），选中的那一项几乎读不出来（hover 底 #f1f3f5 同样如此）。
    锚点修正：弹框由 createPortal 挂到 body 下，**不在** [data-slot='sidebar.settings']
    子树里（那个 slot 只是侧栏底部的设置按钮行），旧选择器在本机 :3080 实测命中 0 个，
    token 一直回落到宿主的近白。改挂弹框自身的语义属性（role=dialog + aria-modal +
