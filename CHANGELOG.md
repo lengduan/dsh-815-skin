@@ -1,5 +1,23 @@
 # 更新日志
 
+## 0.1.37 — 2026-10-01
+
+修桌面端（Electron）整屏比 web 端偏暗（用户报）：同一套皮肤，桌面端 Mean 30.2、web 端 40.2。根因不是渲染器 / GPU 合成 / 色彩管理差异，而是桌面端布局插件在 **Windows 标题栏模式**下把皮肤的侧栏填充变量当成了整个框架容器的底色。
+
+- 插件规则（`@deepseek-ai/dsh-client-ui-layout`，Windows 标题栏模式）：`[data-windows-titlebar] .BynINW_frame { background: var(--dsw-specific-sidebar-fill); … }`；该变量由皮肤定义成 `rgba(14, 16, 12, 0.88)`（`src/client/vj815.module.css:102`，语义本应是「侧栏填充」）
+- 命中元素是铺满视口的顶层容器（`.BynINW_frame`，属性 `data-dsh-frame`，实测 1920×1032），于是 88% 不透明的深色盖在 `body` 的油画背景之上；web 端没有 `data-windows-titlebar`，同一容器走 `--dsw-alias-bg-base`（皮肤设为 transparent），因此不受影响
+- 修法（`src/client/index.ts:189`，`appendRule` 段）：给 Windows 标题栏模式的框架容器覆盖背景，只动框架本体，`::before`（40px 标题条）与三列各自底色不动
+
+  ```css
+  [data-windows-titlebar] body[data-dsh-815] [class*="frame"][data-dsh-frame] { background: transparent; }
+  ```
+
+- 交接文档给出的原文是 `body[data-dsh-815] [data-windows-titlebar] [class*="frame"][data-dsh-frame]`，本机实测 `document.querySelectorAll` 命中 **0** 个：`data-windows-titlebar` 挂在 `<html>` 上，写成 `body[data-dsh-815]` 的后代在结构上永不成立；把这两段交换顺序后命中 **1** 个（同一元素）。选择器仍以 `[class*="frame"][data-dsh-frame]` 收窄，不用宽泛的 `[class*="frame"]`
+- 本机桌面端实测（1920×1032 / dpr=1 / 首页状态，`lib\*` 覆盖到 profile 后的本机验证态）：修前 **30.2 / 91.5% / 24.4** → 修后 **40.1 / 64.0% / 31.5**（整体 Mean / 暗像素占比 / 右侧纯背景区 x1500-1900 y200-700），与 web 端对齐
+- 受控对照（在同一页面把框架底改回 `var(--dsw-specific-sidebar-fill)` 再截图）逐区对比修后：侧栏 x0-280 逐点相同（平均绝对差 0.01，逐点相同占比 100%）、输入框填充色两态同为 `rgb(238, 228, 202)`、标题条中心 (960,20) 修后 `(14,16,13)` vs 修前 `(13,16,12)`（最大差 3.2/255，来自修前框架底在 `::before` 标题条之下多叠了一层 88% 深色）；油画可见区按预期变亮（主内容区平均绝对差 16.62）
+- web 端回归（`http://127.0.0.1:3080/`，同视口）：**40.2 / 63.1% / 31.7**，与修前 40.1 / 63.0% / 31.7 一致；页面样式表里已确认加载的是本条新规则，且 `[data-windows-titlebar]` 在 web 端不存在、该规则命中 0 个元素
+- `pnpm test` 5 passed（`tests/apply.spec.ts`）
+
 ## 0.1.36 — 2026-09-30
 
 修侧栏 mneme「记忆」按钮右上角冲突计数徽章的文字与底色过近（用户报），按用户要求把底色换成更鲜艳的红、文字换成高对比色。成因是插件用两个宿主 token 拼配色，而皮肤改写了其中一个。

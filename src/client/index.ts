@@ -182,6 +182,11 @@ export function apply(ctx: Context): void {
   }
   appendRule('body[data-dsh-815] [class*="frame"][data-wco] { grid-template-rows: env(titlebar-area-height, 40px) 1fr; }')
   appendRule('body[data-dsh-815] [class*="frame"][data-desktop] { grid-template-rows: 32px 1fr; }')
+  // 桌面端把整个框架容器刷成了 --dsw-specific-sidebar-fill（皮肤里是 88% 深色），
+  // 会盖住 body 上的油画背景；这里只把框架底恢复透明，标题条与三列各自底色不动。
+  // data-windows-titlebar 挂在 <html> 上，只能放在 body 之前：写成 body[data-dsh-815] [data-windows-titlebar] …
+  // 要求 <html> 是 body 的后代，永远 0 命中（本机实测）。
+  appendRule('[data-windows-titlebar] body[data-dsh-815] [class*="frame"][data-dsh-frame] { background: transparent; }')
   const widthRule = widthSheet.sheet!.cssRules[0] as CSSStyleRule
 
   syncTitlebarHeight = (): void => {
