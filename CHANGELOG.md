@@ -1,5 +1,17 @@
 # 更新日志
 
+## 0.1.38 — 2026-10-11
+
+修会话里斜杠命令（`/goal` 这类）的输入回显气泡整块糊住（用户报，截图里文字与底色几乎同色）。根因是**这类气泡与普通用户气泡不是同一个组件**，皮肤原有的深底规则对它命中 0 个。
+
+- 气泡 DOM：命令气泡是 `-ja1rG_row / -ja1rG_stack / -ja1rG_bubble`，祖先链上没有 `userRow`；皮肤那条 `body[data-dsh-815] [class*='userRow'] [class*='bubble']`（`src/client/vj815.module.css:473`）因此整条落空
+- 落空的后果：底走宿主的 `--dsw-specific-bubble`（浅色主题 = `var(--dsw-static-deepseek-50)`，本机客户端 asar 内该模块 CSS 原文：`.ja1rG_bubble{…;background:var(--dsw-specific-bubble);…;color:var(--dsw-alias-label-primary);…}`），字仍是皮肤全局的奶油 `#f4ead6` —— 本机 `:19387` 真实节点实测正文 **1.07:1**、`/goal` chip（铜金 `#c4a35a`）**2.16:1**
+- 修法：锚点用宿主手写的语义属性 `data-chat-flow-kind='command-input'`（不随 CSS Module hash 变），把两种气泡并进同一条规则 —— 同深橄榄底 `rgba(52,48,32,.92)`、同铜边、同奶油字；类名仍只用 localName 后缀 `[class*='bubble']`，不含任何 hash 整串
+- 修后实测（同一节点，刷新页面载入新 bundle 后）：正文 **11.06:1**、chip **5.49:1**；另有受控探针（先量原节点、再注入本条等价规则）得到同一组数值，修前 1.07 / 2.16
+- `pnpm test` 5 passed（`tests/apply.spec.ts`）
+- 同一 token 的第三处使用点 `-v1fjQa_bubble`（问答卡，文字同样取 `label-primary` / `label-secondary`）**本轮未改**：它当时没有出现在任何会话里，且除构建期 hash `v1fjQa` 外没有可用的稳定锚点，等它实际出现时再取证处理
+- 未实测项：暗色主题下的命令气泡（宿主该 token 在暗色下本是 `var(--dsw-static-neutral-bluish-850)` 深色，按同值推算不劣化，未取实测值）
+
 ## 0.1.37 — 2026-10-01
 
 修桌面端（Electron）整屏比 web 端偏暗（用户报）：同一套皮肤，桌面端 Mean 30.2、web 端 40.2。根因不是渲染器 / GPU 合成 / 色彩管理差异，而是桌面端布局插件在 **Windows 标题栏模式**下把皮肤的侧栏填充变量当成了整个框架容器的底色。

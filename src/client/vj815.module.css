@@ -470,7 +470,19 @@ body[data-dsh-815] [data-composer-card] button[class*='add']:hover {
   background: #4a5238;
 }
 
-body[data-dsh-815] [class*='userRow'] [class*='bubble'] {
+/* 用户气泡，以及斜杠命令（/goal 这类）的输入回显气泡。
+   命令气泡的 DOM 与普通用户气泡不同（-ja1rG_row / -ja1rG_stack / -ja1rG_bubble，
+   祖先链上没有 userRow），旧的 [class*='userRow'] 规则整条落空：底走宿主的
+   --dsw-specific-bubble（浅色主题 = static-deepseek-50，本机 :19387 实测
+   rgb(237,243,254)），字仍是皮肤全局的奶油 label-primary #f4ead6 —— 实测正文
+   1.07:1、/goal chip（铜金 #c4a35a）2.16:1，与用户截图「整块糊在浅底里」一致。
+   勾子用宿主的语义属性 data-chat-flow-kind='command-input'（不随 CSS Module hash 变），
+   两种气泡并进同一条规则：同深橄榄底、同铜边、同奶油字。
+   受控探针（同一节点先量、再注入本条等价规则）修后正文 11.06:1、chip 5.49:1。
+   暗色主题下宿主命令气泡底本就是深色（static-neutral-bluish-850），深橄榄同样成立。 */
+body[data-dsh-815]
+  :is([class*='userRow'], [data-chat-flow-kind='command-input'])
+  [class*='bubble'] {
   color: #f4ead6;
   border: 1px solid rgba(196, 163, 90, 0.4);
   background: rgba(52, 48, 32, 0.92);
