@@ -747,6 +747,27 @@ body[data-dsh-815] option {
   background-color: #f3ead4;
 }
 
+/* 插件二级页（左栏「插件」→ 任一插件的详情页）：「来源信息」里的代码来源值，以及
+   标题旁的版本徽章。宿主给这两处同一个底 —— `.fO69Vq_facts code` 与
+   `._tag_brmue_4[data-tone='neutral']` 的 background 都是
+   var(--dsw-alias-bg-module-platform)，皮肤没有覆盖该 token，浅色主题下它仍是
+   #f5f6f7；字却跟着皮肤换成了奶油 label-primary #f4ead6 / 米色 label-secondary
+   #c8c0a4。本机客户端 :53801 实测（dsh-fallback-guard / mneme 记忆库 /
+   @linxin666/dsh-web-all 三个详情页数值一致）：代码来源 1.10:1、版本徽章
+   1.68:1；修后同一节点两处均为 14.52:1。
+   修法与对话区行内 code 同一视觉语言：宣纸底 + 墨字 + 铜边（边界改用 inset
+   box-shadow，不占布局，徽章与值行的高度不变）。锚点用宿主手写的语义属性
+   data-plugin-detail / data-plugin-source，类名只留 localName 后缀 versionTag，
+   不引用构建期 hash；暗色主题下这两个 token 本身是深底浅字，故限定非暗色主题。 */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [data-plugin-detail] [data-plugin-source] code,
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [data-plugin-detail] [class*='versionTag'] {
+  color: #1c1a14;
+  background: var(--vj-paper);
+  box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.45);
+}
+
 /* 插件推荐面板写死 GitHub 冷色（#0d1117 / #58a6ff）。皮肤下换成暖橄榄底 + 铜金链。 */
 body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-panel) {
   color: #f4ead6;

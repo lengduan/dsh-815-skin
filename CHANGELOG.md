@@ -1,5 +1,18 @@
 # 更新日志
 
+## 0.1.39 — 2026-10-19
+
+修插件二级页（左栏「插件」→ 任一插件）里「来源信息」的代码来源值、以及标题旁的版本徽章文字贴底色（用户报，箭头指向代码来源那一条近白横条）。成因是宿主给这两处同一个底 token，皮肤只换字没换底。
+
+- 宿主规则（本机客户端 asar 内 ui 包）：`.fO69Vq_facts code{…background:var(--dsw-alias-bg-module-platform);…}`、`._tag_brmue_4[data-tone="neutral"]{…background:var(--dsw-alias-bg-module-platform);color:var(--dsw-alias-label-secondary);…}`；皮肤没覆盖 `--dsw-alias-bg-module-platform`，浅色主题下它仍是 `#f5f6f7`，字却跟着皮肤换成奶油 `#f4ead6` / 米色 `#c8c0a4`
+- 本机客户端 `:53801` 实测（dsh-fallback-guard / mneme 记忆库 / @linxin666/dsh-web-all 三个详情页数值一致）：代码来源 **1.10:1**、版本徽章 **1.68:1**
+- 修法（`src/client/vj815.module.css`，「插件二级页」段）：两处并进对话区行内 code 的宣纸底 + 墨字 + 铜边；边界用 `inset box-shadow` 而非 `border`，值行高度 18px、徽章 45×19 与修前一致
+- 锚点用宿主手写的语义属性 `[data-plugin-detail]` / `[data-plugin-source]`，类名只留 localName 后缀 `[class*='versionTag']`，不引用构建期 hash（`fO69Vq` / `brmue`）；作用域限 `:not([data-ds-dark-theme])`
+- 修后实测（刷新载入新 bundle 后同一节点）：两处均墨字 `#1c1a14` 落宣纸 `#f3ead4` = **14.52:1**
+- 受控对照：给 `body` 临时加 `data-ds-dark-theme`，本条规则不再命中，回落宿主的 `#353638` 深底 + `#f9fafb` / `#cfd3d6` 浅字（按 WCAG 公式约 11.5:1 / 8.6:1）—— 暗色主题下的真实渲染本轮**未实测**，只验证了作用域
+- `pnpm build` 成功、`pnpm test` 5 passed；`lib\*` 覆盖 desktop / web 两个 profile 后刷新页面验证，三处 `client.js` sha256 一致
+- 同页「卸载」按钮红字 `#ec1313` 落 `#080a06` 实测 4.42:1，用户未报、本轮未改
+
 ## 0.1.38 — 2026-10-11
 
 修会话里斜杠命令（`/goal` 这类）的输入回显气泡整块糊住（用户报，截图里文字与底色几乎同色）。根因是**这类气泡与普通用户气泡不是同一个组件**，皮肤原有的深底规则对它命中 0 个。
