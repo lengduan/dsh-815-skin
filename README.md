@@ -1,3 +1,5 @@
+> **口径更新（2026-10-16）**：本机 DSH 已改为官方桌面客户端独占——客户端固定监听 `127.0.0.1:19387`，活动 profile 为 `~/.dsh/profiles/desktop`。下文出现的 `:3080` / `:3099`、A/B 双仓与 `C:\lengduan\githubs\ds-harness` 下的脚本路径，均属源码启动链路，现仅作回落。（该目录本机已不存在。）
+
 # 一九四五年八月十五日 · dsh-815-skin
 
 这个懂的都懂，不懂的先欣赏世界名画
@@ -22,7 +24,7 @@ DeepSeek Harness **Web GUI** 史料皮肤。对话区底图是陈坚油画《公
 
 **解决什么：** Web UI 默认浅色/默认底换成 1945 终战史料外观（油画底、选中会话青天白日小旗、标题栏品牌）。
 
-**适合谁：** 本机跑 `dsh web` / `--profile web`、只想换皮的人。
+**适合谁：** 本机装 `desktop` profile、只想换皮的人（源码 `dsh web` 回落链路同样生效）。
 
 **不适合：** TUI / headless；要改 agent 行为、工具权限或主题引擎配置的场景。宿主 `apply()` 为空，效果全在 client bundle。
 
@@ -31,7 +33,7 @@ DeepSeek Harness **Web GUI** 史料皮肤。对话区底图是陈坚油画《公
 | 项 | 声明 |
 |---|---|
 | 运行时 peer | `@deepseek-ai/cordis` `^4.0.1` |
-| DSH 形态 | Web GUI profile（`dsh web`） |
+| DSH 形态 | Web GUI（本机由 DSH 桌面客户端加载；源码 `dsh web` 为回落链路） |
 | 适配 DSH 版本 | **`0.1.7-rc.1`**（2026-09-24 本机 `:3080` 实测；服务会在 A/B 两个构建槽间切换，实测时见过 `f867838-dirty` 与 `2d3fd39-dirty`） |
 | 最后本机验证 | 2026-09-24，Windows，`:3080` 实测思考块正文 / 「在本地打开」图标 / diff 视图三类修复的对比度 |
 | 静态检查 | `pnpm test`（jsdom：body 属性、背景、owned 节点撤回） |
@@ -41,10 +43,10 @@ DSH mainline 几乎每日变。DOM class / token 漂移会导致皮失效或叠�
 
 ## Install / Uninstall
 
-装进 **web** profile（从 npm 拉已构建包，不必 clone）：
+装进 **desktop** profile（从 npm 拉已构建包，不必 clone）：
 
 ```sh
-dsh plugin --profile web add @lengduan/dsh-client-ui-skin-815
+dsh plugin --profile desktop add @lengduan/dsh-client-ui-skin-815
 ```
 
 `dsh plugin` 把参数转给 profile 目录里的 pnpm，成功后把带 `dsh.bundle` 的包写进 `dsh.profile.bundles`。本包 patch 插入 id `ui-skin-815`。
@@ -52,27 +54,27 @@ dsh plugin --profile web add @lengduan/dsh-client-ui-skin-815
 升级：
 
 ```sh
-dsh plugin --profile web update @lengduan/dsh-client-ui-skin-815
+dsh plugin --profile desktop update @lengduan/dsh-client-ui-skin-815
 ```
 
-从源码开发：clone 后 `pnpm install`、`pnpm build`，再 `dsh plugin --profile web add .`。相对路径相对你执行命令时的当前目录。本地 `link:` / `file:` 安装时，改源码后重新 `pnpm build`；HMR 是否立刻刷皮取决于宿主 client 热更新。
+从源码开发：clone 后 `pnpm install`、`pnpm build`，再 `dsh plugin --profile desktop add .`。相对路径相对你执行命令时的当前目录。本地 `link:` / `file:` 安装时，改源码后重新 `pnpm build`；HMR 是否立刻刷皮取决于宿主 client 热更新。
 
-**禁用（不删依赖）：** 在 web profile 的 `cordis.patch.yml`（或能盖过 bundle 层的 patch）把 `ui-skin-815` 设 `disabled: true`。effect 会整份撤回。
+**禁用（不删依赖）：** 在 desktop profile 的 `cordis.patch.yml`（或能盖过 bundle 层的 patch）把 `ui-skin-815` 设 `disabled: true`。effect 会整份撤回。
 
 **彻底移除：**
 
 ```sh
-dsh plugin --profile web remove @lengduan/dsh-client-ui-skin-815
+dsh plugin --profile desktop remove @lengduan/dsh-client-ui-skin-815
 ```
 
-依赖和 `dsh.profile.bundles` 层一并拿掉。重启 `dsh web` 后不应再有 `data-dsh-815`、内嵌油画。
+依赖和 `dsh.profile.bundles` 层一并拿掉。重启 DSH 桌面客户端（托盘退出后重新启动）后不应再有 `data-dsh-815`、内嵌油画。
 
-固定版本：用 commit / tag，不要依赖会漂移的未钉死分支。建议先在隔离 profile 试加载，再进日常 web profile。
+固定版本：用 commit / tag，不要依赖会漂移的未钉死分支。建议先在隔离 profile 试加载，再进日常 desktop profile。
 
 ## Quick start
 
-1. `pnpm build` 且 `dsh plugin --profile web add .` 成功。
-2. `dsh web`，打开 GUI。
+1. `pnpm build` 且 `dsh plugin --profile desktop add .` 成功。
+2. 打开 DSH 桌面客户端 GUI。
 3. 最小验收：`document.body` 有 `data-dsh-815`；对话区能看见南京受降油画；侧栏不出现诏书缩略；点卸载/禁用后上述全部消失。
 
 无需额外配置文件、无需环境变量。
@@ -99,13 +101,13 @@ dsh plugin --profile web remove @lengduan/dsh-client-ui-skin-815
 
 | 现象 | 处理 |
 |---|---|
-| 装了没皮 | 确认装的是 **web** profile，且已 `pnpm build`（`lib/client.js` 存在）。`headless` 不会出这层 UI |
+| 装了没皮 | 确认装的是 **desktop** profile，且已 `pnpm build`（`lib/client.js` 存在）。`headless` 不会出这层 UI |
 | 对话区一条水平线 / 油画被切 | 主题 token `--dsw-alias-bg-base` 盖住底图。确认本仓 CSS 已把 `[data-phase='active']` 设透明；升级 DSH 后 class 名变了就要改选择器 |
 | 禁用后还留着 | 硬刷新；查是否还有别的皮肤插件也在写 body 背景 |
 | 加载报错缺 `@deepseek-ai/cordis` | peer 未满足。对齐 DSH 自带 cordis `^4.0.1` |
 | 回滚 | `remove` 包或 `disabled: true`，保留 profile 原 `package.json` / lockfile 再装 |
 
-日志：浏览器控制台 + 启动 `dsh web` 的终端。本插件不写独立日志文件。
+日志：浏览器控制台 + 启动 DSH 桌面客户端的终端。本插件不写独立日志文件。
 
 ## Development
 
