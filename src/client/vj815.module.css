@@ -361,6 +361,13 @@ body[data-dsh-815]
     0 8px 22px rgba(0, 0, 0, 0.32);
 }
 
+/* 会话退出码的 neutral 胶囊在浅色宿主下使用近白底，米色次级文字不易辨认。
+   只把带失败圆点的工具徽章改为皮肤墨色，保留胶囊底色与状态圆点。 */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [data-tool] [data-tone='neutral'][class*='_badge']:has(> [class*='_dot'][aria-hidden='true']) {
+  color: var(--vj-ink);
+}
+
 body[data-dsh-815] [class*='markdown'] [class*='bannerWrap'] {
   background-color: var(--dsw-alias-markdown-code-block-banner);
 }
@@ -1473,6 +1480,22 @@ body[data-dsh-815]:not([data-ds-dark-theme])
   [role='group'][data-pill]::before {
   background: rgba(196, 163, 90, 0.35);
   box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.6);
+}
+
+/* Mnemon 的独立记忆页面、插件详情与组件子页：徽章、目录提示和选择器使用宿主的
+   bg-module-platform，浅色主题下为 #f5f6f7，却配皮肤的浅色文字。
+   在这两个入口及其弹层内补齐深橄榄底，并提亮说明和元数据；使用宿主的
+   语义属性限定范围，不依赖 CSS Modules 的构建哈希。 */
+body[data-dsh-815] :is(
+  [data-dsh-mnemon-view],
+  [data-mnemon-dialog-portal],
+  [data-plugin-detail='dsh-mnemon'],
+  [data-plugin-row-detail^='dsh-mnemon#']
+) {
+  --dsw-alias-bg-module-platform: #24261c;
+  --dsw-alias-label-secondary: #d4ccb0;
+  --dsw-alias-label-tertiary: #c8c0a4;
+  --dsw-alias-label-caption: #9e9780;
 }
 
 
