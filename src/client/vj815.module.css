@@ -869,6 +869,201 @@ body[data-dsh-815] [data-slot='sidebar.footer.action'] {
   --dsw-alias-bg-base: #24261c;
 }
 
+/* dsh-context（「上下文洞察」）的浅色分支。插件按 body:not([data-ds-dark-theme])
+   判深浅（lib/client.js 的 base.css 段），未命中暗色属性时把 --lc-canvas 与
+   --lc-control-track 换成宿主的静态近白 --dsw-static-neutral-bluish-75，而皮肤把
+   --dsw-alias-label-primary / label-secondary 换成奶油档。结果全屏「上下文洞察」页
+   的标题、时间范围分段控件、会话卡片外层文字整片压在近白底上：本机 :63030 实测
+   页面底 rgb(241,243,245)，标题字 rgb(200,192,164)，对比 1.52:1。
+   这里把这两条变量改回皮肤的暗底：canvas 取侧栏同款深色玻璃，control-track 取
+   暗色分支同值 bg-layer-2。锚点是插件写死在 base.css 里的 --lc-* 变量名（C 级稳定
+   名），不是它的类名；选择器多带一个 [data-dsh-815] 属性，特异性高于插件那条
+   body:not([data-ds-dark-theme])，不依赖样式表加载顺序。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) {
+  --lc-canvas: rgba(16, 18, 12, 0.92);
+  --lc-control-track: var(--dsw-alias-bg-layer-2);
+}
+
+/* 插件设置表单（插件详情页里展开的那张表单）的下拉值按钮：底取宿主
+   --dsw-alias-bg-module-platform（皮肤未接管，浅色主题 #f5f6f7），字色却是皮肤
+   全局奶油 label-primary #f4ead6 —— 本机实测 rgb(244,234,214) 落 rgb(245,246,247)
+   只有 1.10:1，11 个下拉值全看不清。沿用提问卡（:312）的修法，在插件设置子树内把
+   该 token 压成卡面同色 #24261c；锚点 [class*='lc-settings'] 是插件手写的类名前缀
+   （C 级固定名），作用域只覆盖设置表单，宿主其它用该 token 的表面不受影响。 */
+body[data-dsh-815]:not([data-ds-dark-theme]) [class*='lc-settings'] {
+  --dsw-alias-bg-module-platform: #24261c;
+}
+
+/* 深色主题下插件设置文本框占位符用 --dsw-alias-label-dimmed（深灰 #43454a），
+   落在插件深橄榄底 rgba(44,46,34,.92) 上只有 1.44:1。按提问卡同款取值提到
+   #9e9780；只作用于设置表单子树。 */
+body[data-dsh-815][data-ds-dark-theme] [class*='lc-settings'] {
+  --dsw-alias-label-dimmed: #9e9780;
+}
+
+/* 插件自绘 Markdown 正文里的行内 code。插件只给 `.lc-ts-desc-md` 设了文字色
+   （label-primary，皮肤下是奶油 #f4ead6），行内 code 的浅底来自宿主全局的
+   `code` 规则（--dsw-alias-markdown-inline-code，浅色主题 #fafafa），于是奶油字压
+   近白底：本机实测 rgb(244,234,214) 落 rgb(250,250,250) 只有 1.14:1，属于「看不见」。
+   锚点用插件手写类名 lc-ts-desc-md / lc-br-content / lc-detail（C 级固定名，不参与
+   构建 hash），外面再套 body[data-dsh-815]（A 级属性）收窄，特异性高于宿主全局
+   code 规则。配色沿用对话区行内 code 的「宣纸底 + 墨字 + 铜边」，暗色主题下同样是
+   浅芯片，与皮肤既有视觉一致。 */
+body[data-dsh-815]
+  :is([class*='lc-ts-desc-md'], [class*='lc-br-content'], [class*='lc-detail'])
+  :not(pre)
+  > code {
+  padding: 0.04em 0.34em;
+  border: 1px solid rgba(196, 163, 90, 0.45);
+  border-radius: 5px;
+  color: #1c1a14;
+  background: var(--vj-paper);
+}
+
+/* 插件的分段控件选中态（上下文浏览器「比前步/比前轮」、趋势粒度「步骤/轮次/全量」、
+   「Markdown/原文」等）：插件取 --dsw-alias-button-primary-fill（皮肤值铜色
+   #c4a35a）作底、--dsw-alias-label-primary-foreground 作字，皮肤的 foreground 是
+   白色，白字压铜底实测 2.4:1，11px 小字达不到 4.5:1。这里只把选中态字色压回墨色
+   （墨字压铜底约 6.9:1），底仍用皮肤的铜色主按钮色，不动布局与边框。
+   锚点必须写成属性选择器：本文件是 CSS Module，写 `.lc-gran-btn` 会被编译成
+   `哈希_lc-gran-btn`，与插件 DOM 上的裸类名对不上（实测命中 0）。改成
+   [class*='lc-gran-btn'] 后命中 5 个；类名本身仍是插件手写的固定名（C 级）。
+
+   注意不能无差别命中「上下文事件」卡的语义色过滤器（.lc-kind-inject/-compaction/
+   -prune/-model/-mode）——它们也是 lc-gran-btn.lc-gran-on，但底是 15% 语义色叠卡片底
+   （深绿/暗红/暗紫），墨字压上去只有 1.23–1.59:1。所以这里排掉 lc-kind、lc-fa-chip、
+   lc-cmd-chip 三类语义/模块 chip，只把「实心铜底」那批压成墨字。 */
+body[data-dsh-815] [class*='lc-gran-btn'][class*='lc-gran-on']:not([class*='lc-kind']):not(
+    [class*='lc-fa-chip']
+  ):not([class*='lc-cmd-chip']),
+body[data-dsh-815] [class*='lc-gran-btn'][class*='lc-gran-on']:not([class*='lc-kind']):not(
+    [class*='lc-fa-chip']
+  ):not([class*='lc-cmd-chip']):hover {
+  color: #1c1a14;
+}
+
+body[data-dsh-815] [class*='lc-gran-btn'][class*='lc-gran-on']:not([class*='lc-kind']):not(
+    [class*='lc-fa-chip']
+  ):not([class*='lc-cmd-chip'])
+  * {
+  color: inherit;
+}
+
+/* 语义色 chip 的字色单独提亮：插件用 --color-red-500 / --color-violet-500 这类
+   Tailwind 500 档原色（rgb(236,19,19) / oklch 紫），压在深橄榄卡片或 15% 语义底上
+   只有 3.46 / 3.53:1，12px 半粗仍不达标。提亮到同色相 300 档（#ff8080 / #c4b5fd），
+   对两种底都约 6:1。锚点是插件手写语义类名 lc-kind-compaction / lc-kind-prune
+   （C 级），属性选择器避开 CSS Module 改名。 */
+body[data-dsh-815] [class*='lc-kind-compaction'],
+body[data-dsh-815] [class*='lc-cmd-chip-failed'] {
+  color: #ff8080;
+}
+
+body[data-dsh-815] [class*='lc-kind-prune'] {
+  color: #c4b5fd;
+}
+
+body[data-dsh-815] [class*='lc-kind-compaction'] *,
+body[data-dsh-815] [class*='lc-kind-prune'] *,
+body[data-dsh-815] [class*='lc-cmd-chip-failed'] * {
+  color: inherit;
+}
+
+/* 「文件活动」「命令执行」卡的「全部」选中 chip 走 --dsw-alias-button-info-fill
+   （皮肤值 rgb(106,90,50)），白字 4.0:1、墨字 2.59:1 都不够。统一到与其它选中态
+   同一套视觉：亮铜底 + 墨字（约 7:1）。 */
+body[data-dsh-815] [class*='lc-fa-chip'][class*='lc-gran-on'],
+body[data-dsh-815] [class*='lc-cmd-chip'][class*='lc-gran-on'] {
+  background: #d8b96a;
+  color: #1c1a14;
+}
+
+body[data-dsh-815] [class*='lc-fa-chip'][class*='lc-gran-on'] *,
+body[data-dsh-815] [class*='lc-cmd-chip'][class*='lc-gran-on'] * {
+  color: inherit;
+}
+
+/* M4 编队视图的强调色小字：插件直接用 --color-violet-500 / 粉 500 档原色，压深橄榄
+   卡底/自绘高饱和小点，实测 2.53–4.32:1，且字号只有 8–11px。这里只提亮字色、不动
+   图形与布局：泳道名与 eyebrow 提到浅紫 #c39bff；事件点里的符号改近白；头像缩写继续
+   沿用原色相、往奶油方向混 55%（color-mix 保持紫/粉各自色相）；任务编号提一档。
+   锚点全部是插件手写类名（C 级），属性选择器避开 CSS Module 改名。 */
+body[data-dsh-815] [class*='lc-pulse-lane-name'],
+body[data-dsh-815] [class*='lc-pulse-eyebrow'] {
+  color: #c39bff;
+}
+
+body[data-dsh-815] [class*='lc-pulse-event-dot'] {
+  /* 事件点的原始底色是逐 Agent 的 inline 变量 --lc-ch-b（6 种高饱和/高明度色相），
+     只把字改白会让 28/35 个点亮底白字跌到 1.88–2.35:1（M4 复测实测）。这里把点底
+     按 30% 原色相混进 #12150e 变成深盘（色相仍可区分），白字压深盘约 8–10:1。
+     锚点：lc-pulse-event-dot 是插件手写类名（C 级）；--lc-ch-b 是插件写在事件节点
+     inline style 上的强调色变量，会继承到点上。 */
+  background: color-mix(in srgb, var(--lc-ch-b, #c4a35a) 30%, #12150e);
+  color: #fffaf0;
+}
+
+body[data-dsh-815] [class*='lc-comms-avatar-text'] {
+  color: color-mix(in srgb, currentColor 45%, #f6efdf);
+}
+
+body[data-dsh-815] [class*='lc-pulse-work-id'] {
+  color: #b3a67f;
+}
+
+/* 插件 Markdown 正文里的链接取宿主 DeepSeek 蓝 #4176e6，压深橄榄底只有 3.67:1。
+   提亮到浅蓝 #9fc3ff（对深底约 7:1）。锚点是插件手写类名 lc-ts-desc-md（C 级）。 */
+body[data-dsh-815] [class*='lc-ts-desc-md'] a {
+  color: #9fc3ff;
+}
+
+/* 插件 Markdown 正文里的图片替代文字（宿主渲染器打 _imageAlt 后缀）取
+   label-tertiary #9e9780，压卡片底 rgb(65,58,37) 只有 3.86:1。提到次级奶油
+   label-secondary。锚点 _imageAlt 是 D 级 localName 后缀，必须用 C 级插件容器
+   lc-ts-desc-md 收窄，且不能写完整哈希类名。 */
+body[data-dsh-815]
+  :is([class*='lc-ts-desc-md'], [class*='lc-br-content'], [class*='lc-detail'])
+  [class*='_imageAlt'] {
+  color: var(--dsw-alias-label-secondary);
+}
+
+/* 会话页头的视图 tab（对话 / 轨迹 / 上下文 / 编队）未选中态：文字取 label-tertiary
+   #9e9780，底是油画图（本机实测绘制区 rgb(56,52,39)），4.26:1 略低于 4.5；同一条里
+   编队 tab 也只在 4.88–5.26 的边缘。油画底随截图区域变亮时会继续掉，所以把未选中态
+   字色提一档到 rgb(170,164,143)（同一坐标实测约 5.0:1），选中态不动。
+   锚点：viewTabs 是宿主 CSS Module 的 localName 后缀（D 级，必须配 A 级容器收窄），
+   这里叠 [role='tab'][aria-selected='false']（A 级）与 body 属性，因此不受哈希前缀
+   变化影响；不能用完整哈希类名。 */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [class*='viewTabs']
+  [role='tab'][aria-selected='false'] {
+  color: rgb(170, 164, 143);
+}
+
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [class*='viewTabs']
+  [role='tab'][aria-selected='false']:hover {
+  color: rgb(196, 188, 164);
+}
+
+/* 同一根因的另两处选中态：总览页分组 chip（.lc-ov-chip-on）与日期范围浮层的起止日
+   （.lc-dp-edge）。插件都用铜色 --dsw-alias-button-primary-fill 作底、宿主
+   label-primary-foreground 白字，实测均为 2.40:1，11px 小字不达标。只把字色压回
+   墨色（墨压铜底 7.23:1），底、边框、圆角都不动。锚点同样是插件手写类名（C 级），
+   必须写成 [class*=] 属性选择器，否则被 CSS Module 哈希成 哈希_lc-ov-chip-on 而
+   命中 0（实测）。 */
+body[data-dsh-815] [class*='lc-ov-chip-on'],
+body[data-dsh-815] [class*='lc-ov-chip-on']:hover,
+body[data-dsh-815] [class*='lc-dp-edge'],
+body[data-dsh-815] [class*='lc-dp-edge']:hover {
+  color: #1c1a14;
+}
+
+body[data-dsh-815] [class*='lc-ov-chip-on'] *,
+body[data-dsh-815] [class*='lc-dp-edge'] * {
+  color: inherit;
+}
+
 /* dsh-timer-agent 的侧栏入口是插件自绘 DOM（board.module.css 的 .entry，一条透明
    导航行），插在宿主「新会话」与 mneme portal 的「记忆」按钮之间；后两者都是宿主
    .newSession 观感（38px 高 / 12px 圆角 / 0.5px 铜边 / elevated 底 / 内容居中）。
