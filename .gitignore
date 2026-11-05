@@ -150,6 +150,6 @@ src/client/art.generated.ts
 
 # docs 下只保留仓库预览图，交接与审计记录不入库
 docs/*
-!docs/preview.png
+!docs/preview.webp
 
 .npmrc
