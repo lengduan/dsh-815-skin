@@ -495,6 +495,26 @@ body[data-dsh-815]
   background: rgba(52, 48, 32, 0.92);
 }
 
+/* 已作答提问卡的历史回显（ui-user-questions 的 QuestionReplyView）是第三种气泡：
+   外层是 BfLV8a_row（data-question-reply / data-chat-flow-kind='question-reply'），
+   祖先链上没有 [class*='userRow']，上面那条规则整条落空 —— 气泡底走宿主的
+   --dsw-specific-bubble（浅色主题 = static-deepseek-50），问题文字取皮肤
+   label-secondary #c8c0a4、答案取 label-primary #f4ead6。本机 :63030 实测：
+   底 rgb(237,243,254)，问题 1.63:1、答案 1.07:1，正是用户截图里「整块糊在浅底里」
+   的那条。这里让它加入同一条视觉语言：同深橄榄底、同铜边、同奶油字（修后
+   问题 7.25:1、答案 11.06:1，按不透明 #343020 计；实际底叠在油画上会更高）。
+   气泡元素是「_bubble_1sgyj_1 BfLV8a_bubble」，外层 wrapper 叫 BfLV8a_bubbleWidth
+   也含 "bubble" 子串，故用 :not 挡掉 wrapper，免得框套在气泡外面多出一圈。
+   锚点用宿主语义属性 data-chat-flow-kind（与 command-input 同源），不随 CSS
+   Module hash 变。 */
+body[data-dsh-815]
+  [data-chat-flow-kind='question-reply']
+  [class*='bubble']:not([class*='bubbleWidth']) {
+  color: #f4ead6;
+  border: 1px solid rgba(196, 163, 90, 0.4);
+  background: rgba(52, 48, 32, 0.92);
+}
+
 /* 宿主自带的浅色面不吃皮肤的暗色假设：非暗色主题下，下列容器的底色来自
    主题（近白 / 浅灰），而皮肤把 label-primary 全局换成奶油色 #f4ead6，
    浅底浅字几乎不可见。在这两类容器内把文字压回墨色。暗色主题下容器本身
