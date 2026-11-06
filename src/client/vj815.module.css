@@ -1741,4 +1741,76 @@ body[data-dsh-815] :is(
   --dsw-alias-label-caption: #9e9780;
 }
 
+/* ——— 任务看板（@linxin666/dsh-client-ui-task-board）：深底可读档（2026-11-06） ———
+
+   用户报「任务看板里这些文字的颜色和底色过于接近」（箭头指向看板卡片、列头与
+   右上「新建任务」）。卡片正文本身在深底上够亮，真正糊住的是插件按**浅色宿主
+   主题**拼出来的一组颜色：
+
+     · 执行结果徽章「最近成功 / 最近失败 / 进行中」：插件 `.cardResult` /
+       `.executionBadge` 拿宿主 state-*-primary 作字、state-*-secondary 作底
+       （board.module.css:469-496、1607-1631、1746-1759、2689-2715）。宿主两档是
+       同一色相的 500/400 阶（success #22c55e / #4ed17e，warn #f59e0b / #f7ad31，
+       error #ec1313 / #f25a5a），压在皮肤深底上实测 1.17:1 / 1.37:1 / 1.00:1，
+       字与底几乎同色；
+     · 列头计数徽章「0 / 4 / 15」：label-tertiary #9e9780 落在 14% 铜金底上，
+       实测 4.25:1；
+     · 详情页状态徽章「已失败」与错误文字：state-error-primary #ec1313 作字压在
+       暗底上，实测 3.41:1；
+     · 填充按钮「新建任务 / 重新执行」：字取 --dsw-alias-label-primary-foreground
+       （浅色主题为白），压在皮肤的铜金底 #c4a35a 上实测 2.40:1。
+
+   修法沿用规格的 token 优先原则：只在看板容器上重绑语义色与文字档，不逐个改
+   插件类名，插件内部换类名不受影响。state-*-primary 提亮（圆点、结果条、徽章字、
+   错误文字共用），secondary 换成同色低透明底（插件里只作徽章底，见上）；文字三级
+   各提一档到奶油五级的上一级。容器锚点用插件手写的语义属性：
+     · 主视图 [data-dsh-taskboard-board]（TaskBoard.tsx:328）；
+     · 弹框根 [class*='modalBackdrop'] > [role='dialog' | 'alertdialog']
+       （ConfirmDialog.tsx:25-26；role 是 A 级锚点，类名后缀只作收窄，不引 hash）。
+   填充按钮的墨字由 --dsw-alias-label-primary-foreground 重绑一并解决；危险的「删除」
+   按钮原本是白字压 state-error-primary，重绑后红底变亮、白字反差只剩 2:1 级，故在
+   同一容器内把它单独压回深红 #b91c1c 保住白字。
+
+   [修后实测] 1600x900、本机客户端 GUI 刷新页面即生效（未重启客户端）；徽章与元信息
+   数值取自新截图像素采样，其余取自页面计算样式（getComputedStyle + 背景逐层合成）：
+     徽章字 vs 徽章半透明底（截图采样，含油画透出的实际合成底）：
+       「最近成功」#4ade80 on rgb(48,84,53)   = 4.93:1（修前 1.17:1）
+       「最近失败」#ff8a8a on rgb(71,52,45)   = 5.15:1（修前 1.37:1）
+       「进行中」  #fbbf24 on 卡片底        = 9.57:1（修前 warn 徽章 1.00:1）
+     列头计数 #c8c0a4 on 14% 铜金底 = 6.63:1（修前 4.25:1）
+     卡片元信息（创建时间 / 执行次数）#c8c0a4 on 卡底 = 8.29:1（修前 5.22:1）
+     详情状态徽章 error #ff8a8a on 弹框底 = 6.76:1（修前 3.41:1）
+     「新建任务 / 重新执行」墨 #1a1c14 压铜金 #c4a35a = 7.16:1（修前 2.40:1）
+     「删除」白字 on 深红 #b91c1c = 6.47:1
+     列表与详情两态逐元素扫描（<4.5:1 的元素数）：修前 10 项，修后 0 项。
+*/
+body[data-dsh-815]
+  :is(
+    [data-dsh-taskboard-board],
+    [class*='modalBackdrop'] > [role='dialog'],
+    [class*='modalBackdrop'] > [role='alertdialog']
+  ) {
+  --dsw-alias-label-secondary: #d4ccb0;
+  --dsw-alias-label-tertiary: #c8c0a4;
+  --dsw-alias-label-caption: #9e9780;
+  --dsw-alias-label-primary-foreground: #1a1c14;
+  --dsw-alias-state-success-primary: #4ade80;
+  --dsw-alias-state-success-secondary: rgba(74, 222, 128, 0.15);
+  --dsw-alias-state-warn-primary: #fbbf24;
+  --dsw-alias-state-warn-secondary: rgba(251, 191, 36, 0.16);
+  --dsw-alias-state-error-primary: #ff8a8a;
+  --dsw-alias-state-error-secondary: rgba(255, 138, 138, 0.16);
+}
+
+body[data-dsh-815]
+  :is(
+    [data-dsh-taskboard-board],
+    [class*='modalBackdrop'] > [role='dialog'],
+    [class*='modalBackdrop'] > [role='alertdialog']
+  )
+  [class*='dangerButton'] {
+  background: #b91c1c;
+  color: #ffffff;
+}
+
 
