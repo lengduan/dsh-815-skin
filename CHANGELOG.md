@@ -1,5 +1,15 @@
 # 更新日志
 
+## 0.1.43 — 2026-11-06
+
+修插件二级页（左栏「插件」→ 任一插件）面包屑、包名与 README 行内 code 贴底色（用户报，箭头指向「‹ 插件」、标题下的包名与正文里的近白胶囊）。
+
+- 面包屑 `.crumb` 与包名 `.detailName` 取 `--dsw-alias-label-tertiary`（皮肤值 `#9e9780`），落在透出的油画上：报障截图（1920×1032）取样字 `rgb(157,150,129)` / 底 `rgb(56,52,41)` = **4.21:1**，12~12.5px 小字低于 4.5:1；在 `[data-plugin-detail]` 内提到 secondary `#c8c0a4`，同底色 **6.87:1**，hover 仍由宿主提到 label-primary
+- README 正文（ui-primitives 的 `DetailDocument`，根节点带 `data-detail-document`）行内 code：宿主 `_markdown_* :not(pre)>code` 只设底不设字色，浅色主题下底是近白 `#fafafa`，字继承皮肤奶油 `#f4ead6` = **1.14:1**，胶囊里的包名整行读不出来；改宣纸底 + 墨字 + 铜边（约 **14.7:1**），与对话区行内 code 同一视觉语言
+- 标题 `.detailTitle` 取样 **9.83:1**，不动
+- 锚点：`data-plugin-detail` / `data-detail-document` 是宿主组件手写的语义属性（A 级），类名只取 localName 后缀 `crumb` / `detailName`（D 级）并套 A 级容器收窄，不引构建期 hash
+- 干净副本预演：`pnpm install --frozen-lockfile`、`pnpm build`、`pnpm test`（5 passed）、`pnpm pack --dry-run`（清单与 `files` 一致）全绿；对比度数值取自报障截图取样，本次未在运行中的 GUI 复测
+
 ## 0.1.42 — 2026-11-06
 
 修 dsh-context「上下文洞察」（v0.81.2）在皮肤下整批文字贴底色：插件按 `body:not([data-ds-dark-theme])` 判浅色，把 canvas 与控件底换成近白，皮肤又把字色接管成奶油档。
