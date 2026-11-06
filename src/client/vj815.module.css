@@ -795,6 +795,34 @@ body[data-dsh-815]:not([data-ds-dark-theme])
   box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.45);
 }
 
+/* 插件二级页剩下的两处低对比（2026-11-06 报障截图标注三处：面包屑、标题、
+   README 行内 code；标题 .detailTitle 对底取样 #3d362a 实测 9.83:1，不动）。
+   1) 面包屑 .crumb 与包名 .detailName 取 label-tertiary #9e9780，落在透出的
+      油画（该区压暗遮罩只到 38%）上：截图取样字 rgb(157,150,129) / 底
+      rgb(56,52,41) 只有 4.21:1，12~12.5px 小字低于规格第八条的 4.5:1。
+      就地提到 secondary #c8c0a4，同底色下 6.87:1。hover 由宿主提到
+      label-primary，保持不动（故 :not(:hover)）。
+   2) README 正文（ui-primitives 的 DetailDocument）里的行内 code：宿主
+      `_markdown_* :not(pre)>code` 只设底不设字色，浅色主题下底是近白
+      #fafafa，字继承皮肤奶油 #f4ead6 —— 截图取样 1.14:1，胶囊里的包名
+      整行读不出来。沿用对话区行内 code 的宣纸底 + 墨字 + 铜边。
+   锚点：data-plugin-detail / data-detail-document 是宿主组件手写的语义属性
+   （A 级，不参与构建 hash）；类名只取 localName 后缀 crumb / detailName
+   （D 级），外面套 A 级容器收窄范围。截图数值来自 1920x1032 报障图取样。 */
+body[data-dsh-815]
+  [data-plugin-detail]
+  :is([class*='crumb']:not(:hover), [class*='detailName']) {
+  color: var(--dsw-alias-label-secondary);
+}
+
+body[data-dsh-815] [data-detail-document] :not(pre) > code {
+  padding: 0.04em 0.34em;
+  border: 1px solid rgba(196, 163, 90, 0.45);
+  border-radius: 5px;
+  color: #1c1a14;
+  background: var(--vj-paper);
+}
+
 /* 插件推荐面板写死 GitHub 冷色（#0d1117 / #58a6ff）。皮肤下换成暖橄榄底 + 铜金链。 */
 body[data-dsh-815] :global(.dsh-rec-root) :global(.dsh-rec-panel) {
   color: #f4ead6;
