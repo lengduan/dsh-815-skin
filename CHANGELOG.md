@@ -1,5 +1,16 @@
 # 更新日志
 
+## 0.1.44 — 2026-11-06
+
+修任务看板（`@linxin666/dsh-client-ui-task-board`）里执行结果徽章、列头计数等文字与底色过近（用户报，箭头指向看板卡片、列头与「新建任务」）。
+
+- 根因是插件按宿主浅色主题拼色：`.cardResult` / `.executionBadge` 拿 `state-*-primary` 作字、`state-*-secondary` 作底（`board.module.css:469-496`、`1607-1631`、`1746-1759`、`2689-2715`），宿主两档是同一色相的 500/400 阶（success `#22c55e` / `#4ed17e`），落在皮肤深底上实测「最近成功」**1.17:1**、「最近失败」**1.37:1**、「进行中」**1.00:1**
+- 同一屏还有三处：列头计数 `label-tertiary #9e9780` 落 14% 铜金底 **4.25:1**；详情状态徽章 `state-error-primary #ec1313` 压暗底 **3.41:1**；「新建任务 / 重新执行」的白字取 `label-primary-foreground`，压在皮肤铜金底 `#c4a35a` 上 **2.40:1**
+- 修法走 token 重绑，不逐个改插件类名：在看板主视图 `[data-dsh-taskboard-board]`（`TaskBoard.tsx:328`）与弹框根 `[class*='modalBackdrop'] > [role='dialog' | 'alertdialog']`（`ConfirmDialog.tsx:25-26`）内把 `state-*-primary` 提亮（success `#4ade80` / warn `#fbbf24` / error `#ff8a8a`）、`state-*-secondary` 换成同色 15~16% 半透明底，label 三级各提一档到奶油五级的上一级，`--dsw-alias-label-primary-foreground` 压成墨 `#1a1c14`；重绑后红底变亮，白字的「删除」按钮单独压回深红 `#b91c1c`
+- 实测（1600x900 本机客户端 GUI，刷新页面即生效、未重启客户端；徽章取截图像素采样，其余取计算样式）：最近成功 **4.93:1**、最近失败 **5.15:1**、进行中 **9.57:1**、列头计数 **6.63:1**、卡片元信息 **8.29:1**、详情状态徽章 **6.76:1**、新建任务 **7.16:1**、删除 **6.47:1**；看板与详情逐元素扫描低于 4.5:1 的元素从 **10 项**降到 **0 项**
+- 锚点：插件手写的语义属性 `data-dsh-taskboard-board`、`role='dialog' | 'alertdialog'`（A 级），类名只用 localName 后缀收窄（D 级），不引构建期 hash
+- `pnpm build` 成功、`pnpm test` 5 passed
+
 ## 0.1.43 — 2026-11-06
 
 修插件二级页（左栏「插件」→ 任一插件）面包屑、包名与 README 行内 code 贴底色（用户报，箭头指向「‹ 插件」、标题下的包名与正文里的近白胶囊）。
