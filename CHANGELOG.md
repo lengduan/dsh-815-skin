@@ -1,5 +1,15 @@
 # 更新日志
 
+## 0.1.46 — 2026-11-09
+
+修自动化任务页「重复间隔」步进器里的数字贴底色（用户报，箭头指向详情页「重复间隔」右侧的白色胶囊）。
+
+- 根因是宿主 `.ruleIntervalStepper` 的底取 `--dsw-alias-bg-module-platform`，皮肤没接管这个 token，浅色宿主主题下是近白 `#f5f6f7`；框内数字走皮肤全局的奶油 `label-primary #f4ead6`，实测 **1.10:1**，数字与步进箭头一起糊在白底上，白斑本身也与深橄榄面板断裂（2026-11-05 提问卡那条同因）
+- 修法走 token 重绑：在页根 `[data-testid='task-manager-page']`（A 级锚点）内把该 token 压成面板同色 `#24261c`，数字 **12.85:1**；胶囊另补一道铜金细边（该页面板半透明、油画透出，深橄榄胶囊在画面上边界不清）。控件用 D 级 localName 后缀 `_ruleIntervalStepper`，不引构建期 hash；作用域限 `:not([data-ds-dark-theme])`，暗色主题下该 token 本身是深色
+- 同页顺带修同类问题：填充按钮（「新建」「选择创建方式」「保存修改」）的字取 `--dsw-alias-label-primary-foreground`（浅色主题为白），压在皮肤铜金底 `#c4a35a` 上实测 **2.40:1**；在页根把它重绑成墨 `#1a1c14`，三处 **7.16:1**。实测本页只有 primary 按钮用到该 token，ghost 按钮走 `label-primary` 不受影响
+- 实测（1875×918 本机客户端 GUI，刷新页面即生效、未重启客户端）：详情页与手动创建表单（重复改成「每天」后）各命中 1 处；该页低于 4.5:1 的元素从 **4 项**（1 处数字 + 3 个填充按钮）降到 **0 项**；临时加 `data-ds-dark-theme` 模拟暗色主题时规则不生效（token 回到宿主 `#353638`）
+- 干净副本预演：`pnpm install --frozen-lockfile`、`pnpm build`、`pnpm test`（5 passed）、`npm pack --dry-run`（8 个文件与 `files` 字段一致）全绿
+
 ## 0.1.45 — 2026-11-09
 
 修桌面端（Electron）整页像盖了一层深色、油画看不清（用户报，更新插件与重启客户端后出现；web 端正常）。
