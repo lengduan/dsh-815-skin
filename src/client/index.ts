@@ -186,7 +186,14 @@ export function apply(ctx: Context): void {
   // 会盖住 body 上的油画背景；这里只把框架底恢复透明，标题条与三列各自底色不动。
   // data-windows-titlebar 挂在 <html> 上，只能放在 body 之前：写成 body[data-dsh-815] [data-windows-titlebar] …
   // 要求 <html> 是 body 的后代，永远 0 命中（本机实测）。
-  appendRule('[data-windows-titlebar] body[data-dsh-815] [class*="frame"][data-dsh-frame] { background: transparent; }')
+  //
+  // 2026-11-09：DSH 升级后 AppFrame 不再带 data-dsh-frame（当前 app.asar 内该属性 0 命中），
+  // 旧规则跟着落空、整页重新被压暗。改锚点为：宿主语义属性 [data-windows-titlebar]（A 级）
+  // + body[data-dsh-815]（B 级）+ class 子串 [class*='frame']（D 级）；再用 :has() 要求
+  // 直接子元素含 sidebarCol/centerCol，只命中 AppFrame 那一个容器，不误伤插件自带的
+  // .xxx_frame。特异度 (0,4,1) 高于宿主 [data-windows-titlebar] .xxx_frame 的 (0,2,0)，
+  // 不依赖样式注入顺序。宿主当前类名为 AppFrame.module.css 的 hash 前缀，不作锚点。
+  appendRule("[data-windows-titlebar] body[data-dsh-815] [class*='frame']:has(> :is([class*='sidebarCol'], [class*='centerCol'])) { background: transparent; }")
   const widthRule = widthSheet.sheet!.cssRules[0] as CSSStyleRule
 
   syncTitlebarHeight = (): void => {
