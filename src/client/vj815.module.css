@@ -1813,4 +1813,42 @@ body[data-dsh-815]
   color: #ffffff;
 }
 
+/* ——— 自动化任务页（宿主 ui-schedule 的 TaskManagerPage，2026-11-09） ———
+
+   用户报「重复间隔」右侧步进器里的数字与底过于接近（箭头所指的白胶囊）。
+   该控件是宿主 ScheduleDetailView 的 .ruleIntervalStepper，底取
+   --dsw-alias-bg-module-platform，皮肤没接管这个 token，浅色宿主主题下是近白
+   #f5f6f7；框内数字走皮肤全局的奶油 label-primary #f4ead6 —— 实测 1.10:1，
+   数字与步进箭头都糊在白底上，白斑本身也与深橄榄面板断裂（2026-11-05 提问卡
+   那条同因，修法同：容器内重绑 token）。
+
+   容器锚点用宿主手写的 data-testid='task-manager-page'（TaskManagerPage 根节点，
+   A 级）；控件用 D 级 localName 后缀 _ruleIntervalStepper（olCj9W 是构建期 hash
+   前缀，禁用）。详情页与手动创建表单都在该根节点子树内，故主规则挂在根上即可；
+   胶囊再补一道铜金细边——该页面板为半透明，油画透出来，深橄榄胶囊在画面上边界
+   不清。作用域限 :not([data-ds-dark-theme])：暗色主题下该 token 本身是深色。
+
+   同一页顺带发现同类问题：填充按钮（「新建」「选择创建方式」「保存修改」）的字取
+   宿主 --dsw-alias-label-primary-foreground（浅色主题为白），压在皮肤的铜金底
+   #c4a35a 上实测 2.40:1；在本页根节点把它重绑成墨色 #1a1c14（与任务看板那条
+   同一取值），三处都是 7.16:1。实测本页只有 primary 按钮用到该 token，ghost 按钮
+   走 label-primary，不受影响。
+
+   [修后实测] 1875x918、本机客户端 GUI 的详情页（规则页签）：
+     数字 #f4ead6 on #24261c = 12.85:1（修前 1.10:1）
+     步进箭头图标同底 = 12.85:1（修前同 1.10:1）
+     填充按钮墨 #1a1c14 on 铜金 #c4a35a = 7.16:1（修前白字 2.40:1）
+     该页 <4.5:1 的元素：修前 4 项（1 处数字 + 3 个填充按钮），修后 0 项
+*/
+body[data-dsh-815]:not([data-ds-dark-theme]) [data-testid='task-manager-page'] {
+  --dsw-alias-bg-module-platform: #24261c;
+  --dsw-alias-label-primary-foreground: #1a1c14;
+}
+
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [data-testid='task-manager-page']
+  [class*='_ruleIntervalStepper'] {
+  box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.42);
+}
+
 
