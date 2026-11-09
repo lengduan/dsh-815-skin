@@ -1,5 +1,17 @@
 # 更新日志
 
+## 0.1.45 — 2026-11-09
+
+修桌面端（Electron）整页像盖了一层深色、油画看不清（用户报，更新插件与重启客户端后出现；web 端正常）。
+
+- 根因是 2026-09-30 那条补丁失效后重新露出：`<html data-windows-titlebar>` 下宿主 AppFrame 容器用 `--dsw-specific-sidebar-fill` 铺满整个视口，皮肤把这个变量定义成 `rgba(14,16,12,.88)`，88% 深色压在 body 油画之上
+- 旧规则锚在 `[class*="frame"][data-dsh-frame]`，本次 DSH 升级后 `data-dsh-frame` 已不存在：当前 `app.asar` 内该属性 **0 命中**（`data-wco`、`data-desktop` 同样 0 命中），规则命中 0 个元素，补丁整体落空
+- 修法只恢复框架底，标题条与三列各自底色不动：`[data-windows-titlebar] body[data-dsh-815] [class*='frame']:has(> :is([class*='sidebarCol'], [class*='centerCol'])) { background: transparent; }`；特异度 (0,4,1) 高于宿主的 (0,2,0)，不依赖注入顺序，`:has()` 把范围收窄到 AppFrame 一个容器
+- 锚点：A 级 `[data-windows-titlebar]` + B 级 `body[data-dsh-815]` + D 级 class 子串；宿主类名是 `AppFrame.module.css` 的 hash 前缀，不作锚点
+- 实测（1600×900 浏览器访问同一 GUI，页面内模拟 `html[data-windows-titlebar]`）：修复前 frame 背景 `rgba(14,16,12,0.88)`、画面与报障截图一致，修复后 `rgba(0,0,0,0)`、选择器命中 1；截图全图均值 / 暗像素占比 **33.0 / 89.8% → 42.8 / 62.4%**（报障截图 29.4 / 92.3%）
+- `specs/项目规格/皮肤样式锚点.md` 失效史补一条：宿主「看起来像语义属性」的 `data-*` 也可能被移除，改锚点前要回查当前 `app.asar`
+- `pnpm build` 成功、`pnpm test` 5 passed；真实 Electron 窗口内的效果本次未复测（客户端未开调试端口），上述数值来自宿主 CSS 原文与页面内等价模拟
+
 ## 0.1.44 — 2026-11-06
 
 修任务看板（`@linxin666/dsh-client-ui-task-board`）里执行结果徽章、列头计数等文字与底色过近（用户报，箭头指向看板卡片、列头与「新建任务」）。
