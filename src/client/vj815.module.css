@@ -1417,10 +1417,14 @@ body[data-dsh-815]
   mask: var(--vj-folder-icon) center / contain no-repeat;
 }
 
-/* 右下角展签：右缘铜金竖线，主行画名奶油字，副行时间地点铜金小字。
-   层级压到 #root（z-index: 1）之下、背景遮罩（body::before, z-index: 0）之上：
-   fixed 元素与其同为 body 子层，DOM 顺序靠后故仍浮在遮罩上；应用外壳的不透明
-   UI（如输入座宣纸卡）可盖住它，不再遮挡输入框。 */
+/* 右下角展签：右缘铜金细线，主行画名奶油字，副行时间地点铜金小字。
+   层级：fixed + z-index: 0，DOM 在背景遮罩之后，故浮于遮罩、名义上位于 #root
+   内容层（z-index: 1）之下。2026-11-11 实测：宿主把右侧抽屉 / 底栏画在自身合成
+   层上时，本展签仍会透在内容之上，调 #root 的 z-index（1 / 2 / 100）均不能让内容
+   盖住它；负 z-index 又会被油画底盖掉。由此定为「背景级暗纹」：去掉底色板、
+   整体不透明度 0.6、字号降一档（体宽约 240px），只保留右缘细线与两行低对比字，
+   即使与面板内容重叠也不形成实心遮挡块。立体感交给油画底，不加投影底。
+   选择器用 B 级 data-skin-chrome + A 级 body[data-dsh-815]，不依赖宿主 hash。 */
 body[data-dsh-815] [data-skin-chrome='caption'] {
   position: fixed;
   right: 16px;
@@ -1428,29 +1432,40 @@ body[data-dsh-815] [data-skin-chrome='caption'] {
   z-index: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   max-width: min(52vw, 460px);
-  padding: 7px 12px;
-  border-right: 2px solid var(--vj-brass);
+  padding: 6px 10px;
+  border-right: 1px solid rgba(196, 163, 90, 0.45);
   border-radius: 8px 0 0 8px;
-  background: linear-gradient(270deg, rgba(8, 10, 6, 0.78), rgba(8, 10, 6, 0.32));
+  background: none;
   font-family: Georgia, 'Times New Roman', serif;
   text-align: right;
+  opacity: 0.6;
   pointer-events: none;
 }
 
 body[data-dsh-815] [data-skin-chrome='caption-title'] {
   color: #f4ead6;
-  font-size: 12.5px;
+  font-size: 11.5px;
   letter-spacing: 0.06em;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.7);
 }
 
 body[data-dsh-815] [data-skin-chrome='caption-sub'] {
   color: #d4bc7a;
-  font-size: 10.5px;
+  font-size: 9.5px;
   letter-spacing: 0.14em;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* 宿主页面底部出现操作栏（footer）或打开模态对话框时，右下角已被界面占用，
+   展签整块退场。2026-11-11 实测：任务详情抽屉的「放弃 / 保存修改」底栏与展签
+   重叠，且改 #root 的 z-index 不能把内容提到展签之上，故改为按「该区域是否被
+   占用」退场。锚点：E 级 footer 标签 + D 级 [role='dialog']，外层都挂 A 级
+   body[data-dsh-815]；聊天与欢迎页无 footer，展签照常显示。 */
+body[data-dsh-815]:has(footer) [data-skin-chrome='caption'],
+body[data-dsh-815]:has([role='dialog']) [data-skin-chrome='caption'] {
+  opacity: 0;
 }
 
 @media (hover: hover) {
