@@ -1866,4 +1866,100 @@ body[data-dsh-815]:not([data-ds-dark-theme])
   box-shadow: inset 0 0 0 1px rgba(196, 163, 90, 0.42);
 }
 
+/* ——— 会话「轨迹」视图（宿主 @deepseek-ai/dsh-client-ui-trajectory，2026-11-11） ———
+
+   用户报「轨迹里面有些文字颜色和背景色过于接近」。指向的是表格最左侧那列形态
+   标签（工具 / 子工具 / 上下文 / 助手）与时间线坐标轴。插件按**浅色宿主主题**
+   拼色，落到皮肤的深底上有三类失效：
+
+     · 形态标签的底取宿主 state-*-tertiary —— 浅色主题里是近白的 #fef5e7（warn）
+       / #e6faed（success），字取同色系 500/400 阶或与其混合：实测
+         工具   #dd8629 on #fef5e7                           = 2.58:1
+         子工具 mix(#dd8629 62%, #9e9780) on mix(...)         = 1.04:1
+         上下文 mix(#22c55e 68%, #c8c0a4) on #e6faed         = 2.03:1
+         助手   （brand #4176e6 与 error-secondary #f25a5a 混合，底取 15% 叠
+                bg-layer-1）                                   = 3.23:1
+       10px、字重 650 的小字全部低于 4.5:1，屏幕上是「浅色小方块上糊着同色字」；
+     · 时间线坐标轴与表格箭头取 label-caption #7e7866：轴标签 3.48:1（底
+       bg-layer-2 #24261c）、箭头 3.82:1（底 #1c1e16）；工具结果里的错误文字取
+       state-error-primary #ec1313，#1c1e16 上 3.75:1；
+     · 事件详情「参数」页签是宿主共用的 JSON 树，语法色是浅色主题的深色值：
+       property #881391 2.04:1、string #c41a16 2.81:1、punctuation #202124
+       1.05:1（底均为 #1c1e16），括号与键名基本看不见。
+
+   修法沿用规格的 token 优先原则：在轨迹的时间线、表格与事件详情三块容器上重绑
+   语义色与最低一档文字色，插件用的是 var()，换 token 即全列换色，不必逐个别名
+   类名改色。语义色取本文件任务看板那段已在用的深底档（amber #fbbf24 / green
+   #4ade80），标签底改成同色相的深橄榄实色，避免半透明底在「选中行」（铜金
+   28% 底）上被抬亮、把字重新压回去；事件详情面板里的标签与表格共用同一套值。
+   caption 提一档到 tertiary #c8c0a4（奶油五级内部提档，不新增色值），坐标轴与
+   箭头一并达标。JSON 树的语法色不在 token 上继承（插件把 --json-tree-* 设在树根
+   节点自身），故另起一条只改这七个变量、色值沿用皮肤代码块的 shiki token 档。
+
+   助手标签是例外：它的紫由 brand-primary（#4176e6，DeepSeek 蓝）与
+   error-secondary 混出，重绑 brand 会顺带改掉时间线里 message 段落的颜色，
+   故只对这一个标签用 data-role-kind='message' 直接给色（深紫底 + 浅紫字）。
+
+   容器锚点全部取 A 级：宿主手写的 aria-label「轨迹时间线」「事件详情」、
+   data-trajectory-scroll、data-role-kind；插件 CSS Module 的 hash 前缀
+   （xeixwq_）只作观测线索，不进选择器。
+
+   [修后实测] 1400x900、本机客户端 GUI 的轨迹页（表格 + 展开的事件详情，含悬停
+   行、选中行与「参数」页签），逐元素扫描文字对比度 (<4.5:1)：
+     修前 8 类（四个形态标签、时间线坐标轴、表格箭头、工具结果错误文字、参数
+     JSON 树的语法色），修后 0 项。逐项（含选中行与展开态）：
+     工具   #fbbf24 on #3a2f14 = 7.88:1（修前 2.58:1；选中行 7.88:1）
+     子工具 #d8b047 on #2d2815 = 7.15:1（修前 1.04:1）
+     上下文 #72d48c on #24301f = 7.61:1（修前 2.03:1）
+     助手   #d6c9f5 on #2f2a3d = 8.91:1（修前 3.23:1）
+     箭头   #c8c0a4 on #1c1e16 = 9.27:1（修前 3.82:1）
+     坐标轴 #c8c0a4 on #24261c = 8.42:1（修前 3.48:1）
+     错误文字 #ff9c9c on #1c1e16 = 7.60:1（修前 3.75:1）
+     JSON 树 property #4dabf7 = 6.81:1（修前 2.04:1）
+             string   #69db7c = 9.65:1（修前 2.81:1）
+             punctuation #ced4da = 11.27:1（修前 1.05:1）
+*/
+body[data-dsh-815]
+  :is(
+    [aria-label='轨迹时间线'],
+    [data-trajectory-scroll],
+    aside[aria-label='事件详情']
+  ) {
+  --dsw-alias-state-warn-label: #fbbf24;
+  --dsw-alias-state-warn-tertiary: #3a2f14;
+  --dsw-alias-state-success-primary: #4ade80;
+  --dsw-alias-state-success-tertiary: #24301f;
+  --dsw-alias-state-error-primary: #ff9c9c;
+  --dsw-alias-label-caption: #c8c0a4;
+}
+
+body[data-dsh-815]
+  :is([data-trajectory-scroll], aside[aria-label='事件详情'])
+  [data-role-kind='message'] {
+  color: #d6c9f5;
+  background: #2f2a3d;
+}
+
+/* 事件详情「参数」页签是宿主共用的 JSON 树（类名后缀 _root_ / _label_ /
+   _punctuation_ 等，前缀是构建期 hash）。它的语法色定义在 JSON 树根节点上，
+   默认那套是浅色主题的深色值：property #881391、string #c41a16、number
+   #1c00cf、punctuation #202124 —— 落在轨迹详情的深底 #1c1e16 上实测
+   2.04:1 / 2.81:1 / 1.05:1，括号与键名基本看不见（展开详情、切到「参数」即
+   可见）。宿主只在 body[data-ds-dark-theme] 下换亮色，而皮肤跑在浅色宿主
+   主题上。
+   这里在事件详情面板内把 JSON 树的七个变量换成皮肤代码块（shiki token）那套
+   深底配色，与对话区代码块同一色板：键名蓝、字符串绿、数字橙、关键字粉、
+   标点浅灰、展开箭头三级灰、hover 用皮肤的铜金交互底。挂 [class*='_root_']
+   是因为变量由插件设在树根节点自身，必须落在同一元素上才盖得住；前缀 hash
+   不进选择器，外层再用 aside[aria-label='事件详情'] 收窄。 */
+body[data-dsh-815] aside[aria-label='事件详情'] [class*='_root_'] {
+  --json-tree-property: #4dabf7;
+  --json-tree-string: #69db7c;
+  --json-tree-number: #ffa94d;
+  --json-tree-keyword: #faa2c1;
+  --json-tree-punctuation: #ced4da;
+  --json-tree-icon: #9e9780;
+  --json-tree-hover: rgba(196, 163, 90, 0.14);
+}
+
 
