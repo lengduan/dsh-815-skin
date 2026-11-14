@@ -1962,4 +1962,43 @@ body[data-dsh-815] aside[aria-label='事件详情'] [class*='_root_'] {
   --json-tree-hover: rgba(196, 163, 90, 0.14);
 }
 
+/* dsh-deep-ptc-mode 的「当前上下文中的 Skill」卡片（.dpt-card.dpt-skills）：插件按
+   **浅色宿主主题**拼色，卡底取 var(--dpt-card-fill) → --dsw-static-neutral-50（#fafafa），
+   字却走皮肤全局的奶油档 --dsw-alias-label-primary #f4ead6 —— 本机 1600x900 客户端 GUI
+   实测标题与 Skill 名 rgb(244,234,214) 落 rgb(250,250,250) = **1.14:1**，整张卡只剩
+   描边与开关可见，正是用户报的「文字颜色和背景颜色过于接近」（箭头指向标题行与 Skill 行）。
+   同一处还有第二个来源：插件开着「界面特效」时另有一段 body[data-dpt-ui] 的 token
+   覆盖带 !important，把 --dsw-alias-label-primary 压回 #101828、--dsw-alias-bg-base
+   压成 #fff，而按钮底 --dsw-alias-button-floating-fill 仍是皮肤的深橄榄 #3a3c2c，
+   实测「全部保留 / 全部关闭」墨字落 rgb(70,71,56) = **1.88:1**，按钮上同样读不出字。
+   修法走 token 重绑（卡片底换皮肤玻璃、文字与按钮底一并回到深底档），锚点是插件
+   手写的 dpt-* 类名（C 级固定名，不参与构建 hash），外层叠 body[data-dsh-815] 收窄；
+   特异度 (0,2,1) 高于插件那条 (0,1,0)，不依赖样式表加载顺序，也不改插件源码。
+   修后实测：标题 / Skill 名 10.07:1、副行与描述 6.60:1、卡片页脚 6.60:1、
+   「全部保留 / 全部关闭」9.63:1、卡片图标 5.39:1。 */
+body[data-dsh-815] [class*='dpt-skills'] {
+  --dpt-card-fill: rgba(36, 38, 28, 0.92);
+  --dpt-accent: var(--vj-brass);
+  --dsw-alias-label-primary: #f4ead6;
+  --dsw-alias-label-secondary: #d4ccb0;
+  --dsw-alias-label-tertiary: #c8c0a4;
+  --dsw-alias-label-caption: #b5ad94;
+  --dsw-alias-border-l1: rgba(196, 163, 90, 0.28);
+  --dsw-alias-border-l2: rgba(196, 163, 90, 0.42);
+  --dsw-alias-button-floating-fill: rgba(58, 60, 44, 0.94);
+  --dsw-alias-button-floating-hover: #4a4e38;
+  --dsw-alias-interactive-bg-hover: rgba(196, 163, 90, 0.14);
+  color: #f4ead6;
+  background: rgba(36, 38, 28, 0.92);
+  border-color: rgba(196, 163, 90, 0.42);
+}
+
+/* 卡内按钮：插件在「界面特效」分支里给 .dpt-btn 写死过
+   background:var(--dsw-alias-bg-base)；上面重绑的 token 已把卡底换回深橄榄，
+   这里再补一条同档底与奶油字，避免特效开关两态下按钮被抬成浅底。 */
+body[data-dsh-815] [class*='dpt-skills'] [class*='dpt-btn'] {
+  background: rgba(58, 60, 44, 0.94);
+  color: #f4ead6;
+}
+
 
