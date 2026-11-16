@@ -1,5 +1,18 @@
 # 更新日志
 
+## 0.1.50 — 2026-11-16
+
+修右栏全屏时左栏、对话列整片透上来与右栏内容叠压（用户报「这个全屏的效果极差」，并追问能否全屏时隐藏左侧）。
+
+- 根因不在宿主的全屏实现，而在皮肤：宿主右栏全屏是 100vw 的绝对定位覆盖层（`dsh-client-ui-sidebar-right` 的 `SidebarRight.tsx:342-345` 写内联 `width: 100vw` 并标 `data-sidebar-right-panel='fullscreen'`），撑底容器写 `background: var(--dsw-alias-bg-base)`，而皮肤在 `vj815.module.css:22` 把该 token 定为 `transparent`（为了让油画透出）。全屏覆盖 100% 视口后，底下的左侧边栏、对话列、输入卡整片透上来，与右栏文件树等文字互相叠压。`push` 态只占视口右侧一列、那块区域本来没有内容可透，所以此前没暴露
+- 修法两条：① 全屏时把底层两列设为 `opacity: 0` + `pointer-events: none`；② 在面板子树内局部重绑 `--dsw-alias-bg-base` 为 `var(--dsw-alias-bg-layer-2)` 并给自身实底。全局 token 保持 `transparent`，油画该透出的地方不受影响
+- 锚点：A 级 `[data-rightbar-fullscreen]`（`AppFrame.tsx:302` 宿主手写）+ A 级 `[data-sidebar-right-panel='fullscreen']`（`SidebarRight.tsx:345`）；底层两列宿主没有 `data-*` 可用（实测只有 class），退到 D 级 `[class*='sidebarCol']` / `[class*='centerCol']`，因此必须叠 A 级容器并写成直接子代收窄；不引构建期 hash
+- 两条走法经实测否决：不用 `display: none`——框架栅格是内联 `grid-template-columns`（全屏态实测 `280px 600px 720px`），移除列会让右栏定位参考系 `rightbarCol` 位移、全屏内容整体错位；不用 `visibility: hidden`——宿主侧栏内部有 `.sectionLabel` 一类节点显式声明 `visibility: visible`，会在子代把隐藏覆盖回来，实测 `sidebarCol` 已 `hidden` 时「工作区」几个字仍然显示
+- 实测（1600×900 浏览器访问同一 GUI，注入构建产物中的同一段 CSS 验证；`sidebarCol` / `centerCol` 选择器各命中 1、`[data-sidebar-right-panel='fullscreen']` 命中 1）：全屏态 `opacity` 0/0、`pointer-events` none、面板撑底 `rgba(36,38,28,0.88)`；退出全屏后恢复到 1/1、auto，`elementFromPoint` 在左栏区域命中侧栏内元素，左栏完整可点击
+- 规格：新增 `specs/功能规格/右栏全屏呈现.md`，并在 `specs/功能规格/README.md` 清单登记
+- 已知边界：底层两列只能用 D 级 class 子串定位，宿主若改 `sidebarCol` / `centerCol` 的 localName，这两条会失配；只在 `body[data-dsh-815]` 下生效，卸载皮肤即整体撤回
+- 干净副本预演：`pnpm install --frozen-lockfile`、`pnpm build`、`pnpm test`（5 passed）、`npm pack --dry-run`（8 个文件与 `files` 字段一致）全绿
+
 ## 0.1.49 — 2026-11-14
 
 修 Deep PTC 会话「当前上下文中的 Skill」卡片文字与底色过近（用户报「修复这个会话下这些内容，它的文字颜色和背景颜色过于接近」，箭头指向卡片标题行与 Skill 行）。
