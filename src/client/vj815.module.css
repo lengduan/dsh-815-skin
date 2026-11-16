@@ -461,6 +461,34 @@ body[data-dsh-815] [data-slot='sidebar.right.pane.tab.title'] svg[class*='titleI
   display: none;
 }
 
+/* 右栏全屏（宿主「右侧面板」的全屏呈现，规格见 specs/功能规格/右栏全屏呈现.md）。
+   宿主的全屏面板是 100vw 的绝对定位覆盖层，撑底容器写
+   background: var(--dsw-alias-bg-base)，而皮肤把该 token 定成 transparent
+   （:22，为了让油画透出）。结果 100% 视口被透空，左栏、对话列、输入卡整片
+   透上来与右栏内容叠压。这里做两件事：底层各列隐去、面板自带实底。
+   锚点：A 级 [data-rightbar-fullscreen]（AppFrame.tsx:302 宿主手写）、A 级
+   [data-sidebar-right-panel='fullscreen']（SidebarRight.tsx:345）；底层两列
+   宿主没有 data-* 可用（2026-11-16 实测只有 class），退到 D 级
+   [class*='sidebarCol'] / [class*='centerCol']，因此必须叠 A 级容器并写成
+   直接子代收窄范围。
+   不用 display: none：框架栅格是内联 grid-template-columns（全屏态实测
+   280px 600px 720px），移除列会让右栏的定位参考系 rightbarCol 位移、全屏
+   内容整体错位。
+   不用 visibility: hidden：宿主侧栏内部有 .sectionLabel 一类节点显式声明
+   visibility: visible，会在子代覆盖回来（2026-11-16 实测 sidebarCol 已
+   hidden 时「工作区」仍显示）。 */
+body[data-dsh-815] [class*='frame'][data-rightbar-fullscreen] > :is([class*='sidebarCol'], [class*='centerCol']) {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* 面板实底。只在这个子树内重绑 --dsw-alias-bg-base，全局值仍保持 transparent
+   （油画要透出来，那是皮肤的基础设定）。取 bg-layer-2 是皮肤的面板玻璃档。 */
+body[data-dsh-815] [data-sidebar-right-panel='fullscreen'] {
+  --dsw-alias-bg-base: var(--dsw-alias-bg-layer-2);
+  background: var(--dsw-alias-bg-layer-2);
+}
+
 body[data-dsh-815]
   [data-chat-flow-kind='assistant-step'] > * > * > * > div[class*='markdown'] [class*='fileMention'] {
   color: #6b4e16;
