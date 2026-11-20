@@ -2075,6 +2075,32 @@ body[data-dsh-815]:not([data-ds-dark-theme])
   --dsw-alias-bg-module-platform: #24261c;
 }
 
+/* ——— 统计面板的「失败 N」徽章（宿主统计 tab，2026-11-20） ———
+
+   用户报「会话 顶部 统计 页中，红色 色块中有文字，文字颜色和背景色一致」，箭头指向
+   「执行内容」列的红色小徽章。徽章是宿主 CSS Module 的 .failPill，写的是
+   color: var(--dsw-alias-bg-base)（反色字：用背景色当字色），而皮肤为露出油画把
+   --dsw-alias-bg-base 定为 transparent（:22），于是字变成完全透明 —— 本机 1600x900
+   客户端 GUI :57363 实测 color rgba(0,0,0,0) 落 rgb(236,19,19)，等于没有字。
+
+   修法：只在徽章自身补字色，不动全局 bg-base（对话列、输入座、右栏都靠它透明）。
+   底色同时从宿主红 #ec1313 压到 #e01818：白字对原红实测正好 4.50:1，卡在 AA 线上，
+   压深一档后 4.87:1，对面板深底仍有 4.08:1 的可辨度。错误红属设计风格第八条允许
+   保留的宿主语义色，不用换成铜金。
+
+   锚点：[data-slot='conversation.view']（A 级，宿主组件写死的槽位属性）+ body[data-dsh-815]
+   （B 级）限定范围，徽章用 D 级 localName 后缀 [class*='_failPill'] —— 包前缀 O9N_wq
+   是构建期 hash，禁止作锚点。用 '_failPill' 带下划线整串而非裸 'failPill'，避免将来
+   出现 *_failPillX 一类近邻同名被误命中。
+
+   [修后实测] 统计 tab：徽章字 #ffffff on #e01818 = 4.87:1（修前透明、读不出）；
+   面板内逐元素扫描文字对比度 <4.5:1 的元素：修前 2 个（两处徽章），修后 0 个。
+*/
+body[data-dsh-815] [data-slot='conversation.view'] [class*='_failPill'] {
+  color: #ffffff;
+  background: #e01818;
+}
+
 /* ——— 特点卡片页（dsh-deep-ptc-mode 的 .dpt-pv）与内建卡片的按钮（2026-11-20） ———
 
    用户报「特点卡片中的文字颜色和背景色过于接近」（截图箭头指向：顶部「特点卡片」tab
@@ -2155,3 +2181,5 @@ body[data-dsh-815] [class*='dpt-cc'] {
 body[data-dsh-815] [class*='dpt-cc'][data-archived] {
   background: rgba(28, 30, 22, 0.78);
 }
+
+
