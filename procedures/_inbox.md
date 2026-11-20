@@ -6,4 +6,5 @@
 - 2026-11-20 给插件手写类名加样式时写裸类名（`.dpt-pv-link`）会被 CSS Module 编译成 `哈希_dpt-pv-link`，与插件 DOM 上的裸类名对不上、命中 0 个；必须写 `[class*='dpt-pv-link']`。
 - 2026-11-20 dsh-deep-ptc-mode 的 `.dpt-cc[data-archived]` 会把卡底设成 transparent（会话结束后卡片即进此态），奶油字直接压油画；补一层半透明橄榄底，别用 opacity 继续压。
 - 2026-11-20 dsh-deep-ptc-mode 的 `.dpt-pv` / `.dpt-cc` 自带一层 `--cc-*` 调色板（按浅色宿主取值），皮肤重绑 `--dsw-alias-label-primary` 后会让主按钮「底取 --cc-ink、字取 --cc-surface」变成奶油底白字（1.14:1）。修法：在 `.dpt-pv` 根上重绑 `--cc-*` 到深墨档，不要逐条改 `.dpt-cc-btn`。
+- 2026-11-20 npm 可信发布：GitHub Actions 的 `npm publish` 报 success 且 provenance 已上链，但 registry 的 `latest` 与 `/<pkg>/<version>` 清单仍返回旧版 / 404 约 4 分钟（日志提示 `Your package is being processed`）。不要据此判断发布失败，也不要重跑 workflow；轮询 `dist-tags.latest` 到目标版本再装。
 - 2026-11-14 用 `tools.write` 整文件覆写源码时踩了两次截断：`vj815.module.css` 从 1965 行变 964 行、`CHANGELOG.md` 从 489 行变 215 行。改既有文件一律用 `edit` 做定点替换；写入后必须核对行数（`git diff --stat`），提交前 `git show --numstat` 确认没有意外删除。
