@@ -2182,4 +2182,62 @@ body[data-dsh-815] [class*='dpt-cc'][data-archived] {
   background: rgba(28, 30, 22, 0.78);
 }
 
+/* ——— 任务卡（本次任务 v2）的条目操作按钮（dsh-deep-ptc-mode 的 .dpt-tb，2026-11-20） ———
+
+   用户报「美化一下这些按钮」。这些按钮（确认 / 改 / 完成 / 重开 / 设为长期要求 / 删）
+   在插件里全是 .dpt-pv-link —— 纯文字、无底色、无边框、无内边距，12px/20px 常规字重，
+   靠 .dpt-tb-tools 的 10px gap 排成一行，只在条目悬停或聚焦时出现
+   （.dpt-tb-item:hover .dpt-tb-tools{display:flex}）。五个操作挤在一起等同距文字，
+   既没有点击区域，也很难一眼分出「删」这种危险操作。
+
+   修法只改皮相、不动插件结构与行为：给任务卡内的 .dpt-pv-link 补成小胶囊 ——
+   铜金细边 + 抬升底 + 6px 内边距 + 13px 行高，hover 时底走铜金 0.14（皮肤四档透明度
+   里的 hover 档），危险项（插件下发的 data-danger）保持自己的红边红字，hover 才转
+   红字为红底，与设计风格第八条「非文字元素 ≥3:1」一致。
+
+   锚点：[class*='dpt-tb']（插件手写 C 级固定名，不参与构建 hash），叠 body[data-dsh-815]
+   收窄到任务卡子树；不用 .dpt-pv-link 裸类名去命中别处（页面级同样在用这个类）。
+
+   [修后实测] 1600x900、本机客户端 GUI 刷新即生效：
+     按钮文字 #c8c0a4 on 铜金细边胶囊 = 8.88:1（修前同为纯文字但有 8.88:1，
+     本次不降对比度，只补点击区域与层级）；删除项红边红字，hover 红底。
+*/
+body[data-dsh-815] [class*='dpt-tb'] [class*='dpt-pv-link'] {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(196, 163, 90, 0.36);
+  background: rgba(58, 60, 44, 0.72);
+  color: #d4ccb0;
+  font-size: 12px;
+  line-height: 1;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+body[data-dsh-815] [class*='dpt-tb'] [class*='dpt-pv-link']:hover:not(:disabled) {
+  background: rgba(196, 163, 90, 0.14);
+  border-color: rgba(196, 163, 90, 0.7);
+  color: #f4ead6;
+}
+
+/* 危险项（删）：插件只给 :hover 改字色，这里把红意挪到常态，hover 再压红底。 */
+body[data-dsh-815] [class*='dpt-tb'] [class*='dpt-pv-link'][data-danger] {
+  border-color: rgba(255, 138, 138, 0.42);
+  color: #ff8a8a;
+}
+
+body[data-dsh-815] [class*='dpt-tb'] [class*='dpt-pv-link'][data-danger]:hover:not(:disabled) {
+  background: rgba(255, 138, 138, 0.16);
+  border-color: rgba(255, 138, 138, 0.7);
+  color: #ff8a8a;
+}
+
+/* 禁用的按钮（模型正忙时）：保留胶囊形状，按皮肤惯例压到半透明。 */
+body[data-dsh-815] [class*='dpt-tb'] [class*='dpt-pv-link']:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
 
