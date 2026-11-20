@@ -2030,3 +2030,28 @@ body[data-dsh-815] [class*='dpt-skills'] [class*='dpt-btn'] {
 }
 
 
+/* ——— 侧栏「会话数据诊断」表头（@deepseek-ai/dsh-experimental-session-inspector，2026-11-20） ———
+
+   用户报「会话数据诊断 窗口的文字颜色和背景色过于接近」，箭头指向表头行（序号 / 类型 /
+   T/S / 时间 (UTC) / 数据）。该行是 sticky 表头，底取宿主 --dsw-alias-bg-module-platform，
+   皮肤没接管这个 token，浅色宿主主题下是近白 #f5f6f7；字走皮肤全局奶油 label-primary
+   #f4ead6 —— 本机 1600x900 客户端 GUI :57363 实测 rgb(244,234,214) 落 rgb(245,246,247)
+   = **1.10:1**，五个列头全糊在白条上，与深橄榄表格体断裂成一块白斑。这是「提问卡」
+   （:312）、插件设置（:949）、自动化任务页（:1886）同一根因的第五处，修法照旧：容器内重绑
+   该 token 为面板同色 #24261c。
+
+   容器锚点用插件写在面板根 section 上的 aria-label（A 级：'原始数据' / '对话分组'，
+   两个展示形式各一个根；插件用 i18n 目录替换文案，中文环境与截图一致）。不用
+   [class*='_root'] 一类 CSS Module localName：那是 D 级且本包前缀 -vOKNW 属构建期 hash。
+   作用域限 :not([data-ds-dark-theme])——暗色主题下该 token 本身是深色，无需改动。
+
+   [修后实测] 1600x900、本机客户端 GUI，原始数据视图（含展开详情的「原始数据」抽屉、
+   选中行、悬停行）与对话分组视图逐元素扫描文字对比度 (<4.5:1)：
+     修前 1 类（5 个表头单元格），修后 0 项。
+     表头 #f4ead6 on #24261c = 12.85:1（修前 1.10:1），五个列头同值；
+     行正文与详情抽屉本就在深底上达标，重绑后不变（详情抽屉无底色，透出面板）。
+ */
+body[data-dsh-815]:not([data-ds-dark-theme])
+  :is([aria-label='原始数据'], [aria-label='对话分组']) {
+  --dsw-alias-bg-module-platform: #24261c;
+}
