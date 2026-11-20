@@ -148,6 +148,9 @@ vite.config.ts.timestamp-*
 lib/
 src/client/art.generated.ts
 
+# 工作区临时文件与中间产物
+.scratch/
+
 # docs 下只保留仓库预览图，交接与审计记录不入库
 docs/*
 !docs/preview.webp
