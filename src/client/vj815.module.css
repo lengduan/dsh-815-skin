@@ -409,6 +409,25 @@ body[data-dsh-815]
   background: var(--vj-paper);
 }
 
+/* 「上下文已压缩」折叠块的展开正文（MessageItem 的 CompactionItem：compactionRow >
+   compactionButton + compactionBody > MarkdownText）。宿主给 compactionBody 设了
+   color: var(--dsw-alias-label-tertiary)，行内 code 沿用上面那条「宣纸底墨字」的
+   视觉语言之外的默认——即宿主 .markdown :not(pre) > code 只设近白底、不设字色，
+   字色继承正文（皮肤奶油 #f4ead6）。2026-11-21 本机 GUI 实测行内 code
+   rgb(244,234,214) 落 rgb(250,250,250) 只有 1.14:1：截图里表现为一串纯白胶囊、
+   字几乎与纸面融成一片。这里把胶囊内的字压回墨色，底仍交给宿主。
+   锚点是宿主手写的固定类名 compactionBody / compactionRow（C 级，不参与构建 hash，
+   MessageItem.module.css 的 localName），外面套 B 级 data-dsh-815 收窄；与上面
+   对话区、思考块、插件正文几处行内 code 同为「浅底必须压墨」的同一类场景。 */
+body[data-dsh-815]
+  :is([class*='compactionBody'], [class*='compactionRow']) [class*='markdown'] :not(pre) > code {
+  padding: 0.04em 0.34em;
+  border: 1px solid rgba(196, 163, 90, 0.45);
+  border-radius: 5px;
+  color: #1c1a14;
+  background: var(--vj-paper);
+}
+
 /* 文件查看区域（右栏的文档预览）正文是 ui-primitives 的 markdown：行内 code
    的底取 --dsw-alias-markdown-inline-code，浅色主题下是近白 #fafafa，而字色
    继承皮肤全局的奶油 label-primary #f4ead6 —— 只有 1.14:1，胶囊里的字基本
