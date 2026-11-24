@@ -287,6 +287,28 @@ body[data-dsh-815] [data-composer-card] [data-input-backdrop] :is([data-decorati
   color: #2f4a2f;
 }
 
+/* 输入卡内「引入的文件」chip 悬停：宿主 composer-editor.module.css 的
+   .reference:hover 把底换成 --dsw-alias-state-business-tertiary（皮肤值 #3a3828，
+   深橄榄），但没有跟着换字色 —— 字仍取 --dsw-alias-state-business-primary，而该 token
+   在输入卡内被压在宣纸浅底那一档 #6b4e16（见 :246）。深底配暗铜实测 1.54:1，
+   hover 上去文件名整块沉进底里（用户截图即此态，像素取样：底 rgb(58,56,40)、
+   字 rgb(107,78,22)）。按「深底只配奶油五级」把 hover 态的字提到亮铜同族
+   #e2c98a：对 #3a3828 实测 7.29:1，与对话气泡里深底 fileMention 的取值一致。
+   锚点用宿主手写的 data-composer-chip / data-composer-text-ref（ReferenceChipNode /
+   TextRefNode 的 createDOM 写入，A 级，不随 CSS Module hash 变）；图标走
+   currentColor，随字色一起变亮。只改 hover 态，未悬停时仍是纸底暗铜（6.43:1）。
+
+   注意改的是 token 而不是直接写 color：chip 节点外层是 [data-composer-chip]，
+   文字其实在内层 span._reference 上，而它自带
+   color: var(--dsw-alias-state-business-primary)。直接把 color 写在外层会被内层
+   盖掉（本机实测外层 rgb(28,26,20)、内层不变，hover 仍是暗铜）。所以在 hover 的
+   chip 子树内重绑该 token，内层取值随之变成亮铜（实测 rgb(226,201,138)）。 */
+body[data-dsh-815]
+  [data-composer-card]
+  :is([data-composer-chip], [data-composer-text-ref]):hover {
+  --dsw-alias-state-business-primary: #e2c98a;
+}
+
 body[data-dsh-815] [data-composer-card] :is(textarea, input)::placeholder {
   color: #6a6454;
 }
