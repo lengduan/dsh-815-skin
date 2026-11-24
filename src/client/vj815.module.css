@@ -1771,6 +1771,73 @@ body[data-dsh-815]:not([data-ds-dark-theme])
   --shiki-token-link: #1b4f9c;
 }
 
+/* ——— 对话区「diff / patch」代码块（第四轮，2026-11-25） ———
+
+   [与上两段不是同一个组件] 上一段的锚点是 FileDiff（ui-deliverables），只出现在
+   ①右栏「本轮改动」面板、②改动卡片的悬停预览卡。用户本次截图里的是**对话正文
+   里 ```diff 围栏**渲染出的代码块，走的是另一条链路：
+     ChatView → renderSlot('conversation.chat.markdown.fence')
+       → DiffFenceLayer（dsh-client-ui-chat/fence/FenceLayers.tsx）
+       → primitives 的 FenceCodeBlock({ diff: true })
+       → CodeBlock.module.css 的 .diffFence / .diffLine / .diffAdd / .diffDel
+   这条链路里**没有 data-diff-line**，类名也不是 `_add` / `_del`，而是
+   `_diffAdd_<hash>` / `_diffDel_<hash>` / `_diffMarker_<hash>` —— 旧规则
+   `:is([data-diff-line='add'], [class*='_add']:not([class*='_added']))` 在这条
+   链路上命中 0 个，这正是「以前调过、现在又坏」的原因（不是规则被删，是覆盖的
+   组件压根不是同一个）。
+
+   [修前实测] 行底沿用宿主浅色主题的 --dsw-alias-file-diff-added-bg #e6f4e7 /
+   deleted-bg #fce6e2，而行内文字是皮肤为暗底选的那套 shiki 亮色（CodeBlock 用
+   css-variables 主题，每个 token 的内联 style 就是 color:var(--shiki-token-*)）：
+     正文（继承 label-primary #f4ead6）落 #e6f4e7 → 1.05:1、落 #fce6e2 → 1.00:1
+     标点 #ced4da → 1.31 / 1.25:1；字符串 #69db7c → 1.54 / 1.46:1
+   `+` 号 .diffMarker 取 --dsw-alias-file-diff-added-marker #01a241 → 2.96:1。
+
+   [修法] 与上一段完全同构：只在**浅色宿主**下、只作用于 diff 行本体
+   （.diffAdd / .diffDel 上的 span.line），在该行上重设 shiki 变量 —— token 的
+   内联 style 读 var()，所以换变量即可，不需要 !important；正文色直接写在行上
+   （宿主没有为行设 color，靠继承拿到皮肤奶油）。删除行的 `-` 号 #ba2723 落
+   #fce6e2 本来 5.16:1，达标，不动；新增行的 `+` 号压深到 #0f6b2c（5.84:1）。
+   代码块本体（#141610 深底）与 hunk 头、context 行不受影响：规则只命中
+   .diffAdd / .diffDel，深底上的其它 token 仍走皮肤原值。
+
+   锚点说明：`[class*='_diffAdd_']` 属 D 级（CSS Module localName 后缀子串），
+   按规格必须叠 A/C 级容器收窄。外层用宿主手写的 data-chat-flow-kind
+   （ChatView 的 flow 属性，A 级）限定到对话区，再以 body[data-dsh-815]（B 级）
+   收全局；不用 [class*='markdown'] 收窄，因为代码块挂在 markdown 之外的
+   FenceCodeBlock 容器里，层级不保证。 */
+
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [data-chat-flow-kind] [class*='_diffAdd_'] {
+  --shiki-foreground: #1c1a14;
+  --shiki-token-constant: #1b4f9c;
+  --shiki-token-string: #146c2e;
+  --shiki-token-string-expression: #146c2e;
+  --shiki-token-comment: #5a5443;
+  --shiki-token-keyword: #9c2b5f;
+  --shiki-token-parameter: #8a4b00;
+  --shiki-token-function: #5b3fa8;
+  --shiki-token-punctuation: #4a4638;
+  --shiki-token-link: #1b4f9c;
+  color: #1c1a14;
+  --dsw-alias-file-diff-added-marker: #0f6b2c;
+}
+
+body[data-dsh-815]:not([data-ds-dark-theme])
+  [data-chat-flow-kind] [class*='_diffDel_'] {
+  --shiki-foreground: #1c1a14;
+  --shiki-token-constant: #1b4f9c;
+  --shiki-token-string: #146c2e;
+  --shiki-token-string-expression: #146c2e;
+  --shiki-token-comment: #5a5443;
+  --shiki-token-keyword: #9c2b5f;
+  --shiki-token-parameter: #8a4b00;
+  --shiki-token-function: #5b3fa8;
+  --shiki-token-punctuation: #4a4638;
+  --shiki-token-link: #1b4f9c;
+  color: #1c1a14;
+}
+
 /* 面板头部「-N」计数是宿主写死的 #ec1313，落在暗底上实测 4.42:1，提亮一档到
    #ff7a7a（7.9:1）；「+N」的 #22c55e 实测 8.72:1 已够，不动。这条表头只在右栏
    面板里有（弹框的 header 只显示路径），故只挂 data-changes-review。 */

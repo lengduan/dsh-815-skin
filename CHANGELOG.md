@@ -1,3 +1,16 @@
+
+## 0.1.54 — 2026-11-25
+
+修对话正文里 ```diff 代码块的行文字与浅绿、浅红行底过近（用户报「修复一下这里面文字颜色和背景色过于接近的问题」，箭头指向助手消息里的 diff 围栏）。
+
+- 根因不是配色选错，也不是锚点漂移，而是**覆盖的组件不对**：2026-09-24、2026-09-28 两轮修的 `FileDiff`（`ui-deliverables`，只出现在右栏「本轮改动」面板与改动卡片的悬停预览）行类名是 `_add` / `_del` 且带 `data-diff-line`；用户截图这块走的是另一条链路 —— `ChatView` 的 `conversation.chat.markdown.fence` slot 到 `DiffFenceLayer`（`dsh-client-ui-chat`）再到 primitives 的 `FenceCodeBlock({diff:true})`，行类名是 `_diffAdd_<hash>` / `_diffDel_<hash>`，**没有** `data-diff-line`，旧规则在这条链路上命中 0 个
+- 于是出现「以前调过、现在又坏」：行底沿用宿主浅色主题的 `--dsw-alias-file-diff-added-bg #e6f4e7` / `deleted-bg #fce6e2`，而行内文字是皮肤为暗底那套 shiki 亮色（`CodeBlock` 用 css-variables 主题，每个 token 的内联 style 就是 `color: var(--shiki-token-*)`）。修前实测：正文继承 `label-primary #f4ead6` 落浅绿底 **1.05:1**、落浅红底 **1.00:1**；标点 `#ced4da` 1.31 / 1.25:1；字符串 `#69db7c` 1.54 / 1.46:1
+- 修法沿用上一轮：只在浅色宿主、只在 diff 行本体上重设 shiki 变量（内联 `var()` 直接跟着变，不需要 `!important`），并把行文字压成墨色 `#1c1a14`；新增行 `+` 号压深到 `#0f6b2c`（5.84:1），删除行 `-` 号 `#ba2723` 落 `#fce6e2` 本来 5.16:1、不动
+- 修后实测（本机桌面客户端 GUI，真实节点 `span.line._diffAdd_kjs70_177` / `._diffDel_kjs70_182`）：行文字 `rgb(28,26,20)` on `rgb(230,244,231)` = **15.29:1**、on `rgb(252,230,226)` = **14.54:1**；字符串 token `rgb(20,108,46)`；`+` 号 `rgb(15,107,44)`
+- 锚点：D 级 `[class*='_diffAdd_']` / `[class*='_diffDel_']`（CSS Module localName 后缀，不随构建 hash 变），叠 A 级 `[data-chat-flow-kind]` 收到对话区、B 级 `body[data-dsh-815]` 收全局；深色主题整体排除
+- 规格：`specs/项目规格/皮肤样式锚点.md` 失效史补记「同处报障先确认渲染链路是否为同一组件」
+- `pnpm build` 与 `pnpm test`（5 passed）通过
+
 # 更新日志
 
 ## 0.1.53 — 2026-11-24
