@@ -1,5 +1,17 @@
 # 更新日志
 
+## 0.1.53 — 2026-11-24
+
+修输入卡里「引入的文件」chip 悬停时文字与底色过近（用户报「引入进来的文件鼠标移入的展示上文字颜色和背景色过于接近」，箭头指向草稿里 `t3_tokio_basics.rs` 那颗 chip）。
+
+- 根因是 hover 只换底不换字：宿主 `composer-editor.module.css` 的 `.reference:hover` 把底换成 `--dsw-alias-state-business-tertiary`（皮肤值 `#3a3828` 深橄榄），字仍取 `--dsw-alias-state-business-primary`，而该 token 在输入卡内为了宣纸浅底被压成暗铜 `#6b4e16`（`:246`）—— 本机实测 `rgb(107,78,22)` 落 `rgb(58,56,40)` 只有 **1.54:1**，hover 上去文件名整块沉进底里
+- 修法按「深底只配奶油五级」：hover 态把字提到亮铜同族 `#e2c98a`，对 `#3a3828` 实测 **7.29:1**，与对话气泡里深底 `fileMention` 同值；未悬停时仍是纸底暗铜，保持 6.43:1 不动
+- 关键做法：重绑 token 而不是直接写 `color`。chip 的 DOM 是外层 `[data-composer-chip]` 套内层 `span._reference`，内层自带 `color: var(--dsw-alias-state-business-primary)`，把 `color` 写在外层会被内层盖掉（实测外层已变、内层不变，hover 仍是暗铜）
+- 锚点：宿主手写的 `data-composer-chip` / `data-composer-text-ref`（`ReferenceChipNode` / `TextRefNode` 的 `createDOM` 写入，A 级，不随 CSS Module hash 变）；图标走 `currentColor`，随字色一起变亮
+- 实测（本机桌面客户端 GUI，造出真实 chip 后悬停）：修前 `rgb(107,78,22)` on `rgb(58,56,40)`；修后同一悬停态 `rgb(226,201,138)`，选择器命中 1 个；截图对比 `docs` 文件名由糊成一团变为清晰可读
+- `pnpm build` 与 `pnpm test`（5 passed）通过
+- 已知遗留（本次未动）：本文件 `:282` / `:286` 两条规则挂在 `data-input-backdrop` / `data-decoration` 上，当前宿主 bundle 里这两个属性 **0 命中**，即输入卡内斜杠命令 token 与引用 chip 的基础色覆盖早已失效，现由宿主默认 + 输入卡的墨色 token 兜底
+
 ## 0.1.52 — 2026-11-21
 
 修「上下文已压缩」展开正文里的行内 code 与底同色（用户报「会话里面展开后的文字颜色 和 背景色过于接近」，箭头指向压缩摘要正文中的白色胶囊）。
